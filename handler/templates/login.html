@@ -1,0 +1,24 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{define "flashes"}}{{ .Flashes }}{{end}}
+
+{{ define "content" }}
+    <div class="padding">
+        <h2>Welcome back, Excellency!</h2>
+        <form action="/login-now" method="post">
+            <p>
+                <label for="email">Email:</label>
+                <input id="email" type="text" name="email">
+            </p>
+            <p>
+                <label for="password">Password:</label>
+                <input id="password" type="password" name="password">
+            </p>
+            <input type="submit" value="Log in!">
+            {{ if .Flashes }}
+                or
+                <a class="button secondary" href="/join">Create an account</a>
+            {{ end }}
+        </form>
+    </div>
+{{ end }}

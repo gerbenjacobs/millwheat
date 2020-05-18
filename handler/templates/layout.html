@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ template "title" . }}</title>
+    <link rel="stylesheet" href="https://unpkg.com/chota@0.7.1">
+    <link rel="stylesheet" href="/css/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat|MedievalSharp" rel="stylesheet">
+</head>
+<body>
+
+{{ if .Flashes }}
+    {{ range $state, $msg := .Flashes }}
+        <div class="container padding flash-{{ $state }}">
+            {{ $msg }}
+        </div>
+    {{ end }}
+{{ end }}
+
+<div class="container">
+    <nav class="nav">
+        <div class="nav-left">
+            <a class="brand" href="/">
+                <img src="/images/castle.png" alt="Millwheat">
+            </a>
+        </div>
+        <div class="nav-right">
+            <div class="tabs">
+                {{ if .User }}
+                    <a href="/logout">Logout</a>
+                {{ else }}
+                    <a href="/login">Log in</a>
+                    <a href="/join">Join</a>
+                {{ end }}
+            </div>
+        </div>
+    </nav>
+
+    {{ template "content" . }}
+</div>
+
+
+<footer class="container" id="footer">
+    <div class="row reverse">
+        <div class="col padding">
+            <h3>Quick links</h3>
+            <ul>
+                <li><a href="#">Log in</a></li>
+                <li><a href="#">Sign up</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Screenshots</a></li>
+                <li><a href="#">About the game</a></li>
+            </ul>
+        </div>
+        <div class="col padding">
+            <h3>Game stats</h3>
+            <dl>
+                <dt>Country</dt>
+                <dd>
+                    Name: <b>Millwheat</b><br>
+                    Cities: <b>12</b><br>
+                    Settlements: <b>36</b><br>
+                </dd>
+                <dt>Players</dt>
+                <dd>
+                    Online: <b>16</b><br>
+                    Active: <b>123</b><br>
+                    Total: <b>642</b><br>
+                </dd>
+            </dl>
+        </div>
+        <div class="col padding">
+            <h3>Millwheat</h3>
+            <p>
+                Millwheat is a <abbr title="Persistent Browser Based Game">PBBG</abbr> set in medieval times.
+            </p>
+            <p>
+                It's a free to play game where you own your own village and are tasked with providing soldiers
+                for the king, while growing the prosperity of the town itself.
+            </p>
+            <p>
+                This means you need to do farming, logging, mining, blacksmithing and much more.
+            </p>
+            <p class="text-center">
+                <a href="/join" class="button dark">Run your town!</a>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            Copyright &copy; Millwheat
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

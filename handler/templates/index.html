@@ -1,0 +1,40 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{ define "content" }}
+    <div class="row padding">
+        {{ if .User }}
+            <div class="col">
+                <p>
+                    You are logged in as User ID <b>{{ .User.ID }}</b>.
+                </p>
+                <a href="/game" class="button">Enter game</a>
+            </div>
+        {{ else }}
+            <div class="col">
+                <p>
+                    <b>Millwheat</b> is a <abbr title="Persistent Browser Based Game">PBBG</abbr> set in medieval times.
+                </p>
+                <p>
+                    You have inherited your parents title as ruler of the town. It's not much of a town,
+                    but with some determination and elbow grease you feel confident you can change that.
+                </p>
+                <p>
+                    What will you focus on? Heavy mining? Maybe set up a big forestry and logging town, or
+                    perhaps you prefer to set up the town for making end products like armour, weaponry and pottery.
+                </p>
+                <p>
+                    Clearly you need to upgrade your town and get ready to one day rule the country.
+                </p>
+                <div class="is-center">
+                    <a href="/join" class="button primary">Join</a>
+                    <a href="/login" class="button secondary">Log in</a>
+                </div>
+            </div>
+            <div class="col text-center">
+                <figure>
+                    <img src="/images/4de972254134031e276254788ce6d5d3.png" alt="Your town">
+                </figure>
+            </div>
+        {{ end }}
+    </div>
+{{ end }}
