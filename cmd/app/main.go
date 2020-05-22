@@ -50,6 +50,7 @@ func main() {
 	if err := db.Ping(); err != nil {
 		log.Fatalf("failed to ping database: %v", err)
 	}
+	db.SetConnMaxLifetime(time.Second)
 
 	// create repositories and services
 	auth := services.NewAuth([]byte(c.Svc.SecretToken))

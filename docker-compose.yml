@@ -10,6 +10,10 @@ services:
       - 3306:3306
     volumes:
       - ./storage/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: "/etc/init.d/mysql status"
+      interval: 1s
+      retries: 120
   pma:
     depends_on:
       - db

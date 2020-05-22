@@ -1,3 +1,16 @@
+:root {
+    --color-primary: #cf763b;
+    --color-lightGrey: #d2d6dd;
+    --color-grey: #8a8583;
+    --color-darkGrey: #475c6c;
+    --color-error: #7f3004;
+    --color-success: #8d8638;
+    --grid-maxWidth: 120rem;
+    --grid-gutter: 2rem;
+    --font-size: 1.6rem;
+    --font-family: "Montserrat", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
 /* Colour palette based on:
     Brugge Medieval  https://www.color-hex.com/color-palette/51111
     Medieval Dominca Garden https://www.color-hex.com/color-palette/1061
@@ -5,7 +18,6 @@
 body {
     background: #eed7a1;
     color: #5a3e2d;
-    font-family: "Montserrat", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
 h1, h2 {
