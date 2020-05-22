@@ -60,6 +60,7 @@ Some other possible buildings:
 - Hunter's lodge (meat & hide)
 - Winery (grapes -> wine) (changes vineyard to only grow grapes)
 - Siege workshop (planks, metal -> ballista, catapult)
+- Market (required to trade with other towns)
 
 These are probably not used within the game, but they're here for informational purposes
 
@@ -72,3 +73,25 @@ These are probably not used within the game, but they're here for informational 
 - Baker (bakery, windmill)
 - Animal breeder (pig farm, stables)
 - Butcher (butchery, tannery)
+
+
+## Simulation example / construction material examples
+
+https://play.golang.org/p/FFr2VJsvLuV
+
+Construction costs for **Farm**
+
+Stone column is calculated by an exponential function while the planks have been adjusted by hand for gameplay value.
+
+|     | Stone | Planks |
+|-----|-------|--------|
+| 1:  | 1     | 3      |
+| 2:  | 2     | 6      |
+| 3:  | 3     | 15     |
+| 4:  | 5     | 50     |
+| 5:  | 7     | 75     |
+| 6:  | 12    | 125    |
+| 7:  | 19    | 250    |
+| 8:  | 30    | 375    |
+| 9:  | 48    | 550    |
+| 10: | 77    | 750    |
