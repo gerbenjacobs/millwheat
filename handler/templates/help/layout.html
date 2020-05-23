@@ -1,0 +1,14 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{ define "flashes" }}{{ .Flashes }}{{ end }}
+
+{{ define "content" }}
+    <div class="row">
+        <div class="col-3-md col-2-lg">
+            {{ template "menu" .}}
+        </div>
+        <div class="col-9-md col-10-lg padding">
+            {{ template "helpcontent" .}}
+        </div>
+    </div>
+{{ end }}

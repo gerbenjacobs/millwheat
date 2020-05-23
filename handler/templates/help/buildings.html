@@ -1,0 +1,125 @@
+{{ define "helpcontent" }}
+    <h2 id="top">Buildings</h2>
+        <ul>
+            <li><a href="#stone-quarry">Stone Quarry</a></li>
+            <li><a href="#farm">Farm</a></li>
+            <li><a href="#saw-mill">Saw Mill</a></li>
+        </ul>
+
+    <div id="stone-quarry" class="card" style="margin-bottom: 20px;">
+        <p class="pull-right">
+            <a href="#top">Top</a>
+        </p>
+        <header>
+            <h4>Stone Quarry</h4>
+        </header>
+        <div class="row">
+            <div class="col-3 text-center">
+                <img src="https://www.knightsandmerchants.net/application/files/7115/6823/6446/quarry.png" alt="Quarry">
+            </div>
+            <div class="col-9">
+                <p>
+                    Stone Quarry mines for raw stone in the mountains and converts these to stone blocks.
+                </p>
+                <table class="striped">
+                    <tr>
+                        <th>Level</th>
+                        <th>Stone blocks per hour</th>
+                        <th>Build costs</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1 stone, 3 planks</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2</td>
+                        <td>2 stone, 5 planks</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>3</td>
+                        <td>3 stone, 7 planks</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="farm" class="card" style="margin-bottom: 20px;">
+        <p class="pull-right">
+            <a href="#top">Top</a>
+        </p>
+        <header>
+            <h4>Farm</h4>
+        </header>
+        <div class="row">
+            <div class="col-3 text-center">
+                <img src="https://www.knightsandmerchants.net/application/files/7515/6823/6441/farm.png" alt="Farm">
+            </div>
+            <div class="col-9">
+                <p>
+                    The wheat farm sows and harvests wheat and after separating the chaff the end result will be
+                    bags of grain.
+                </p>
+                <table class="striped">
+                    <tr>
+                        <th>Level</th>
+                        <th>Grain per hour</th>
+                        <th>Build costs</th>
+                    </tr>
+                    <tr><td>1</td><td>?</td><td>1 stone, 3 planks</td></tr>
+                    <tr><td>2</td><td>?</td><td>2 stone, 6 planks</td></tr>
+                    <tr><td>3</td><td>?</td><td>3 stone, 15 planks</td></tr>
+                    <tr><td>4</td><td>?</td><td>5 stone, 50 planks</td></tr>
+                    <tr><td>5</td><td>?</td><td>7 stone, 75 planks</td></tr>
+                    <tr><td>6</td><td>?</td><td>12 stone, 125 planks</td></tr>
+                    <tr><td>7</td><td>?</td><td>19 stone, 250 planks</td></tr>
+                    <tr><td>8</td><td>?</td><td>30 stone, 375 planks</td></tr>
+                    <tr><td>9</td><td>?</td><td>48 stone, 550 planks</td></tr>
+                    <tr><td>10</td><td>?</td><td>77 stone, 750 planks</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="saw-mill" class="card" style="margin-bottom: 20px;">
+        <p class="pull-right">
+            <a href="#top">Top</a>
+        </p>
+        <header>
+            <h4>Saw Mill</h4>
+        </header>
+        <div class="row">
+            <div class="col-3 text-center">
+                <img src="https://www.knightsandmerchants.net/application/files/4715/6823/6447/sawmill.png" alt="Saw Mill">
+            </div>
+            <div class="col-9">
+                <p>
+                    The saw mill takes logs and saws them into planks, ready for use in construction or weaponbuilding.
+                    By upgrading the saw mill you improve the efficiency meaning you'll get more planks from a single log.
+                </p>
+                <table class="striped">
+                    <tr>
+                        <th>Level</th>
+                        <th>Logs per hour</th>
+                        <th>Efficiency</th>
+                        <th>Planks per hour</th>
+                        <th>Build costs</th>
+                    </tr>
+                    <tr><th>1</th><td>1</td><td>2</td><td>2</td><td>? stones, ? planks</td></tr>
+                    <tr><th>2</th><td>2</td><td>2</td><td>4</td><td>? stones, ? planks</td></tr>
+                    <tr><th>3</th><td>2</td><td>3</td><td>6</td><td>? stones, ? planks</td></tr>
+                    <tr><th>4</th><td>3</td><td>3</td><td>9</td><td>? stones, ? planks</td></tr>
+                    <tr><th>5</th><td>3</td><td>4</td><td>12</td><td>? stones, ? planks</td></tr>
+                    <tr><th>6</th><td>4</td><td>4</td><td>16</td><td>? stones, ? planks</td></tr>
+                    <tr><th>7</th><td>5</td><td>4</td><td>20</td><td>? stones, ? planks</td></tr>
+                    <tr><th>8</th><td>5</td><td>5</td><td>25</td><td>? stones, ? planks</td></tr>
+                    <tr><th>9</th><td>6</td><td>5</td><td>30</td><td>? stones, ? planks</td></tr>
+                    <tr><th>10</th><td>6</td><td>6</td><td>36</td><td>? stones, ? planks</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+{{ end }}

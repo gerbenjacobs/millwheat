@@ -106,7 +106,7 @@ func (h *Handler) join(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 	))
 	err := tmpl.Execute(w, Game{
 		Page: Page{
-			Title:   "Register for free -- Millwheat",
+			Title:   "Register for free ⚔️ Millwheat",
 			Flashes: flashes,
 		},
 	})
@@ -125,7 +125,7 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	))
 	err := tmpl.Execute(w, Game{
 		Page: Page{
-			Title:   "Log in -- Millwheat",
+			Title:   "Log in ⚔️ Millwheat",
 			Flashes: flashes,
 		},
 	})
@@ -187,7 +187,7 @@ func (h *Handler) logout(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 
 func (h *Handler) errorHandler(localErr error) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		data, err := h.getUserAndState(r, w, localErr.Error()+"-- Oops!")
+		data, err := h.getUserAndState(r, w, localErr.Error()+" ⚔️ Oops!")
 		if err != nil {
 			_ = storeAndSaveFlash(r, w, "error|Failed to load your information")
 			http.Redirect(w, r, "/", http.StatusFound)
