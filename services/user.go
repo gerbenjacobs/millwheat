@@ -52,3 +52,8 @@ func (u *UserSvc) Add(ctx context.Context, user *app.User) error {
 func (u *UserSvc) Login(ctx context.Context, email, password string) (*app.User, error) {
 	return u.storage.Login(ctx, email, password)
 }
+
+// Update updates the allowed fields of a User object - not the password
+func (u *UserSvc) Update(ctx context.Context, user *app.User) (*app.User, error) {
+	return u.storage.Update(ctx, user)
+}

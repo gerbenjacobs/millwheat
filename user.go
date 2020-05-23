@@ -1,7 +1,6 @@
 package svc
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,8 +13,4 @@ type User struct {
 	Token     string    `json:"token"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-}
-
-func (u User) String() string {
-	return fmt.Sprintf("[%v] %s - %s", u.ID, u.Email, u.CreatedAt)
 }

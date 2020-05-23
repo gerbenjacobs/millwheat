@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/go-sql-driver/mysql"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
@@ -28,17 +27,20 @@ func (r *UserRepository) Create(ctx context.Context, user *app.User) error {
 	if err != nil {
 		return err
 	}
+
 	uid, _ := user.ID.MarshalBinary()
 	password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 	user.Password = string(password) // replace the actual password with the hashed version
+
 	_, err = stmt.ExecContext(ctx, uid, user.Email, password, user.Token, user.CreatedAt, user.UpdatedAt)
 	merr, ok := err.(*mysql.MySQLError)
 	if ok && merr.Number == 1062 {
 		return app.ErrUserEmailUniqueness
 	}
+
 	return err
 }
 
@@ -76,4 +78,13 @@ func (r *UserRepository) Login(ctx context.Context, email, password string) (*ap
 	}
 
 	return r.Read(ctx, id)
+}
+
+func (r *UserRepository) Update(ctx context.Context, user *app.User) (*app.User, error) {
+	uid, _ := user.ID.MarshalBinary()
+
+	query := "UPDATE users SET email = ?, token = ?, createdAt = ?, updatedAt = ? WHERE id = ?"
+	_, err := r.db.ExecContext(ctx, query, user.Email, user.Token, user.CreatedAt, user.UpdatedAt, uid)
+
+	return user, err
 }

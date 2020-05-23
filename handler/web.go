@@ -153,6 +153,7 @@ func (h *Handler) loginNow(w http.ResponseWriter, r *http.Request, _ httprouter.
 
 	user, err := h.UserSvc.Login(r.Context(), e, p)
 	if err != nil {
+		logrus.Debugf("failed to login: %v", err)
 		_ = storeAndSaveFlash(r, w, "error|Failed to log in, please try again")
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
@@ -164,6 +165,10 @@ func (h *Handler) loginNow(w http.ResponseWriter, r *http.Request, _ httprouter.
 		Value:    user.Token,
 		HttpOnly: true,
 	})
+
+	// update last login time
+	user.UpdatedAt = time.Now().UTC()
+	_, _ = h.UserSvc.Update(r.Context(), user)
 
 	http.Redirect(w, r, "/", http.StatusFound) // TODO: redirect to game
 }
