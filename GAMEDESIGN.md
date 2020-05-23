@@ -95,3 +95,25 @@ Stone column is calculated by an exponential function while the planks have been
 | 8:  | 30    | 375    |
 | 9:  | 48    | 550    |
 | 10: | 77    | 750    |
+
+
+**Production rate**
+
+Does the stone quarry mine raw rock and then masons it into stone blocks?
+The saw mill needs logs, how does this affect 'planks per hour'? One log equals two planks? Also on level 5?
+
+Ex. saw mill level 2: 2 logs per hour with conversion rate 2, resulting in 4 planks  
+Saw mill level 6: 4 logs per hour, with conversion rate 4, resulting in 16 planks
+
+|    | Stone per hour | Logs per hour (Planks per log) - Planks |
+|----|----------------|-----------------|
+| 1  |   1   |   1 (2) - 2   |
+| 2  |   2   |   2 (2) - 4   |
+| 3  |   3   |   2 (3) - 6   |
+| 4  |   5   |   3 (3) - 9   |
+| 5  |   7   |   3 (4) - 12  |
+| 6  |   10  |   4 (4) - 16  |
+| 7  |   13  |   5 (4) - 20  |
+| 8  |   17  |   5 (5) - 25  |
+| 9  |   21  |   6 (5) - 30  |
+| 10 |   26  |   6 (6) - 36  |
