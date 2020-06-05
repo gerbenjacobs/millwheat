@@ -1,4 +1,4 @@
-package svc
+package millwheat
 
 import (
 	"errors"

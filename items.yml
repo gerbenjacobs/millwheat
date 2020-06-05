@@ -1,0 +1,73 @@
+- id: bread
+  name: Bread
+  description: A loaf of bread, freshly baked
+
+- id: wheat
+  name: Wheat
+  description: A bundle of wheat
+
+- id: grain
+  name: Grain
+  description: Grains separated from wheat in a windmill
+
+- id: log
+  name: Logs
+  description: Logs chopped down in forests
+
+- id: plank
+  name: Planks
+  description: Planks sawed from big logs
+
+- id: iron
+  name: Iron
+
+- id: coal
+  name: Coal
+
+- id: iron_bars
+  name: Iron Bars
+
+- id: grape
+  name: Grapes
+
+- id: wine
+  name: Wine
+
+- id: pig
+  name: Pigs
+
+- id: meat
+  name: Meat
+
+- id: hide
+  name: Hide
+
+- id: leather
+  name: Leather
+
+- id: stone
+  name: Raw Stone
+
+- id: stone_blocks
+  name: Stone Blocks
+
+- id: horse
+  name: Horses
+
+- id: leather_armour
+  name: Leather Armour
+
+- id: iron_chainmail
+  name: Iron Chain Mail
+
+- id: iron_platearmour
+  name: Iron Plate Armour
+
+- id: sword
+  name: Sword
+
+- id: crossbow
+  name: Crossbow
+
+- id: lance
+  name: Lance

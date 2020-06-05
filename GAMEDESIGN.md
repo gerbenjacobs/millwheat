@@ -2,29 +2,30 @@
 
 In Millwheat you run a village in the 13th century  with the goal of supplying the king with soldiers.
 Soldiers can be swordsmen, bowmen or calvary. The type indicates which items they need, next to their need
-for one item of wood and one item of drink.
+for food and drinks.
 To supply all these items you need to grow your village.
 
 Millwheat is a persistent browser based game which has rounds of battles that are run transparently in the background
 but which give the game its competitive loop. After a certain amount of time a soft reset will be done.
-Perhaps these 'seasons' can switch the battleground.
+Perhaps these 'seasons' can switch the battleground location.
 
 Millwheat is inspired on Travian (town sim), Knights & Merchants (themes) and Heroes & Generals (war system).
 
 ## Game loop
 
+- Seasons of 3 months (Meteorological) after which your village(s) will be reset
 - Grow your village (logging, mining, farming, blacksmithing)
 - Recruit and equip soldiers (with tools and food)
-- Supply soldiers and resources for the war effort
+- Supply soldiers and resources for the war effort (wars happen every week; ~12 battles per season)
 
 You grow your village by constructing buildings and leveling them up. Buildings consume and produce items.
 You need certain items to recruit soldiers, namely food and drinks (bread, meat, wine) and armour and weapons
 (leather armor, iron chain mail, iron plate armour, longbow, sword, lance).
 
-Every x days the king will organize battles to conquer or reclaim land, you need to help the war effort
+Every 7 days the king will organize battles to conquer or reclaim land, you need to help the war effort
 by supplying resources but more importantly trained troops.
 
-After every x months a season is completed and every village will be wiped before users can start playing again.
+After every 3 months a season is completed and every village will be wiped before users can start playing again.
 
 There will be many highscore lists to show user's achievements i.e. town size, town production rate, 
 soldiers recruited, battles won etc.
