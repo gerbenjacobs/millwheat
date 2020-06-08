@@ -17,15 +17,16 @@ const (
 
 func (h *Handler) AuthMiddleware(f httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		claims, err := h.Auth.ReadFromRequest(r)
-		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			_, _ = w.Write([]byte(err.Error()))
+		u, err := h.Auth.ReadFromRequest(r)
+		if err != nil || u == nil || u.Valid() != nil {
+			// Not logged in
+			_ = storeAndSaveFlash(r, w, "error|Please log in")
+			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 
 		// Add user ID in context
-		r = r.WithContext(context.WithValue(r.Context(), CtxKeyUserID, claims.UserID))
+		r = r.WithContext(context.WithValue(r.Context(), CtxKeyUserID, u.UserID))
 		f(w, r, p)
 	}
 }

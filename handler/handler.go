@@ -32,11 +32,15 @@ func New(dependencies Dependencies) *Handler {
 	r.ServeFiles("/css/*filepath", http.Dir("resources/css"))
 	r.ServeFiles("/images/*filepath", http.Dir("resources/images"))
 	r.GET("/", h.index)
+
 	r.GET("/join", h.join)
 	r.POST("/join-now", h.joinNow)
 	r.GET("/login", h.login)
 	r.POST("/login-now", h.loginNow)
 	r.GET("/logout", h.logout)
+
+	r.GET("/game", h.AuthMiddleware(h.game))
+
 	r.GET("/help/*page", h.helpPages)
 
 	r.NotFound = http.HandlerFunc(h.errorHandler(app.ErrPageNotFound))

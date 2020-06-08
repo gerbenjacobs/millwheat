@@ -30,6 +30,7 @@
         <div class="nav-right">
             <div class="tabs">
                 {{ if .User }}
+                    <a href="/game">Town</a>
                     <a href="/logout">Logout</a>
                 {{ else }}
                     <a href="/login">Log in</a>
@@ -48,9 +49,9 @@
         <div class="col padding">
             <h3>Quick links</h3>
             <ul>
-                <li><a href="#">Log in</a></li>
-                <li><a href="#">Sign up</a></li>
-                <li><a href="#">FAQ</a></li>
+                <li><a href="/login">Log in</a></li>
+                <li><a href="/join">Sign up</a></li>
+                <li><a href="/help">FAQ</a></li>
                 <li><a href="#">Screenshots</a></li>
                 <li><a href="#">About the game</a></li>
             </ul>
@@ -78,7 +79,7 @@
                 Millwheat is a <abbr title="Persistent Browser Based Game">PBBG</abbr> set in medieval times.
             </p>
             <p>
-                It's a free to play game where you own your own village and are tasked with providing soldiers
+                It's a free to play game where you run your own village and are tasked with providing soldiers
                 for the king, while growing the prosperity of the town itself.
             </p>
             <p>

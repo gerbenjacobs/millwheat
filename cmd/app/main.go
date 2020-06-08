@@ -10,8 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
-
 	"github.com/gerbenjacobs/millwheat/handler"
 	"github.com/gerbenjacobs/millwheat/internal"
 	"github.com/gerbenjacobs/millwheat/services"
@@ -46,8 +44,7 @@ func main() {
 	}
 
 	// load game data
-	warehouse := internal.MustReadItemsForWarehouse("items.yml")
-	spew.Dump(warehouse)
+	_ = internal.MustReadItemsForWarehouse("items.yml")
 
 	// set up and check database
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s?parseTime=true", c.DB.User, c.DB.Password, c.DB.Database))

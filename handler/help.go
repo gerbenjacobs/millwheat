@@ -24,11 +24,11 @@ func (h *Handler) helpPages(w http.ResponseWriter, r *http.Request, ps httproute
 		"handler/templates/help/menu.html",
 		"handler/templates/help/"+helpPage.file+".html",
 	))
-	data, err := h.getUserAndState(r, w, helpPage.title+" ⚔️ Millwheat")
+	data, err := h.getUserAndState(r, w, helpPage.title+" &#x2694;&#xfe0f; Millwheat")
 	if err != nil {
 		data = Game{
 			Page: Page{
-				Title: helpPage.title + " ⚔️ Millwheat",
+				Title: template.HTML(helpPage.title + " &#x2694;&#xfe0f; Millwheat"),
 			},
 		}
 	}
@@ -43,7 +43,7 @@ func (h *Handler) helpPages(w http.ResponseWriter, r *http.Request, ps httproute
 func helpPageByURL(path string) helpPage {
 	pages := map[string]helpPage{
 		"/":          {file: "index", title: "Help pages"},
-		"/buildings": {file: "buildings", title: "Buildings ⚔️ Help"},
+		"/buildings": {file: "buildings", title: "Buildings &#x2694;&#xfe0f; Help"},
 	}
 
 	p, ok := pages[path]

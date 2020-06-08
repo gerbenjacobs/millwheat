@@ -32,10 +32,38 @@ h1, h2 {
     padding: 20px;
 }
 
+.button.small {
+    padding: 0.5rem 1.5rem;
+}
+.card footer {
+    margin-top: 1rem;
+}
+
+.row .card {
+    height: 100%;
+}
+
+.topnav {
+    padding: 0;
+    margin: 0 0 1rem;
+}
+.topnav li {
+    list-style-type: none;
+    margin: 0.5rem;
+}
+.topnav li a {
+    width: 100%;
+}
+
 @media (min-width: 600px) {
     .container {
         margin-top: 20px;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.49), 0 6px 6px rgba(0, 0, 0, 0.53);
+    }
+
+    .topnav li {
+        display: inline-block;
+        margin: 0;
     }
 }
 
@@ -63,3 +91,6 @@ h1, h2 {
     color: #4e4e4e;
 }
 
+.card {
+    margin-bottom: 1em;
+}
