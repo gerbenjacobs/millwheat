@@ -11,6 +11,17 @@
     --font-family: "Montserrat", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
+/* overwrite colours for navbar */
+.tabs > .dropdown > summary, .tabs > a {
+    color: #5a3e2d;
+    border-bottom: 2px solid var(--color-primary);
+}
+.tabs>a.active,
+.tabs>a:hover {
+    opacity:1;
+    border-bottom:2px solid var(--color-error)
+}
+
 /* Colour palette based on:
     Brugge Medieval  https://www.color-hex.com/color-palette/51111
     Medieval Dominca Garden https://www.color-hex.com/color-palette/1061
@@ -28,18 +39,15 @@ h1, h2 {
     background: #f7efd3;
 }
 
-.padding {
-    padding: 20px;
-}
-
 .button.small {
     padding: 0.5rem 1.5rem;
 }
+
 .card footer {
     margin-top: 1rem;
 }
 
-.row .card {
+.is-full-height {
     height: 100%;
 }
 
@@ -47,23 +55,29 @@ h1, h2 {
     padding: 0;
     margin: 0 0 1rem;
 }
+
 .topnav li {
     list-style-type: none;
     margin: 0.5rem;
 }
+
 .topnav li a {
     width: 100%;
 }
 
 @media (min-width: 600px) {
     .container {
-        margin-top: 20px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.49), 0 6px 6px rgba(0, 0, 0, 0.53);
+        margin-top: 1rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.49), 0 .25rem .25rem rgba(0, 0, 0, 0.53);
+    }
+
+    .padding {
+        padding: 1rem;
     }
 
     .topnav li {
         display: inline-block;
-        margin: 0;
+        margin: 0 0 .25rem;
     }
 }
 
@@ -74,6 +88,10 @@ h1, h2 {
 
 #footer a {
     color: #faebd7;
+}
+
+.flash {
+    padding: 1rem;
 }
 
 .flash-error {
@@ -92,5 +110,5 @@ h1, h2 {
 }
 
 .card {
-    margin-bottom: 1em;
+    margin-bottom: 1rem;
 }

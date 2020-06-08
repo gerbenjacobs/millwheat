@@ -14,7 +14,7 @@
 
 {{ if .Flashes }}
     {{ range $state, $msg := .Flashes }}
-        <div class="container padding flash-{{ $state }}">
+        <div class="container flash flash-{{ $state }}">
             {{ $msg }}
         </div>
     {{ end }}
@@ -24,7 +24,7 @@
     <nav class="nav">
         <div class="nav-left">
             <a class="brand" href="/">
-                <img src="/images/castle.png" alt="Millwheat">
+                <img src="/images/castle.png" alt="Millwheat" width="40">
             </a>
         </div>
         <div class="nav-right">
