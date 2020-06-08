@@ -11,37 +11,70 @@
 
         <ul class="topnav">
             <li><a href="#buildqueue" class="button small">Build queue</a></li>
-            <li><a href="#buildings" class="button small">Buildings</a></li>
+            <li><a href="#town" class="button small">Town</a></li>
             <li><a href="#warehouse" class="button small">Warehouse</a></li>
         </ul>
 
         <div class="row" id="buildqueue">
             <div class="col">
-                <div class="card is-full-height">
-                    <header>
-                        <h3>Build queue</h3>
-                    </header>
-                    <p>
-                        At your current level you can have up to <strong>3</strong> buildings in the queue.
-                    </p>
-                    <div class="row">
-                        <div class="col">
-                            <h4>Farm</h4>
-                            Level 3
+                <div class="card is-full-height" style="background: #d3d3d7;">
+                    <nav id="queue_tabs" class="tabs" role="tablist">
+                        <a id="queue_tab_queue" aria-controls="queue_pane_queue" class="active">Build queue</a>
+                        <a id="queue_tab_building" aria-controls="queue_pane_building">New building</a>
+                    </nav>
+                    <div id="queue_pane_queue" class="queue_pane" role="tabpanel" tabindex="0" aria-labelledby="queue_tab_queue">
+                        <!-- Queue -->
+                        <p>
+                            At your current level you can have up to <strong>3</strong> buildings in the queue.
+                        </p>
+                        {{ $r := rand }}
+                        {{ if le $r 0.5 }}
+                        <p>
+                            <em>Currently nothing queued.</em>
+                        </p>
+                        {{ else }}
+                        <div class="row">
+                            <div class="col">
+                                <h4>Farm</h4>
+                                Level 3
+                            </div>
+                            <div class="col">
+                                Ready at <strong>2020-06-06 21:05</strong>
+                                <br>
+                                <progress max="100" value="80"></progress>
+                            </div>
+                            <div class="col">
+                                <a href="#" class="button error">Cancel</a>
+                            </div>
                         </div>
-                        <div class="col">
-                            Ready at <strong>2020-06-06 21:05</strong>
-                            <br>
-                            <progress max="100" value="80"></progress>
-                        </div>
-                        <div class="col">
-                            <a href="#" class="button error">Cancel</a>
-                        </div>
+                        {{ end }}
+                    </div>
+
+                    <div id="queue_pane_building" class="queue_pane" role="tabpanel" tabindex="0" aria-labelledby="queue_tab_building" hidden>
+                        <!-- Form -->
+                        <p>
+                            At your current level you can have up to <strong>10</strong> buildings.
+                            You currently have <strong>4</strong>.
+                        </p>
+                        <form action="/game/queue" method="post">
+                            <p>
+                                <label for="building">Building:</label>
+                                <select name="building" id="building">
+                                    <option value="">Farm</option>
+                                    <option value="">Mill</option>
+                                    <option value="">Bakery</option>
+                                    <option value="">Vineyard</option>
+                                    <option value="">Forestry</option>
+                                    <option value="">Saw Mill</option>
+                                </select>
+                            </p>
+                            <input type="submit" value="Build">
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row" id="buildings">
+        <div class="row" id="town">
             <div class="col-6 col-4-md">
                 <div class="card is-full-height">
                     <header>
@@ -174,7 +207,7 @@
             </div>
 
             <div class="col-6 col-4-md">
-                <div class="card">
+                <div class="card is-full-height">
                     <header>
                         <h3>Bakery</h3>
                     </header>
@@ -226,6 +259,119 @@
                     <header>
                         <h3>Warehouse</h3>
                     </header>
+                    <div class="row">
+                        <div class="col">
+                            <table class="striped">
+                                <tr>
+                                    <th style="width: 4rem;">&nbsp;</th>
+                                    <th>Name</th>
+                                    <th style="width: 4rem;">Quantity</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/9415/6823/6524/loaf.png"
+                                             alt="Bread"></td>
+                                    <td>Bread</td>
+                                    <td>24</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/6815/6823/6519/flour.png"
+                                             alt="Flour"></td>
+                                    <td>Flour</td>
+                                    <td>6</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/4615/6823/6518/corn.png"
+                                             alt="Wheat"></td>
+                                    <td>Wheat</td>
+                                    <td>3</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/3315/6823/6523/leather.png"
+                                             alt="Leather"></td>
+                                    <td>Leather</td>
+                                    <td>29</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table class="striped">
+                                <tr>
+                                    <th style="width: 4rem;">&nbsp;</th>
+                                    <th>Name</th>
+                                    <th style="width: 4rem;">Quantity</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/3415/6823/6528/treetrunk.png"
+                                             alt="Logs"></td>
+                                    <td>Logs</td>
+                                    <td>12</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/8915/6823/6528/timber.png"
+                                             alt="Planks"></td>
+                                    <td>Planks</td>
+                                    <td>6</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/5515/6823/6526/sausage.png"
+                                             alt="Meat"></td>
+                                    <td>Meat</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/9315/6823/6525/pig.png"
+                                             alt="Pigs"></td>
+                                    <td>Pigs</td>
+                                    <td>6</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table class="striped">
+                                <tr>
+                                    <th style="width: 4rem;">&nbsp;</th>
+                                    <th>Name</th>
+                                    <th style="width: 4rem;">Quantity</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/2215/6823/6529/woodenshield.png"
+                                             alt="Wooden Shield"></td>
+                                    <td>Wooden Shield</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/8715/6823/6527/sword.png"
+                                             alt="Sword"></td>
+                                    <td>Sword</td>
+                                    <td>4</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/5015/6823/6518/Crossbow.gif"
+                                             alt="Crossbow"></td>
+                                    <td>Crossbow</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="https://www.knightsandmerchants.net/application/files/7415/6823/6521/Horses.gif"
+                                             alt="Horses"></td>
+                                    <td>Horses</td>
+                                    <td>13</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

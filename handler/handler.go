@@ -30,6 +30,7 @@ func New(dependencies Dependencies) *Handler {
 
 	r := httprouter.New()
 	r.ServeFiles("/css/*filepath", http.Dir("resources/css"))
+	r.ServeFiles("/js/*filepath", http.Dir("resources/js"))
 	r.ServeFiles("/images/*filepath", http.Dir("resources/images"))
 	r.GET("/", h.index)
 

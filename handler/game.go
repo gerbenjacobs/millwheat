@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"html/template"
+	"math/rand"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -17,10 +18,11 @@ func (h *Handler) game(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		return
 	}
 
-	tmpl := template.Must(template.ParseFiles(
+	tmpl, _ := template.New("layout.html").Funcs(template.FuncMap{"rand": rand.Float64}).ParseFiles(
 		"handler/templates/layout.html",
 		"handler/templates/game.html",
-	))
+	)
+
 	if err := tmpl.Execute(w, data); err != nil {
 		logrus.Errorf("failed to execute layout: %v", err)
 		error500(w, errors.New("failed to create layout"))
