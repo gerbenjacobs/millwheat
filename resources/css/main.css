@@ -25,6 +25,14 @@
     font-weight: bold;
 }
 
+thead {
+    border-bottom-color: var(--color-primary);
+}
+
+#warehouse table.striped tr:nth-of-type(2n) {
+    background-color: #b8a77d;
+}
+
 /* Colour palette based on:
     Brugge Medieval  https://www.color-hex.com/color-palette/51111
     Medieval Dominca Garden https://www.color-hex.com/color-palette/1061
@@ -118,7 +126,4 @@ h1, h2 {
 
 #warehouse .card {
     background-color: #eed7a1;
-}
-#warehouse table.striped tr:nth-of-type(2n) {
-    background-color: var(--color-primary);
 }
