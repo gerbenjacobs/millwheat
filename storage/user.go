@@ -23,7 +23,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 }
 
 func (r *UserRepository) Create(ctx context.Context, user *app.User) error {
-	stmt, err := r.db.PrepareContext(ctx, "INSERT INTO users (id, email, password, token, createdAt, updatedAt) VALUES(?, ?, ?, ?, ?, ?)")
+	stmt, err := r.db.PrepareContext(ctx, "INSERT INTO users (id, email, password, token, currentTown, createdAt, updatedAt) VALUES(?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -34,8 +34,9 @@ func (r *UserRepository) Create(ctx context.Context, user *app.User) error {
 		return err
 	}
 	user.Password = string(password) // replace the actual password with the hashed version
+	currentTown, _ := user.CurrentTown.MarshalBinary()
 
-	_, err = stmt.ExecContext(ctx, uid, user.Email, password, user.Token, user.CreatedAt, user.UpdatedAt)
+	_, err = stmt.ExecContext(ctx, uid, user.Email, password, user.Token, currentTown, user.CreatedAt, user.UpdatedAt)
 	merr, ok := err.(*mysql.MySQLError)
 	if ok && merr.Number == 1062 {
 		return app.ErrUserEmailUniqueness
@@ -46,10 +47,10 @@ func (r *UserRepository) Create(ctx context.Context, user *app.User) error {
 
 func (r *UserRepository) Read(ctx context.Context, userID uuid.UUID) (*app.User, error) {
 	uid, _ := userID.MarshalBinary()
-	row := r.db.QueryRowContext(ctx, "SELECT id, email, password, token, createdAt, updatedAt FROM users WHERE id = ?", uid)
+	row := r.db.QueryRowContext(ctx, "SELECT id, email, password, token, currentTown, createdAt, updatedAt FROM users WHERE id = ?", uid)
 
 	user := new(app.User)
-	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.Token, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.Token, &user.CurrentTown, &user.CreatedAt, &user.UpdatedAt)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("user with ID %q not found: %w", userID, app.ErrUserNotFound)
@@ -82,9 +83,10 @@ func (r *UserRepository) Login(ctx context.Context, email, password string) (*ap
 
 func (r *UserRepository) Update(ctx context.Context, user *app.User) (*app.User, error) {
 	uid, _ := user.ID.MarshalBinary()
+	currentTown, _ := user.CurrentTown.MarshalBinary()
 
-	query := "UPDATE users SET email = ?, token = ?, createdAt = ?, updatedAt = ? WHERE id = ?"
-	_, err := r.db.ExecContext(ctx, query, user.Email, user.Token, user.CreatedAt, user.UpdatedAt, uid)
+	query := "UPDATE users SET email = ?, token = ?, currentTown = ?, createdAt = ?, updatedAt = ? WHERE id = ?"
+	_, err := r.db.ExecContext(ctx, query, user.Email, user.Token, currentTown, user.CreatedAt, user.UpdatedAt, uid)
 
 	return user, err
 }

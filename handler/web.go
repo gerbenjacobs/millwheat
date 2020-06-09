@@ -29,7 +29,7 @@ type Page struct {
 	Attributes map[string]interface{}
 }
 
-type Game struct {
+type PageUser struct {
 	Page
 	*app.User
 }
@@ -104,7 +104,7 @@ func (h *Handler) join(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		"handler/templates/layout.html",
 		"handler/templates/join.html",
 	))
-	err := tmpl.Execute(w, Game{
+	err := tmpl.Execute(w, PageUser{
 		Page: Page{
 			Title:   "Register for free &#x2694;&#xfe0f; Millwheat",
 			Flashes: flashes,
@@ -123,7 +123,7 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 		"handler/templates/layout.html",
 		"handler/templates/login.html",
 	))
-	err := tmpl.Execute(w, Game{
+	err := tmpl.Execute(w, PageUser{
 		Page: Page{
 			Title:   "Log in &#x2694;&#xfe0f; Millwheat",
 			Flashes: flashes,
@@ -231,7 +231,7 @@ func getFlashes(r *http.Request, w http.ResponseWriter) (map[string]string, erro
 	return m, session.Save(r, w)
 }
 
-func (h *Handler) getUserAndState(r *http.Request, w http.ResponseWriter, title string) (Game, error) {
+func (h *Handler) getUserAndState(r *http.Request, w http.ResponseWriter, title string) (PageUser, error) {
 	u, _ := h.Auth.ReadFromRequest(r)
 	loggedIn := false
 	if u != nil {
@@ -239,7 +239,7 @@ func (h *Handler) getUserAndState(r *http.Request, w http.ResponseWriter, title 
 	}
 	flashes, _ := getFlashes(r, w)
 
-	data := Game{
+	data := PageUser{
 		Page: Page{
 			Title:   template.HTML(title),
 			Flashes: flashes,

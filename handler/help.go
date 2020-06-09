@@ -26,7 +26,7 @@ func (h *Handler) helpPages(w http.ResponseWriter, r *http.Request, ps httproute
 	))
 	data, err := h.getUserAndState(r, w, helpPage.title+" &#x2694;&#xfe0f; Millwheat")
 	if err != nil {
-		data = Game{
+		data = PageUser{
 			Page: Page{
 				Title: template.HTML(helpPage.title + " &#x2694;&#xfe0f; Millwheat"),
 			},

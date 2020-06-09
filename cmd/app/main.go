@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/google/uuid"
+
+	"github.com/gerbenjacobs/millwheat/game"
 	"github.com/gerbenjacobs/millwheat/handler"
 	"github.com/gerbenjacobs/millwheat/internal"
 	"github.com/gerbenjacobs/millwheat/services"
@@ -62,10 +65,24 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to start user service: %v", err)
 	}
+
+	tempTowns := map[uuid.UUID]*game.Town{
+		uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"): {
+			ID:        uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"),
+			Name:      "Northbrook",
+			Owner:     uuid.MustParse("273d94bb1cf7408da4c85feda0eeff75"),
+			CreatedAt: time.Now().Add(-5 * time.Minute),
+			UpdatedAt: time.Now(),
+		},
+	}
+	townSvc := services.NewTownSvc(storage.NewTownRepository(tempTowns))
+
 	// set up the route handler and server
 	app := handler.New(handler.Dependencies{
 		Auth:    auth,
 		UserSvc: userSvc,
+
+		TownSvc: townSvc,
 	})
 	srv := &http.Server{
 		Addr:         c.Svc.Address,

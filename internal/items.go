@@ -5,11 +5,11 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	app "github.com/gerbenjacobs/millwheat"
+	"github.com/gerbenjacobs/millwheat/game"
 )
 
-func MustReadItemsForWarehouse(filePath string) app.Warehouse {
-	var i []app.Item
+func MustReadItemsForWarehouse(filePath string) game.Warehouse {
+	var i []game.Item
 	b, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		panic("failed to read " + filePath + ": " + err.Error())
@@ -18,5 +18,5 @@ func MustReadItemsForWarehouse(filePath string) app.Warehouse {
 		panic("failed to unmarshal" + filePath + ": " + err.Error())
 	}
 
-	return app.NewWarehouse(i)
+	return game.NewWarehouse(i)
 }

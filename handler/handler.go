@@ -18,8 +18,10 @@ type Handler struct {
 
 // Dependencies contains all the dependencies your application and its services require
 type Dependencies struct {
-	UserSvc services.UserService
 	Auth    *services.Auth
+	UserSvc services.UserService
+
+	TownSvc services.TownService
 }
 
 // New creates a new handler given a set of dependencies

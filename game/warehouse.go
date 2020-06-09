@@ -1,4 +1,4 @@
-package millwheat
+package game
 
 type ItemID string
 
