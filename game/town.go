@@ -6,26 +6,15 @@ import (
 	"github.com/google/uuid"
 )
 
-const (
-	BuildingFarm BuildingType = iota
-	BuildingMill
-	BuildingBakery
-)
-
-type BuildingType int
+type Towns map[uuid.UUID]*Town
 
 type Town struct {
 	ID        uuid.UUID
 	Owner     uuid.UUID
 	Name      string
-	Buildings []Building
+	Buildings []TownBuilding
 	CreatedAt time.Time
 	UpdatedAt time.Time
-}
-
-type Building struct {
-	Type         BuildingType
-	CurrentLevel int
 }
 
 func (t *Town) FormattedCreatedAt() string {

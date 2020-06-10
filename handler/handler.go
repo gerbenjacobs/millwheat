@@ -7,6 +7,7 @@ import (
 	"github.com/justinas/alice"
 
 	app "github.com/gerbenjacobs/millwheat"
+	"github.com/gerbenjacobs/millwheat/game"
 	"github.com/gerbenjacobs/millwheat/services"
 )
 
@@ -18,10 +19,16 @@ type Handler struct {
 
 // Dependencies contains all the dependencies your application and its services require
 type Dependencies struct {
+	// web services
 	Auth    *services.Auth
 	UserSvc services.UserService
 
+	// game services
 	TownSvc services.TownService
+
+	// game data
+	Items     game.Items
+	Buildings game.Buildings
 }
 
 // New creates a new handler given a set of dependencies

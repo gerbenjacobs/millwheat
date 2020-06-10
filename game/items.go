@@ -9,13 +9,13 @@ type Item struct {
 	Image       string
 }
 
-type Warehouse map[ItemID]Item
+type Items map[ItemID]Item
 
-func NewWarehouse(items []Item) Warehouse {
-	w := Warehouse{}
+func NewItems(items []Item) Items {
+	list := Items{}
 	for _, i := range items {
-		w[i.ID] = i
+		list[i.ID] = i
 	}
 
-	return w
+	return list
 }

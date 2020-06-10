@@ -8,7 +8,7 @@ import (
 	"github.com/gerbenjacobs/millwheat/game"
 )
 
-func MustReadItemsForWarehouse(filePath string) game.Warehouse {
+func MustReadItems(filePath string) game.Items {
 	var i []game.Item
 	b, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -18,5 +18,5 @@ func MustReadItemsForWarehouse(filePath string) game.Warehouse {
 		panic("failed to unmarshal" + filePath + ": " + err.Error())
 	}
 
-	return game.NewWarehouse(i)
+	return game.NewItems(i)
 }

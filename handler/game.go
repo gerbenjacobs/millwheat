@@ -14,7 +14,9 @@ import (
 
 type GameData struct {
 	PageUser
-	*game.Town
+	Town      *game.Town
+	Buildings game.Buildings
+	Items     game.Items
 }
 
 func (h *Handler) game(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -40,8 +42,10 @@ func (h *Handler) game(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 	)
 
 	if err := tmpl.Execute(w, GameData{
-		PageUser: data,
-		Town:     currentTown,
+		PageUser:  data,
+		Town:      currentTown,
+		Buildings: h.Buildings,
+		Items:     h.Items,
 	}); err != nil {
 		logrus.Errorf("failed to execute layout: %v", err)
 		error500(w, errors.New("failed to create layout"))

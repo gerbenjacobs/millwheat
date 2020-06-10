@@ -81,183 +81,94 @@
             </div>
         </div>
         <div class="row" id="town">
-            <div class="col-6 col-4-md">
-                <div class="card is-full-height">
-                    <header>
-                        <h3>Farm</h3>
-                    </header>
-                    <img src="https://www.knightsandmerchants.net/application/files/7515/6823/6441/farm.png" alt=""
-                         class="pull-right">
-                    <p>
-                        Grows wheat in the fields.
-                    </p>
-                    <table class="striped">
-                        <tr>
-                            <th>Consumes</th>
-                            <td><em>Nothing</em></td>
-                        </tr>
-                        <tr>
-                            <th>Produces</th>
-                            <td>
-                                <img src="https://www.knightsandmerchants.net/application/files/4615/6823/6518/corn.png"
-                                     alt="Wheat">
-                                Wheat
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Level</th>
-                            <td>2</td>
-                        </tr>
-                        <tr>
-                            <th>Wheat per hour</th>
-                            <td>2</td>
-                        </tr>
-                    </table>
-                    <footer class="is-right">
-                        <a href="#" class="button small success">Upgrade</a>
-                        <a href="#" class="button small error">Demolish</a>
-                    </footer>
+            {{ range $townBuilding := .Town.Buildings }}
+                {{ $building := index $.Buildings $townBuilding.Type }}
+                <div class="col-6 col-4-md">
+                    <div class="card is-full-height">
+                        <header>
+                            <h3>{{ $building.Name }}</h3>
+                        </header>
+                        <img src="{{ $building.Image }}" alt="{{ $building.Name }}" class="pull-right">
+                        <p>{{ $building.Description }}</p>
+                        <table class="striped">
+                            <tr>
+                                <th style="width: 50%;">Level</th>
+                                <td>{{ $townBuilding.CurrentLevel }}</td>
+                            </tr>
+                            <tr>
+                                <th>Consumes</th>
+                                <td>
+                                    {{ range $consume := $building.Consumes }}
+                                        {{ $item := index $.Items $consume }}
+                                        <p>
+                                            <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                            {{ $item.Name }}
+                                        </p>
+                                    {{ else }}
+                                        <em>Nothing</em>
+                                    {{ end }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Produces</th>
+                                <td>
+                                    {{ range $produce := $building.Produces }}
+                                        {{ $item := index $.Items $produce }}
+                                        <p>
+                                            <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                            {{ $item.Name }}
+                                        </p>
+                                    {{ else }}
+                                        <em>Nothing</em>
+                                    {{ end }}
+                                </td>
+                            </tr>
+                            {{ range $mechanic := $building.Mechanics }}
+                                <tr>
+                                    <th>{{ $mechanic.Name }}</th>
+                                    <td>{{ index $mechanic.Levels $townBuilding.CurrentLevel }}</td>
+                                </tr>
+                            {{ end }}
+                        </table>
+                        <details>
+                            <summary>Build costs</summary>
+                            <table class="striped">
+                                <thead>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Stones</th>
+                                    <th>Planks</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{ range $level, $cost := $building.BuildCosts }}
+                                    <tr>
+                                        <th>{{ $level }}</th>
+                                        <td>{{ $cost.Stones }}</td>
+                                        <td>{{ $cost.Planks }}</td>
+                                    </tr>
+                                {{ end }}
+                                </tbody>
+                            </table>
+                        </details>
+                        <footer class="is-right">
+                            <a href="#" class="button small success">Upgrade</a>
+                            <a href="#" class="button small error">Demolish</a>
+                        </footer>
+                    </div>
                 </div>
-            </div>
-            <div class="col-6 col-4-md">
-                <div class="card is-full-height">
-                    <header>
-                        <h3>Mill</h3>
-                    </header>
-                    <img src="https://www.knightsandmerchants.net/application/files/9415/6823/6446/mill.png" alt=""
-                         class="pull-right">
-                    <p>
-                        Mills wheat into bags of flour.
-                    </p>
-                    <table class="striped">
-                        <tr>
-                            <th>Consumes</th>
-                            <td>
-                                <img src="https://www.knightsandmerchants.net/application/files/4615/6823/6518/corn.png"
-                                     alt="Wheat">
-                                Wheat
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Produces</th>
-                            <td>
-                                <img src="https://www.knightsandmerchants.net/application/files/6815/6823/6519/flour.png"
-                                     alt="Flour">
-                                Flour
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Level</th>
-                            <td>1</td>
-                        </tr>
-                        <tr>
-                            <th>Flour per wheat</th>
-                            <td>1</td>
-                        </tr>
-                        <tr>
-                            <th>Flour per hour</th>
-                            <td>1</td>
-                        </tr>
-                    </table>
-                    <footer class="is-right">
-                        <a href="#" class="button small success">Upgrade</a>
-                        <a href="#" class="button small error">Demolish</a>
-                    </footer>
+            {{ else }}
+                <div class="col">
+                    <div class="card">
+                        <header>
+                            <h3>Buildings</h3>
+                        </header>
+                        <p>
+                            Your town has no buildings yet. Queue some up in the build queue!
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div class="col-6 col-4-md">
-                <div class="card is-full-height">
-                    <header>
-                        <h3>Bakery</h3>
-                    </header>
-                    <img src="https://www.knightsandmerchants.net/application/files/1215/6823/6439/bakery.png" alt=""
-                         class="pull-right">
-                    <p>
-                        Bakes bread for the soldiers using flour from the mill.
-                    </p>
-                    <table class="striped">
-                        <tr>
-                            <th>Consumes</th>
-                            <td>
-                                <img src="https://www.knightsandmerchants.net/application/files/6815/6823/6519/flour.png"
-                                     alt="Flour">
-                                Flour
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Produces</th>
-                            <td>
-                                <img src="https://www.knightsandmerchants.net/application/files/9415/6823/6524/loaf.png"
-                                     alt="Bread">
-                                Bread
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Level</th>
-                            <td>3</td>
-                        </tr>
-                        <tr>
-                            <th>Bread per flour</th>
-                            <td>1</td>
-                        </tr>
-                        <tr>
-                            <th>Bread per hour</th>
-                            <td>4</td>
-                        </tr>
-                    </table>
-                    <footer class="is-right">
-                        <a href="#" class="button small success">Upgrade</a>
-                        <a href="#" class="button small error">Demolish</a>
-                    </footer>
-                </div>
-            </div>
-
-            <div class="col-6 col-4-md">
-                <div class="card is-full-height">
-                    <header>
-                        <h3>Bakery</h3>
-                    </header>
-                    <img src="https://www.knightsandmerchants.net/application/files/1215/6823/6439/bakery.png" alt=""
-                         class="pull-right">
-                    <p>
-                        Bakes bread for the soldiers using flour from the mill.
-                    </p>
-                    <table class="striped">
-                        <tr>
-                            <th>Consumes</th>
-                            <td>
-                                <img src="https://www.knightsandmerchants.net/application/files/6815/6823/6519/flour.png"
-                                     alt="Flour">
-                                Flour
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Produces</th>
-                            <td>
-                                <img src="https://www.knightsandmerchants.net/application/files/9415/6823/6524/loaf.png"
-                                     alt="Bread">
-                                Bread
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Level</th>
-                            <td>3</td>
-                        </tr>
-                        <tr>
-                            <th>Bread per flour</th>
-                            <td>1</td>
-                        </tr>
-                        <tr>
-                            <th>Bread per hour</th>
-                            <td>4</td>
-                        </tr>
-                    </table>
-                    <footer class="is-right">
-                        <a href="#" class="button small success">Upgrade</a>
-                        <a href="#" class="button small error">Demolish</a>
-                    </footer>
-                </div>
-            </div>
+            {{ end }}
         </div>
         <div class="row" id="warehouse">
             <div class="col">
