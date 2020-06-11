@@ -1,17 +1,17 @@
 - id: bread
   name: Bread
   description: A loaf of bread, freshly baked
-  image: https://www.knightsandmerchants.net/application/files/9415/6823/6524/loaf.png
+  image: /images/items/bread.png
 
 - id: wheat
   name: Wheat
   description: A bundle of wheat
-  image: https://www.knightsandmerchants.net/application/files/4615/6823/6518/corn.png
+  image: /images/items/wheat.png
 
 - id: flour
   name: Flour
   description: Freshly ground flour from a windmill
-  image: https://www.knightsandmerchants.net/application/files/6815/6823/6519/flour.png
+  image: /images/items/flour.png
 
 - id: log
   name: Logs
