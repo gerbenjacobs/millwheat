@@ -136,16 +136,22 @@
                                 <thead>
                                 <tr>
                                     <th>Level</th>
-                                    <th>Stones</th>
-                                    <th>Planks</th>
+                                    <th><img src="/images/items/stone.png" alt="Stones"> Stones</th>
+                                    <th><img src="/images/items/plank.png" alt="Planks"> Planks</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {{ range $level, $cost := $building.BuildCosts }}
                                     <tr>
-                                        <th>{{ $level }}</th>
-                                        <td>{{ $cost.Stones }}</td>
-                                        <td>{{ $cost.Planks }}</td>
+                                        <th>Lvl {{ $level }}</th>
+                                        <td>
+                                            <img src="/images/items/stone.png" alt="Stones">
+                                            {{ $cost.Stones }}x
+                                        </td>
+                                        <td>
+                                            <img src="/images/items/plank.png" alt="Planks">
+                                            {{ $cost.Planks }}x
+                                        </td>
                                     </tr>
                                 {{ end }}
                                 </tbody>
