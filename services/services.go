@@ -18,4 +18,5 @@ type UserService interface {
 
 type TownService interface {
 	Town(ctx context.Context, id uuid.UUID) (*game.Town, error)
+	Warehouse(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error)
 }

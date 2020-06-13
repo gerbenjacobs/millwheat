@@ -18,4 +18,5 @@ type UserStorage interface {
 
 type TownStorage interface {
 	Get(ctx context.Context, id uuid.UUID) (*game.Town, error)
+	WarehouseItems(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error)
 }

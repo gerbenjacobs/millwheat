@@ -10,11 +10,13 @@ type Buildings map[BuildingType]Building
 
 type BuildingType int
 
+// TownBuilding represents an instance of a building, located in a town
 type TownBuilding struct {
 	Type         BuildingType
 	CurrentLevel int
 }
 
+// Building contains all the data for buildings in the game
 type Building struct {
 	Name        string
 	Description string

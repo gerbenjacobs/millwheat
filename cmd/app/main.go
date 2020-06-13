@@ -13,8 +13,8 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/gerbenjacobs/millwheat/game"
+	"github.com/gerbenjacobs/millwheat/game/data"
 	"github.com/gerbenjacobs/millwheat/handler"
-	"github.com/gerbenjacobs/millwheat/internal"
 	"github.com/gerbenjacobs/millwheat/services"
 	"github.com/gerbenjacobs/millwheat/storage"
 
@@ -211,5 +211,5 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 		},
 	}
 
-	return tempTowns, internal.MustReadItems("items.yml"), tempBuildings
+	return tempTowns, data.Items, tempBuildings
 }

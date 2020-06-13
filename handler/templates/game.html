@@ -193,34 +193,16 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                {{ $whLen := len .WarehouseList }}
+                                {{ range $idx, $itemID := .WarehouseList }}
+                                {{ if ne $idx 0 }}
+                                {{ $item := index $.Items $itemID }}
                                 <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/9415/6823/6524/loaf.png"
-                                             alt="Bread"></td>
-                                    <td>Bread</td>
-                                    <td>24</td>
+                                    <td><img src="{{ $item.Image }}" alt="{{ $item.Name }}"></td>
+                                    <td>{{ $item.Name }}</td>
+                                    <td>{{ with (index $.Warehouse $item.ID) }} {{ .Quantity }} {{ end }}</td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/6815/6823/6519/flour.png"
-                                             alt="Flour"></td>
-                                    <td>Flour</td>
-                                    <td>6</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/4615/6823/6518/corn.png"
-                                             alt="Wheat"></td>
-                                    <td>Wheat</td>
-                                    <td>3</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/3315/6823/6523/leather.png"
-                                             alt="Leather"></td>
-                                    <td>Leather</td>
-                                    <td>29</td>
-                                </tr>
+                                {{ if each 7 $idx $whLen }}
                                 </tbody>
                             </table>
                         </div>
@@ -234,75 +216,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/3415/6823/6528/treetrunk.png"
-                                             alt="Logs"></td>
-                                    <td>Logs</td>
-                                    <td>12</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/8915/6823/6528/timber.png"
-                                             alt="Planks"></td>
-                                    <td>Planks</td>
-                                    <td>6</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/5515/6823/6526/sausage.png"
-                                             alt="Meat"></td>
-                                    <td>Meat</td>
-                                    <td>2</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/9315/6823/6525/pig.png"
-                                             alt="Pigs"></td>
-                                    <td>Pigs</td>
-                                    <td>6</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col">
-                            <table class="striped">
-                                <thead>
-                                <tr>
-                                    <th style="width: 4rem;">&nbsp;</th>
-                                    <th>Name</th>
-                                    <th style="width: 4rem;">Quantity</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/2215/6823/6529/woodenshield.png"
-                                             alt="Wooden Shield"></td>
-                                    <td>Wooden Shield</td>
-                                    <td>2</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/8715/6823/6527/sword.png"
-                                             alt="Sword"></td>
-                                    <td>Sword</td>
-                                    <td>4</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/5015/6823/6518/Crossbow.gif"
-                                             alt="Crossbow"></td>
-                                    <td>Crossbow</td>
-                                    <td>2</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src="https://www.knightsandmerchants.net/application/files/7415/6823/6521/Horses.gif"
-                                             alt="Horses"></td>
-                                    <td>Horses</td>
-                                    <td>13</td>
-                                </tr>
+                                {{ end }}
+                                {{ end }}
+                                {{ end }}
                                 </tbody>
                             </table>
                         </div>

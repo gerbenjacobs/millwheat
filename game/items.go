@@ -11,11 +11,8 @@ type Item struct {
 
 type Items map[ItemID]Item
 
-func NewItems(items []Item) Items {
-	list := Items{}
-	for _, i := range items {
-		list[i.ID] = i
-	}
-
-	return list
+// WarehouseItem represents an instance of an item in a warehouse
+type WarehouseItem struct {
+	ItemID   ItemID
+	Quantity int
 }
