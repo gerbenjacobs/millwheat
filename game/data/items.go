@@ -5,13 +5,15 @@ import (
 )
 
 // WarehouseOrder determines the way the warehouse will be displayed.
-// It is module 7, so 3 rows will be created.
 var WarehouseOrder = []game.ItemID{
-	"skip",
 	"stone", "plank", "log", "wheat", "flour", "bread", "wine",
 	"pig", "meat", "hide", "leather", "iron", "coal", "iron_bar",
 	"woodenshield", "leather_armour", "horse", "iron_platearmour", "sword", "crossbow", "lance",
 }
+
+// WarehouseOrderBreakpoints determines when the warehouse starts a new column
+var WarehouseOrderBreakpoints = []game.ItemID{"wine", "iron_bar"}
+
 var Items = game.Items{
 	"wheat": game.Item{
 		ID:          "wheat",

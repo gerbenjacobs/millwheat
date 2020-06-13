@@ -193,16 +193,14 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {{ $whLen := len .WarehouseList }}
-                                {{ range $idx, $itemID := .WarehouseList }}
-                                {{ if ne $idx 0 }}
+                                {{ range $itemID := .WarehouseList }}
                                 {{ $item := index $.Items $itemID }}
                                 <tr>
                                     <td><img src="{{ $item.Image }}" alt="{{ $item.Name }}"></td>
                                     <td>{{ $item.Name }}</td>
                                     <td>{{ with (index $.Warehouse $item.ID) }} {{ .Quantity }} {{ end }}</td>
                                 </tr>
-                                {{ if each 7 $idx $whLen }}
+                                {{ if hasItemID $.WarehouseBreakpoints $item.ID }}
                                 </tbody>
                             </table>
                         </div>
@@ -216,7 +214,6 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {{ end }}
                                 {{ end }}
                                 {{ end }}
                                 </tbody>

@@ -15,11 +15,12 @@ import (
 
 type GameData struct {
 	PageUser
-	Town          *game.Town
-	Buildings     game.Buildings
-	Items         game.Items
-	Warehouse     map[game.ItemID]game.WarehouseItem
-	WarehouseList []game.ItemID
+	Town                 *game.Town
+	Buildings            game.Buildings
+	Items                game.Items
+	Warehouse            map[game.ItemID]game.WarehouseItem
+	WarehouseList        []game.ItemID
+	WarehouseBreakpoints []game.ItemID
 }
 
 var funcs = template.FuncMap{
@@ -30,6 +31,14 @@ var funcs = template.FuncMap{
 			return false
 		}
 		return n%interval == 0
+	},
+	"hasItemID": func(haystack []game.ItemID, needle game.ItemID) bool {
+		for _, v := range haystack {
+			if v == needle {
+				return true
+			}
+		}
+		return false
 	},
 }
 
@@ -62,12 +71,13 @@ func (h *Handler) game(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 	)
 
 	if err := tmpl.Execute(w, GameData{
-		PageUser:      data,
-		Town:          currentTown,
-		Buildings:     h.Buildings,
-		Items:         h.Items,
-		Warehouse:     warehouse,
-		WarehouseList: gamedata.WarehouseOrder,
+		PageUser:             data,
+		Town:                 currentTown,
+		Buildings:            h.Buildings,
+		Items:                h.Items,
+		Warehouse:            warehouse,
+		WarehouseList:        gamedata.WarehouseOrder,
+		WarehouseBreakpoints: gamedata.WarehouseOrderBreakpoints,
 	}); err != nil {
 		logrus.Errorf("failed to execute layout: %v", err)
 		error500(w, errors.New("failed to create layout"))
