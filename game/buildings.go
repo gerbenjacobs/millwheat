@@ -10,9 +10,16 @@ const (
 	BuildingBakery
 )
 
+const ( // const blocks separated to reset iota
+	MechanicConsumption MechanicType = iota
+	MechanicEfficiency
+	MechanicOutput
+)
+
 type Buildings map[BuildingType]Building
 
 type BuildingType int
+type MechanicType int
 
 // TownBuilding represents an instance of a building, located in a town
 type TownBuilding struct {
@@ -36,6 +43,7 @@ type Building struct {
 // BuildingMechanic contains the mechanical and proficiency attributes of buildings
 // ex. Farm: Wheat per hour
 type BuildingMechanic struct {
+	Type   MechanicType
 	Name   string
 	Levels map[int]int
 }
@@ -43,4 +51,8 @@ type BuildingMechanic struct {
 type BuildCost struct {
 	Stones int
 	Planks int
+}
+
+func (m MechanicType) String() string {
+	return []string{"Consumption", "Efficiency", "Output"}[m]
 }

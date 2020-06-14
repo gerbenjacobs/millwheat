@@ -151,7 +151,19 @@
                             {{ if $building.IsGenerator }}
                                 <p><em>This building produces on its own.</em></p>
                             {{ else }}
+                                <table class="striped">
+                                    {{ range $mechanic := $building.Mechanics }}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ $mechanic.Name }}</strong><br>
+                                                <em>{{ $mechanic.Type }}</em>
+                                            </td>
+                                            <td>{{ index $mechanic.Levels $townBuilding.CurrentLevel }}</td>
+                                        </tr>
+                                    {{ end }}
+                                </table>
                                 <form action="/game/produce" method="post">
+                                    <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
                                     {{ range $produce := $building.Produces }}
                                         {{ $item := index $.Items $produce }}
                                         <p>
@@ -160,7 +172,7 @@
                                                 {{ $item.Name }}
                                             </label>
                                             <input id="{{ $townBuilding.ID }}_{{ $item.ID }}" type="number"
-                                                   name="{{ $townBuilding.ID }}_{{ $item.ID }}">
+                                                   name="{{ $item.ID }}">
                                         </p>
                                     {{ end }}
                                     <p>
