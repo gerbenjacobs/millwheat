@@ -146,8 +146,7 @@
                             </table>
                         </div>
                         <div id="tb_{{ $townBuilding.ID }}_production" class="tb_pane_{{ $townBuilding.ID }}"
-                             role="tabpanel" tabindex="0"
-                             hidden>
+                             role="tabpanel" tabindex="0" hidden>
                             {{ if $building.IsGenerator }}
                                 <p><em>This building produces on its own.</em></p>
                             {{ else }}
@@ -182,16 +181,8 @@
                             {{ end }}
                         </div>
                         <div id="tb_{{ $townBuilding.ID }}_construction" class="tb_pane_{{ $townBuilding.ID }}"
-                             role="tabpanel" tabindex="0"
-                             hidden>
+                             role="tabpanel" tabindex="0" hidden>
                             <table class="striped">
-                                <thead>
-                                <tr>
-                                    <th>Level</th>
-                                    <th><img src="/images/items/stone.png" alt="Stones"> Stones</th>
-                                    <th><img src="/images/items/plank.png" alt="Planks"> Planks</th>
-                                </tr>
-                                </thead>
                                 <tbody>
                                 {{ range $level, $cost := $building.BuildCosts }}
                                     <tr>
