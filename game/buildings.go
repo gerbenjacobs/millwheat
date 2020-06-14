@@ -1,5 +1,9 @@
 package game
 
+import (
+	"github.com/google/uuid"
+)
+
 const (
 	BuildingFarm BuildingType = iota
 	BuildingMill
@@ -12,6 +16,7 @@ type BuildingType int
 
 // TownBuilding represents an instance of a building, located in a town
 type TownBuilding struct {
+	ID           uuid.UUID
 	Type         BuildingType
 	CurrentLevel int
 }
@@ -23,6 +28,7 @@ type Building struct {
 	Image       string
 	Consumes    []ItemID
 	Produces    []ItemID
+	IsGenerator bool
 	Mechanics   []BuildingMechanic
 	BuildCosts  map[int]BuildCost
 }

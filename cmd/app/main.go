@@ -126,14 +126,17 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 			Owner: uuid.MustParse("273d94bb1cf7408da4c85feda0eeff75"),
 			Buildings: []game.TownBuilding{
 				{
+					ID:           uuid.New(),
 					Type:         game.BuildingFarm,
 					CurrentLevel: 2,
 				},
 				{
+					ID:           uuid.New(),
 					Type:         game.BuildingMill,
 					CurrentLevel: 1,
 				},
 				{
+					ID:           uuid.New(),
 					Type:         game.BuildingBakery,
 					CurrentLevel: 1,
 				},
@@ -150,6 +153,7 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 			Image:       "https://www.knightsandmerchants.net/application/files/7515/6823/6441/farm.png",
 			Consumes:    nil,
 			Produces:    []game.ItemID{"wheat"},
+			IsGenerator: true,
 			Mechanics: []game.BuildingMechanic{
 				{
 					Name: "Wheat per hour",

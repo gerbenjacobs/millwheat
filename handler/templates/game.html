@@ -90,48 +90,88 @@
                         </header>
                         <img src="{{ $building.Image }}" alt="{{ $building.Name }}" class="pull-right">
                         <p>{{ $building.Description }}</p>
-                        <table class="striped">
-                            <tr>
-                                <th style="width: 50%;">Level</th>
-                                <td>{{ $townBuilding.CurrentLevel }}</td>
-                            </tr>
-                            <tr>
-                                <th>Consumes</th>
-                                <td>
-                                    {{ range $consume := $building.Consumes }}
-                                        {{ $item := index $.Items $consume }}
-                                        <p>
-                                            <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
-                                            {{ $item.Name }}
-                                        </p>
-                                    {{ else }}
-                                        <em>Nothing</em>
-                                    {{ end }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Produces</th>
-                                <td>
+                        <span class="clearfix">&nbsp;</span>
+                        <nav class="tabs is-full" role="tablist">
+                            <a aria-controls="tb_{{ $townBuilding.ID }}_overview" class="tb_tab active">
+                                <img src="https://icongr.am/feather/home.svg" alt="Overview">
+                            </a>
+                            <a aria-controls="tb_{{ $townBuilding.ID }}_production" class="tb_tab">
+                                <img src="https://icongr.am/feather/package.svg" alt="Production">
+                            </a>
+                            <a aria-controls="tb_{{ $townBuilding.ID }}_construction" class="tb_tab">
+                                <img src="https://icongr.am/feather/settings.svg" alt="Construction">
+                            </a>
+                        </nav>
+                        <div id="tb_{{ $townBuilding.ID }}_overview" class="tb_pane_{{ $townBuilding.ID }}"
+                             role="tabpanel" tabindex="0">
+                            <table class="striped">
+                                <tr>
+                                    <th style="width: 50%;">Level</th>
+                                    <td>{{ $townBuilding.CurrentLevel }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Consumes</th>
+                                    <td>
+                                        {{ range $consume := $building.Consumes }}
+                                            {{ $item := index $.Items $consume }}
+                                            <p>
+                                                <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                                {{ $item.Name }}
+                                            </p>
+                                        {{ else }}
+                                            <em>Nothing</em>
+                                        {{ end }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Produces</th>
+                                    <td>
+                                        {{ range $produce := $building.Produces }}
+                                            {{ $item := index $.Items $produce }}
+                                            <p>
+                                                <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                                {{ $item.Name }}
+                                            </p>
+                                        {{ else }}
+                                            <em>Nothing</em>
+                                        {{ end }}
+                                    </td>
+                                </tr>
+                                {{ range $mechanic := $building.Mechanics }}
+                                    <tr>
+                                        <th>{{ $mechanic.Name }}</th>
+                                        <td>{{ index $mechanic.Levels $townBuilding.CurrentLevel }}</td>
+                                    </tr>
+                                {{ end }}
+                            </table>
+                        </div>
+                        <div id="tb_{{ $townBuilding.ID }}_production" class="tb_pane_{{ $townBuilding.ID }}"
+                             role="tabpanel" tabindex="0"
+                             hidden>
+                            {{ if $building.IsGenerator }}
+                                <p><em>This building produces on its own.</em></p>
+                            {{ else }}
+                                <form action="/game/produce" method="post">
                                     {{ range $produce := $building.Produces }}
                                         {{ $item := index $.Items $produce }}
                                         <p>
-                                            <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
-                                            {{ $item.Name }}
+                                            <label for="{{ $townBuilding.ID }}_{{ $item.ID }}">
+                                                <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                                {{ $item.Name }}
+                                            </label>
+                                            <input id="{{ $townBuilding.ID }}_{{ $item.ID }}" type="number"
+                                                   name="{{ $townBuilding.ID }}_{{ $item.ID }}">
                                         </p>
-                                    {{ else }}
-                                        <em>Nothing</em>
                                     {{ end }}
-                                </td>
-                            </tr>
-                            {{ range $mechanic := $building.Mechanics }}
-                                <tr>
-                                    <th>{{ $mechanic.Name }}</th>
-                                    <td>{{ index $mechanic.Levels $townBuilding.CurrentLevel }}</td>
-                                </tr>
+                                    <p>
+                                        <input type="submit" value="Produce">
+                                    </p>
+                                </form>
                             {{ end }}
-                        </table>
-                        <details>
-                            <summary>Build costs</summary>
+                        </div>
+                        <div id="tb_{{ $townBuilding.ID }}_construction" class="tb_pane_{{ $townBuilding.ID }}"
+                             role="tabpanel" tabindex="0"
+                             hidden>
                             <table class="striped">
                                 <thead>
                                 <tr>
@@ -156,11 +196,11 @@
                                 {{ end }}
                                 </tbody>
                             </table>
-                        </details>
-                        <footer class="is-right">
-                            <a href="#" class="button small success">Upgrade</a>
-                            <a href="#" class="button small error">Demolish</a>
-                        </footer>
+                            <footer class="is-right">
+                                <a href="#" class="button small success">Upgrade</a>
+                                <a href="#" class="button small error">Demolish</a>
+                            </footer>
+                        </div>
                     </div>
                 </div>
             {{ else }}

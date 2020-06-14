@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/handlers"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
@@ -22,6 +23,14 @@ func (h *Handler) AuthMiddleware(f httprouter.Handle) httprouter.Handle {
 			// Not logged in
 			_ = storeAndSaveFlash(r, w, "error|Please log in")
 			http.Redirect(w, r, "/login", http.StatusFound)
+			return
+		}
+
+		// check user
+		_, err = h.UserSvc.User(r.Context(), uuid.MustParse(u.UserID))
+		if err != nil {
+			// most likely old cookie
+			http.Redirect(w, r, "/logout", http.StatusFound)
 			return
 		}
 

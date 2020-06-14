@@ -127,3 +127,8 @@ h1, h2 {
 #warehouse .card {
     background-color: #eed7a1;
 }
+
+#warehouse td:last-of-type {
+    padding-right: 1rem;
+    text-align: right;
+}
