@@ -67,13 +67,15 @@ func main() {
 	}
 
 	townSvc := services.NewTownSvc(storage.NewTownRepository(tempTowns))
+	prodSvc := services.NewProductionSvc(storage.NewProductionRepository())
 
 	// set up the route handler and server
 	app := handler.New(handler.Dependencies{
 		Auth:    auth,
 		UserSvc: userSvc,
 
-		TownSvc: townSvc,
+		TownSvc:       townSvc,
+		ProductionSvc: prodSvc,
 
 		Items:     tempItems,
 		Buildings: tempBuildings,

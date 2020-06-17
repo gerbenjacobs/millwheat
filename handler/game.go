@@ -13,6 +13,7 @@ import (
 
 	"github.com/gerbenjacobs/millwheat/game"
 	gamedata "github.com/gerbenjacobs/millwheat/game/data"
+	"github.com/gerbenjacobs/millwheat/services"
 )
 
 type GameData struct {
@@ -23,17 +24,11 @@ type GameData struct {
 	Warehouse            map[game.ItemID]game.WarehouseItem
 	WarehouseList        []game.ItemID
 	WarehouseBreakpoints []game.ItemID
+	QueuedJobs           []*game.Job
 }
 
 var funcs = template.FuncMap{
 	"rand": rand.Float64,
-	"each": func(interval, n, max int) bool {
-		// prevents each to occur when list is empty
-		if n == max-1 {
-			return false
-		}
-		return n%interval == 0
-	},
 	"hasItemID": func(haystack []game.ItemID, needle game.ItemID) bool {
 		for _, v := range haystack {
 			if v == needle {
@@ -80,6 +75,7 @@ func (h *Handler) game(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		Warehouse:            warehouse,
 		WarehouseList:        gamedata.WarehouseOrder,
 		WarehouseBreakpoints: gamedata.WarehouseOrderBreakpoints,
+		QueuedJobs:           h.ProductionSvc.QueuedJobs(r.Context()),
 	}); err != nil {
 		logrus.Errorf("failed to execute layout: %v", err)
 		error500(w, errors.New("failed to create layout"))
@@ -95,16 +91,8 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		return
 	}
 
-	// get user
-	data, err := h.getUserAndState(r, w, "Game &#x2694;&#xfe0f; Millwheat")
-	if err != nil {
-		_ = storeAndSaveFlash(r, w, "error|Failed to load your information")
-		http.Redirect(w, r, "/game", http.StatusFound)
-		return
-	}
-
 	// get town
-	currentTown, err := h.TownSvc.Town(r.Context(), data.CurrentTown)
+	currentTown, err := h.TownSvc.Town(r.Context(), services.TownFromContext(r.Context()))
 	if err != nil {
 		logrus.Errorf("failed to get current town: %v", err)
 		error500(w, errors.New("failed to load town"))
@@ -151,8 +139,27 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		return
 	}
 
-	// queue job for warehouse
-	// TODO
+	// check if items are in warehouse
+	if !h.TownSvc.ItemsInWarehouse(r.Context(), productionResult.Consumption) {
+		_ = storeAndSaveFlash(r, w, "error|You don't have the required products; "+gamedata.ItemSetSlice(productionResult.Consumption).String())
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// queue job
+	job := &game.Job{
+		Type: game.JobTypeProduct,
+		ProductJob: &game.ProductJob{
+			BuildingID:  townBuilding.ID,
+			Production:  productionResult.Production,
+			Consumption: productionResult.Consumption,
+		},
+	}
+	if err := h.ProductionSvc.CreateJob(r.Context(), job); err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to queue your job")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
 
 	spew.Dump(productionResult)
 	http.Redirect(w, r, "/game", http.StatusFound)

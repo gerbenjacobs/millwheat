@@ -10,10 +10,8 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
-)
 
-const (
-	CtxKeyUserID = iota
+	"github.com/gerbenjacobs/millwheat/services"
 )
 
 func (h *Handler) AuthMiddleware(f httprouter.Handle) httprouter.Handle {
@@ -27,15 +25,16 @@ func (h *Handler) AuthMiddleware(f httprouter.Handle) httprouter.Handle {
 		}
 
 		// check user
-		_, err = h.UserSvc.User(r.Context(), uuid.MustParse(u.UserID))
+		data, err := h.UserSvc.User(r.Context(), uuid.MustParse(u.UserID))
 		if err != nil {
 			// most likely old cookie
 			http.Redirect(w, r, "/logout", http.StatusFound)
 			return
 		}
 
-		// Add user ID in context
-		r = r.WithContext(context.WithValue(r.Context(), CtxKeyUserID, u.UserID))
+		// Add identifiers to context
+		r = r.WithContext(context.WithValue(r.Context(), services.CtxKeyUserID, u.UserID))
+		r = r.WithContext(context.WithValue(r.Context(), services.CtxKeyTownID, data.CurrentTown))
 		f(w, r, p)
 	}
 }

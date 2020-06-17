@@ -9,6 +9,11 @@ import (
 	"github.com/gerbenjacobs/millwheat/game"
 )
 
+const (
+	CtxKeyUserID = iota
+	CtxKeyTownID
+)
+
 type UserService interface {
 	Add(ctx context.Context, user *app.User) error
 	User(ctx context.Context, userID uuid.UUID) (*app.User, error)
@@ -19,4 +24,10 @@ type UserService interface {
 type TownService interface {
 	Town(ctx context.Context, id uuid.UUID) (*game.Town, error)
 	Warehouse(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error)
+	ItemsInWarehouse(ctx context.Context, items []game.ItemSet) bool
+}
+
+type ProductionService interface {
+	QueuedJobs(ctx context.Context) []*game.Job
+	CreateJob(ctx context.Context, job *game.Job) error
 }

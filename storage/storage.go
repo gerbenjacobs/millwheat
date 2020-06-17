@@ -19,4 +19,10 @@ type UserStorage interface {
 type TownStorage interface {
 	Get(ctx context.Context, id uuid.UUID) (*game.Town, error)
 	WarehouseItems(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error)
+	ItemsInWarehouse(ctx context.Context, townID uuid.UUID, items []game.ItemSet) bool
+}
+
+type ProductionStorage interface {
+	QueuedJobs(ctx context.Context, townID uuid.UUID) []*game.Job
+	CreateJob(ctx context.Context, townID uuid.UUID, job *game.Job) error
 }

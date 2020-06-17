@@ -256,7 +256,7 @@ func (h *Handler) getUserAndState(r *http.Request, w http.ResponseWriter, title 
 		},
 	}
 
-	if loggedIn {
+	if loggedIn && u != nil {
 		user, err := h.UserSvc.User(r.Context(), uuid.MustParse(u.UserID))
 		if err == nil {
 			data.User = user

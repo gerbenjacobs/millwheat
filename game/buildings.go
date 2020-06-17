@@ -17,7 +17,6 @@ const (
 )
 
 type Buildings map[BuildingType]Building
-
 type BuildingType int
 
 // TownBuilding represents an instance of a building, located in a town

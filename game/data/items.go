@@ -1,8 +1,13 @@
 package data
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/gerbenjacobs/millwheat/game"
 )
+
+type ItemSetSlice []game.ItemSet
 
 // WarehouseOrder determines the way the warehouse will be displayed.
 var WarehouseOrder = []game.ItemID{
@@ -141,4 +146,13 @@ var Items = game.Items{
 		Description: "-",
 		Image:       "/images/items/lance.gif",
 	},
+}
+
+func (is ItemSetSlice) String() string {
+	var s []string
+	for _, i := range is {
+		s = append(s, fmt.Sprintf("%dx %s", i.Quantity, Items[i.ItemID].Name))
+	}
+
+	return strings.Join(s, ", ")
 }
