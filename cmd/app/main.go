@@ -140,9 +140,14 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 				//	Type:         game.BuildingBakery,
 				//	CurrentLevel: 1,
 				//},
+				//{
+				//	ID:           uuid.MustParse("578ad257-b1a7-4671-bba5-73b98eb21f6c"),
+				//	Type:         game.BuildingButcher,
+				//	CurrentLevel: 1,
+				//},
 				{
-					ID:           uuid.MustParse("578ad257-b1a7-4671-bba5-73b98eb21f6c"),
-					Type:         game.BuildingButcher,
+					ID:           uuid.MustParse("1afb2cf0-6671-4d54-9824-c15940073ce2"),
+					Type:         game.BuildingWeaponSmith,
 					CurrentLevel: 1,
 				},
 			},

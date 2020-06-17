@@ -183,4 +183,47 @@ var Buildings = game.Buildings{
 			},
 		},
 	},
+	game.BuildingWeaponSmith: {
+		Name:        "Weapon Smith",
+		Description: "Use iron bars and planks to create weaponry.",
+		Image:       "https://www.knightsandmerchants.net/application/files/8615/6823/6451/weaponsworkshop.png",
+		Production: map[game.ItemSet][]game.ItemSet{
+			{ItemID: "sword"}: {
+				{ItemID: "iron_bar", IsConsumption: true},
+			},
+			{ItemID: "crossbow"}: {
+				{ItemID: "plank", IsConsumption: true},
+			},
+			{ItemID: "lance"}: {
+				{ItemID: "iron_bar", IsConsumption: true},
+				{ItemID: "plank", IsConsumption: true},
+			},
+		},
+		Mechanics: []game.BuildingMechanic{
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Sword per hour",
+				ItemID: "sword",
+				Levels: map[int]int{
+					1: 1,
+				},
+			},
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Crossbow per hour",
+				ItemID: "crossbow",
+				Levels: map[int]int{
+					1: 1,
+				},
+			},
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Lance per hour",
+				ItemID: "lance",
+				Levels: map[int]int{
+					1: 1,
+				},
+			},
+		},
+	},
 }

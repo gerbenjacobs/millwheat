@@ -13,6 +13,7 @@ const (
 	BuildingBakery
 	BuildingPigFarm
 	BuildingButcher
+	BuildingWeaponSmith
 )
 
 type Buildings map[BuildingType]Building
@@ -130,31 +131,39 @@ func (b Building) CreateProduct(product ItemID, quantity, level int) (*Productio
 }
 
 func (b Building) ConsumesList() []ItemID {
-	var consume []ItemID
+	var consume = make(map[ItemID]struct{})
 	for i, set := range b.Production {
 		if i.IsConsumption {
-			consume = append(consume, i.ItemID)
+			consume[i.ItemID] = struct{}{}
 		}
 		for _, s := range set {
 			if s.IsConsumption {
-				consume = append(consume, s.ItemID)
+				consume[s.ItemID] = struct{}{}
 			}
 		}
 	}
-	return consume
+	var consumeList []ItemID
+	for i := range consume {
+		consumeList = append(consumeList, i)
+	}
+	return consumeList
 }
 
 func (b Building) ProducesList() []ItemID {
-	var produce []ItemID
+	var produce = make(map[ItemID]struct{})
 	for i, set := range b.Production {
 		if !i.IsConsumption {
-			produce = append(produce, i.ItemID)
+			produce[i.ItemID] = struct{}{}
 		}
 		for _, s := range set {
 			if !s.IsConsumption {
-				produce = append(produce, s.ItemID)
+				produce[s.ItemID] = struct{}{}
 			}
 		}
 	}
-	return produce
+	var produceList []ItemID
+	for i := range produce {
+		produceList = append(produceList, i)
+	}
+	return produceList
 }

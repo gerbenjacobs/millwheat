@@ -33,6 +33,13 @@ thead {
     background-color: #b8a77d;
 }
 
+.grouped > .button, [type="button"], [type="reset"], [type="submit"], button {
+    padding: 0.5rem 1.5rem;
+}
+.grouped > :not(:last-child) {
+    margin-right: 0;
+}
+
 /* Colour palette based on:
     Brugge Medieval  https://www.color-hex.com/color-palette/51111
     Medieval Dominca Garden https://www.color-hex.com/color-palette/1061
