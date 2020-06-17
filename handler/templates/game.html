@@ -112,7 +112,7 @@
                                 <tr>
                                     <th>Consumes</th>
                                     <td>
-                                        {{ range $consume := $building.Consumes }}
+                                        {{ range $consume := $building.ConsumesList }}
                                             {{ $item := index $.Items $consume }}
                                             <p>
                                                 <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
@@ -126,7 +126,7 @@
                                 <tr>
                                     <th>Produces</th>
                                     <td>
-                                        {{ range $produce := $building.Produces }}
+                                        {{ range $produce := $building.ProducesList }}
                                             {{ $item := index $.Items $produce }}
                                             <p>
                                                 <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
@@ -161,23 +161,24 @@
                                         </tr>
                                     {{ end }}
                                 </table>
-                                <form action="/game/produce" method="post">
-                                    <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
-                                    {{ range $produce := $building.Produces }}
-                                        {{ $item := index $.Items $produce }}
+                                {{ range $produce, $set := $building.Production }}
+                                    {{ $item := index $.Items $produce.ItemID }}
+                                    <form action="/game/produce" method="post">
+                                        <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
+                                        <input type="hidden" name="product" value="{{ $item.ID }}">
                                         <p>
                                             <label for="{{ $townBuilding.ID }}_{{ $item.ID }}">
                                                 <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
                                                 {{ $item.Name }}
                                             </label>
-                                            <input id="{{ $townBuilding.ID }}_{{ $item.ID }}" type="number"
-                                                   name="{{ $item.ID }}">
                                         </p>
-                                    {{ end }}
-                                    <p>
-                                        <input type="submit" value="Produce">
-                                    </p>
-                                </form>
+                                        <p class="grouped">
+                                            <input id="{{ $townBuilding.ID }}_{{ $item.ID }}" type="number"
+                                                   name="quantity">
+                                            <input type="submit" value="Produce">
+                                        </p>
+                                    </form>
+                                {{ end }}
                             {{ end }}
                         </div>
                         <div id="tb_{{ $townBuilding.ID }}_construction" class="tb_pane_{{ $townBuilding.ID }}"

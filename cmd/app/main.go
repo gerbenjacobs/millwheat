@@ -126,18 +126,23 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 			Owner: uuid.MustParse("273d94bb1cf7408da4c85feda0eeff75"),
 			Buildings: []game.TownBuilding{
 				{
-					ID:           uuid.New(),
+					ID:           uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"),
 					Type:         game.BuildingFarm,
 					CurrentLevel: 2,
 				},
 				{
-					ID:           uuid.New(),
+					ID:           uuid.MustParse("578ad258-e913-4831-998a-2983dd4920ed"),
 					Type:         game.BuildingMill,
-					CurrentLevel: 3,
+					CurrentLevel: 5,
 				},
+				//{
+				//	ID:           uuid.MustParse("c5e9a879-b1a8-4670-9aab-73b98eb21f6b"),
+				//	Type:         game.BuildingBakery,
+				//	CurrentLevel: 1,
+				//},
 				{
-					ID:           uuid.New(),
-					Type:         game.BuildingBakery,
+					ID:           uuid.MustParse("578ad257-b1a7-4671-bba5-73b98eb21f6c"),
+					Type:         game.BuildingButcher,
 					CurrentLevel: 1,
 				},
 			},

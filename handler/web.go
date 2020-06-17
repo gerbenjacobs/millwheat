@@ -95,7 +95,7 @@ func (h *Handler) joinNow(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		HttpOnly: true,
 	})
 
-	http.Redirect(w, r, "/", http.StatusFound) // TODO: redirect to game
+	http.Redirect(w, r, "/game", http.StatusFound)
 }
 
 func (h *Handler) join(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -170,7 +170,7 @@ func (h *Handler) loginNow(w http.ResponseWriter, r *http.Request, _ httprouter.
 	user.UpdatedAt = time.Now().UTC()
 	_, _ = h.UserSvc.Update(r.Context(), user)
 
-	http.Redirect(w, r, "/", http.StatusFound) // TODO: redirect to game
+	http.Redirect(w, r, "/game", http.StatusFound)
 }
 
 func (h *Handler) logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -203,7 +203,14 @@ func (h *Handler) errorHandler(localErr error) func(w http.ResponseWriter, r *ht
 			w.WriteHeader(404)
 		}
 
-		if err := tmpl.Execute(w, data); err != nil {
+		var ErrorPage = struct {
+			PageUser
+			Err error
+		}{
+			PageUser: data,
+			Err:      localErr,
+		}
+		if err := tmpl.Execute(w, ErrorPage); err != nil {
 			logrus.Errorf("failed to execute layout: %v", err)
 			error500(w, errors.New("failed to create layout"))
 			return

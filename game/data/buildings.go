@@ -9,8 +9,9 @@ var Buildings = game.Buildings{
 		Name:        "Farm",
 		Description: "Grows wheat in the fields.",
 		Image:       "https://www.knightsandmerchants.net/application/files/7515/6823/6441/farm.png",
-		Consumes:    nil,
-		Produces:    []game.ItemID{"wheat"},
+		Production: map[game.ItemSet][]game.ItemSet{
+			{ItemID: "wheat"}: {},
+		},
 		IsGenerator: true,
 		Mechanics: []game.BuildingMechanic{
 			{
@@ -22,7 +23,7 @@ var Buildings = game.Buildings{
 				},
 			},
 		},
-		BuildCosts: map[int]game.BuildCost{
+		BuildCosts: map[int]game.BuildingCost{
 			1: {1, 3},
 			2: {2, 6},
 			3: {3, 15},
@@ -34,12 +35,14 @@ var Buildings = game.Buildings{
 		Name:        "Mill",
 		Description: "Mills wheat into bags of flour.",
 		Image:       "https://www.knightsandmerchants.net/application/files/9415/6823/6446/mill.png",
-		Consumes:    []game.ItemID{"wheat"},
-		Produces:    []game.ItemID{"flour"},
+		Production: map[game.ItemSet][]game.ItemSet{
+			{ItemID: "flour"}: {{ItemID: "wheat", IsConsumption: true}},
+		},
 		Mechanics: []game.BuildingMechanic{
 			{
-				Type: game.MechanicConsumption,
-				Name: "Wheat per hour",
+				Type:   game.MechanicConsumption,
+				Name:   "Wheat per hour",
+				ItemID: "wheat",
 				Levels: map[int]int{
 					1:  1,
 					2:  2,
@@ -54,8 +57,9 @@ var Buildings = game.Buildings{
 				},
 			},
 			{
-				Type: game.MechanicEfficiency,
-				Name: "Flour per wheat",
+				Type:   game.MechanicEfficiency,
+				Name:   "Flour per wheat",
+				ItemID: "wheat",
 				Levels: map[int]int{
 					1:  1,
 					2:  1,
@@ -70,8 +74,9 @@ var Buildings = game.Buildings{
 				},
 			},
 			{
-				Type: game.MechanicOutput,
-				Name: "Flour per hour",
+				Type:   game.MechanicOutput,
+				Name:   "Flour per hour",
+				ItemID: "flour",
 				Levels: map[int]int{
 					1:  1,
 					2:  2,
@@ -91,28 +96,89 @@ var Buildings = game.Buildings{
 		Name:        "Bakery",
 		Description: "Bakes bread for the soldiers using flour from the mill.",
 		Image:       "https://www.knightsandmerchants.net/application/files/1215/6823/6439/bakery.png",
-		Consumes:    []game.ItemID{"flour"},
-		Produces:    []game.ItemID{"bread"},
 		Mechanics: []game.BuildingMechanic{
 			{
-				Type: game.MechanicConsumption,
-				Name: "Flour per hour",
+				Type:   game.MechanicConsumption,
+				Name:   "Flour per hour",
+				ItemID: "flour",
 				Levels: map[int]int{
 					1: 1,
 				},
 			},
 			{
-				Type: game.MechanicEfficiency,
-				Name: "Bread per flour",
+				Type:   game.MechanicEfficiency,
+				Name:   "Bread per flour",
+				ItemID: "bread",
 				Levels: map[int]int{
 					1: 1,
 				},
 			},
 			{
-				Type: game.MechanicOutput,
-				Name: "Bread per hour",
+				Type:   game.MechanicOutput,
+				Name:   "Bread per hour",
+				ItemID: "bread",
 				Levels: map[int]int{
 					1: 1,
+				},
+			},
+		},
+	},
+	game.BuildingPigFarm: {
+		Name:        "Pig Farm",
+		Description: "Raises pigs from piglets with love and a lot of wheat!",
+		Image:       "https://www.knightsandmerchants.net/application/files/8815/6823/6449/swinefarm.png",
+	},
+	game.BuildingButcher: {
+		Name:        "Butcher",
+		Description: "Turns pigs into meat and hide.",
+		Image:       "https://www.knightsandmerchants.net/application/files/2215/6823/6440/butchers.png",
+		Production: map[game.ItemSet][]game.ItemSet{
+			{ItemID: "pig", IsConsumption: true}: {{ItemID: "hide"}, {ItemID: "meat"}},
+		},
+		Mechanics: []game.BuildingMechanic{
+			{
+				Type:   game.MechanicConsumption,
+				Name:   "Pigs per hour",
+				ItemID: "pig",
+				Levels: map[int]int{
+					1: 1,
+					2: 1,
+				},
+			},
+			{
+				Type:   game.MechanicEfficiency,
+				Name:   "Hide per pig",
+				ItemID: "hide",
+				Levels: map[int]int{
+					1: 1,
+					2: 1,
+				},
+			},
+			{
+				Type:   game.MechanicEfficiency,
+				Name:   "Meat per pig",
+				ItemID: "meat",
+				Levels: map[int]int{
+					1: 1,
+					2: 2,
+				},
+			},
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Hide per hour",
+				ItemID: "hide",
+				Levels: map[int]int{
+					1: 1,
+					2: 1,
+				},
+			},
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Meat per hour",
+				ItemID: "meat",
+				Levels: map[int]int{
+					1: 1,
+					2: 2,
 				},
 			},
 		},
