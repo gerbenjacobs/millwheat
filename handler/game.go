@@ -118,6 +118,13 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	}
 
 	// check if product has any effect in this building
+	qty, err := strconv.Atoi(r.Form.Get("quantity"))
+	if err != nil || qty <= 0 {
+		_ = storeAndSaveFlash(r, w, "info|You have supplied an invalid number")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
 	product := game.ItemID(r.Form.Get("product"))
 	if !building.CanDealWith(product) {
 		_ = storeAndSaveFlash(r, w, "info|This product can not be made here")
@@ -126,12 +133,6 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	}
 
 	// produce item
-	qty, err := strconv.Atoi(r.Form.Get("quantity"))
-	if err != nil {
-		_ = storeAndSaveFlash(r, w, "info|You have supplied an invalid number")
-		http.Redirect(w, r, "/game", http.StatusFound)
-		return
-	}
 	productionResult, err := building.CreateProduct(product, qty, townBuilding.CurrentLevel)
 	if err != nil {
 		_ = storeAndSaveFlash(r, w, "error|Failed to create your product")
