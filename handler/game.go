@@ -6,8 +6,10 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/davecgh/go-spew/spew"
+	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
 
@@ -24,7 +26,8 @@ type GameData struct {
 	Warehouse            map[game.ItemID]game.WarehouseItem
 	WarehouseList        []game.ItemID
 	WarehouseBreakpoints []game.ItemID
-	QueuedJobs           []*game.Job
+	QueuedJobs           map[uuid.UUID][]*game.Job
+	QueuedBuildings      []*game.Job
 }
 
 var funcs = template.FuncMap{
@@ -76,6 +79,7 @@ func (h *Handler) game(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		WarehouseList:        gamedata.WarehouseOrder,
 		WarehouseBreakpoints: gamedata.WarehouseOrderBreakpoints,
 		QueuedJobs:           h.ProductionSvc.QueuedJobs(r.Context()),
+		QueuedBuildings:      h.ProductionSvc.QueuedBuildings(r.Context()),
 	}); err != nil {
 		logrus.Errorf("failed to execute layout: %v", err)
 		error500(w, errors.New("failed to create layout"))
@@ -155,6 +159,7 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 			Production:  productionResult.Production,
 			Consumption: productionResult.Consumption,
 		},
+		Hours: time.Duration(productionResult.Hours) * time.Hour,
 	}
 	if err := h.ProductionSvc.CreateJob(r.Context(), job); err != nil {
 		_ = storeAndSaveFlash(r, w, "error|Failed to queue your job")

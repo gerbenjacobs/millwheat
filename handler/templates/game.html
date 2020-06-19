@@ -14,76 +14,11 @@
         </p>
 
         <ul class="topnav">
-            <li><a href="#buildqueue" class="button small">Build queue</a></li>
             <li><a href="#town" class="button small">Town</a></li>
             <li><a href="#warehouse" class="button small">Warehouse</a></li>
+            <li><a href="#buildqueue" class="button small">Build queue</a></li>
         </ul>
 
-        <div class="row" id="buildqueue">
-            <div class="col">
-                <div class="card is-full-height" style="background: #d3d3d7;">
-                    <nav id="queue_tabs" class="tabs" role="tablist">
-                        <a id="queue_tab_queue" aria-controls="queue_pane_queue" class="active">Build queue</a>
-                        <a id="queue_tab_building" aria-controls="queue_pane_building">New building</a>
-                    </nav>
-                    <div id="queue_pane_queue" class="queue_pane" role="tabpanel" tabindex="0"
-                         aria-labelledby="queue_tab_queue">
-                        <!-- Queue -->
-                        <p>
-                            At your current level you can have up to <strong>3</strong> buildings in the queue.
-                        </p>
-                        {{ $r := rand }}
-                        {{ if le $r 0.5 }}
-                            <p>
-                                <em>Currently nothing queued.</em>
-                            </p>
-                        {{ else }}
-                            <div class="row">
-                                <div class="col">
-                                    <h4>Farm</h4>
-                                    Level 3
-                                </div>
-                                <div class="col">
-                                    Ready at <strong>2020-06-06 21:05</strong>
-                                    <br>
-                                    <progress max="100" value="80"></progress>
-                                </div>
-                                <div class="col">
-                                    <a href="#" class="button error">Cancel</a>
-                                </div>
-                            </div>
-                        {{ end }}
-
-                        {{ range $idx, $job := .QueuedJobs }}
-                            <pre>{{ $idx }} -> {{ $job }}</pre>
-                        {{ end }}
-                    </div>
-
-                    <div id="queue_pane_building" class="queue_pane" role="tabpanel" tabindex="0"
-                         aria-labelledby="queue_tab_building" hidden>
-                        <!-- Form -->
-                        <p>
-                            At your current level you can have up to <strong>10</strong> buildings.
-                            You currently have <strong>4</strong>.
-                        </p>
-                        <form action="/game/queue" method="post">
-                            <p>
-                                <label for="building">Building:</label>
-                                <select name="building" id="building">
-                                    <option value="">Farm</option>
-                                    <option value="">Mill</option>
-                                    <option value="">Bakery</option>
-                                    <option value="">Vineyard</option>
-                                    <option value="">Forestry</option>
-                                    <option value="">Saw Mill</option>
-                                </select>
-                            </p>
-                            <input type="submit" value="Build">
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="row" id="town">
             {{ range $townBuilding := .Town.Buildings }}
                 {{ $building := index $.Buildings $townBuilding.Type }}
@@ -283,6 +218,81 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="buildqueue">
+            <div class="col">
+                <div class="card is-full-height" style="background: #d3d3d7;">
+                    <nav id="queue_tabs" class="tabs" role="tablist">
+                        <a id="queue_tab_queue" aria-controls="queue_pane_queue" class="active">Build queue</a>
+                        <a id="queue_tab_building" aria-controls="queue_pane_building">New building</a>
+                    </nav>
+                    <div id="queue_pane_queue" class="queue_pane" role="tabpanel" tabindex="0"
+                         aria-labelledby="queue_tab_queue">
+                        <!-- Queue -->
+                        <p>
+                            At your current level you can have up to <strong>3</strong> buildings in the queue.
+                        </p>
+                        {{ range $buildingQ := .QueuedBuildings }}
+                            {{ $building := index $.Buildings $buildingQ.BuildingJob.Type }}
+                            <div class="row">
+                                <div class="col text-center">
+                                    <img src="{{ $building.Image }}" alt="{{ $building.Name }}">
+                                </div>
+                                <div class="col text-center">
+                                    <h4>{{ $building.Name }}</h4>
+                                    Level {{ $buildingQ.BuildingJob.Level }}
+                                </div>
+                                <div class="col text-center">
+                                    {{ if $buildingQ.Active }}
+                                        <p><strong>In progress</strong></p>
+                                    {{ else }}
+                                        <p><em>Queued</em></p>
+                                    {{ end }}
+                                    Started at <strong>{{ $buildingQ.CreatedAt }}</strong>
+                                    <br>
+                                    Ready at <strong>{{ $buildingQ.ReadyAt }}</strong>
+                                    <br>
+                                    {{ $buildingQ.Progress }}% <progress max="100" value="{{ $buildingQ.Progress }}"></progress>
+                                </div>
+                                <div class="col text-center">
+                                    <a href="#" class="button error">Cancel</a>
+                                </div>
+                            </div>
+                        {{ else }}
+                            <p>
+                                No buildings queued.
+                            </p>
+                        {{ end }}
+
+                        {{ range $idx, $job := .QueuedJobs }}
+                            <pre>{{ $idx }} -> {{ $job }}</pre>
+                        {{ end }}
+                    </div>
+
+                    <div id="queue_pane_building" class="queue_pane" role="tabpanel" tabindex="0"
+                         aria-labelledby="queue_tab_building" hidden>
+                        <!-- Form -->
+                        <p>
+                            At your current level you can have up to <strong>10</strong> buildings.
+                            You currently have <strong>{{ len .Town.Buildings }}</strong>.
+                        </p>
+                        <form action="/game/queue" method="post">
+                            <p>
+                                <label for="building">Building:</label>
+                                <select name="building" id="building">
+                                    <option value="">Farm</option>
+                                    <option value="">Mill</option>
+                                    <option value="">Bakery</option>
+                                    <option value="">Vineyard</option>
+                                    <option value="">Forestry</option>
+                                    <option value="">Saw Mill</option>
+                                </select>
+                            </p>
+                            <input type="submit" value="Build">
+                        </form>
                     </div>
                 </div>
             </div>

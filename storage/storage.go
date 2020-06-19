@@ -24,6 +24,7 @@ type TownStorage interface {
 }
 
 type ProductionStorage interface {
-	QueuedJobs(ctx context.Context, townID uuid.UUID) []*game.Job
+	QueuedJobs(ctx context.Context, townID uuid.UUID) map[uuid.UUID][]*game.Job
+	QueuedBuildings(ctx context.Context, townID uuid.UUID) []*game.Job
 	CreateJob(ctx context.Context, townID uuid.UUID, job *game.Job) error
 }

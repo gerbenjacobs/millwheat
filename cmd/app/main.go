@@ -69,6 +69,9 @@ func main() {
 	townSvc := services.NewTownSvc(storage.NewTownRepository(tempTowns))
 	prodSvc := services.NewProductionSvc(storage.NewProductionRepository())
 
+	// TEMP
+	fakeJobs(prodSvc)
+
 	// set up the route handler and server
 	app := handler.New(handler.Dependencies{
 		Auth:    auth,
@@ -159,4 +162,33 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 	}
 
 	return tempTowns, data.Items, data.Buildings
+}
+
+func fakeJobs(prodSvc services.ProductionService) {
+	ctx := context.WithValue(context.Background(), services.CtxKeyTownID, uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"))
+	_ = prodSvc.CreateJob(ctx, &game.Job{
+		ID:   uuid.New(),
+		Type: game.JobTypeBuilding,
+		BuildingJob: &game.BuildingJob{
+			ID:    uuid.New(),
+			Type:  game.BuildingBakery,
+			Level: 1,
+		},
+		Created:   time.Now().UTC(),
+		Completed: time.Now().Add(295 * time.Minute).UTC(),
+		Hours:     5 * time.Hour,
+		Active:    true,
+	})
+	_ = prodSvc.CreateJob(ctx, &game.Job{
+		ID:   uuid.New(),
+		Type: game.JobTypeBuilding,
+		BuildingJob: &game.BuildingJob{
+			ID:    uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"),
+			Type:  game.BuildingFarm,
+			Level: 3,
+		},
+		Created:   time.Now().UTC(),
+		Completed: time.Now().Add(2 * time.Hour).UTC(),
+		Hours:     2 * time.Hour,
+	})
 }

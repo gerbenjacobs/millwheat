@@ -18,13 +18,18 @@ func NewProductionSvc(storage storage.ProductionStorage) *ProductionSvc {
 	return &ProductionSvc{storage: storage}
 }
 
-func (p *ProductionSvc) QueuedJobs(ctx context.Context) []*game.Job {
+func (p *ProductionSvc) QueuedJobs(ctx context.Context) map[uuid.UUID][]*game.Job {
 	return p.storage.QueuedJobs(ctx, TownFromContext(ctx))
+}
+
+func (p *ProductionSvc) QueuedBuildings(ctx context.Context) []*game.Job {
+	return p.storage.QueuedBuildings(ctx, TownFromContext(ctx))
 }
 
 func (p *ProductionSvc) CreateJob(ctx context.Context, job *game.Job) error {
 	job.ID = uuid.New()
 	job.Created = time.Now().UTC()
+	job.Completed = time.Now().Add(job.Hours).UTC()
 
 	return p.storage.CreateJob(ctx, TownFromContext(ctx), job)
 }
