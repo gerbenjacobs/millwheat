@@ -54,7 +54,9 @@
                             </div>
                         {{ end }}
 
-                        <pre>{{ .QueuedJobs }}</pre>
+                        {{ range $idx, $job := .QueuedJobs }}
+                            <pre>{{ $idx }} -> {{ $job }}</pre>
+                        {{ end }}
                     </div>
 
                     <div id="queue_pane_building" class="queue_pane" role="tabpanel" tabindex="0"

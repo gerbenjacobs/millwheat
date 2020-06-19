@@ -59,3 +59,24 @@ func (t *TownRepository) ItemsInWarehouse(ctx context.Context, townID uuid.UUID,
 
 	return true
 }
+
+func (t *TownRepository) TakeFromWarehouse(ctx context.Context, townID uuid.UUID, items []game.ItemSet) error {
+	for _, is := range items {
+		i, ok := t.warehouses[townID][is.ItemID]
+		if !ok {
+			// if item not found
+			return errors.New("item not found")
+		}
+		if i.Quantity < is.Quantity {
+			// if not enough quantity for this item
+			return errors.New("not enough quantity")
+		}
+
+		t.warehouses[townID][is.ItemID] = game.WarehouseItem{
+			ItemID:   i.ItemID,
+			Quantity: i.Quantity - is.Quantity,
+		}
+	}
+
+	return nil
+}

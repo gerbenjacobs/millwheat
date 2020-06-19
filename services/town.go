@@ -28,3 +28,7 @@ func (t *TownSvc) Warehouse(ctx context.Context, townID uuid.UUID) (map[game.Ite
 func (t *TownSvc) ItemsInWarehouse(ctx context.Context, items []game.ItemSet) bool {
 	return t.storage.ItemsInWarehouse(ctx, TownFromContext(ctx), items)
 }
+
+func (t *TownSvc) TakeFromWarehouse(ctx context.Context, items []game.ItemSet) error {
+	return t.storage.TakeFromWarehouse(ctx, TownFromContext(ctx), items)
+}

@@ -162,6 +162,14 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		return
 	}
 
+	// extract consumption items from warehouse
+	if err := h.TownSvc.TakeFromWarehouse(r.Context(), productionResult.Consumption); err != nil {
+		// TODO undo job without returning items
+		_ = storeAndSaveFlash(r, w, "error|Failed to gather items needed")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
 	spew.Dump(productionResult)
 	http.Redirect(w, r, "/game", http.StatusFound)
 }
