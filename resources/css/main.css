@@ -133,3 +133,7 @@ h1, h2 {
     padding-right: 1rem;
     text-align: right;
 }
+
+hr.divider {
+    border-bottom: 2px solid var(--color-primary);
+}

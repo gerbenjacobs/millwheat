@@ -86,42 +86,54 @@
                         </div>
                         <div id="tb_{{ $townBuilding.ID }}_production" class="tb_pane_{{ $townBuilding.ID }}"
                              role="tabpanel" tabindex="0" hidden>
-                            {{ if $building.IsGenerator }}
-                                <p><em>This building produces on its own.</em></p>
-                            {{ else }}
-                                <table class="striped">
-                                    {{ range $mechanic := $building.Mechanics }}
-                                        <tr>
-                                            <td>
-                                                <strong>{{ $mechanic.Name }}</strong><br>
-                                                <em>{{ $mechanic.Type }}</em>
-                                            </td>
-                                            <td>{{ index $mechanic.Levels $townBuilding.CurrentLevel }}</td>
-                                        </tr>
-                                    {{ end }}
-                                </table>
-
-                                <table class="striped">
-                                    <thead>
+                            <table class="striped">
+                                <caption>Modifiers</caption>
+                                {{ range $mechanic := $building.Mechanics }}
                                     <tr>
-                                        <th>Item</th>
-                                        <th>Quantity</th>
-                                        <th>&nbsp;</th>
+                                        <td>
+                                            <strong>{{ $mechanic.Name }}</strong><br>
+                                            <em>{{ $mechanic.Type }}</em>
+                                        </td>
+                                        <td>{{ index $mechanic.Levels $townBuilding.CurrentLevel }}</td>
                                     </tr>
-                                    </thead>
-                                    <tbody>
-                                    {{ range $produce, $set := $building.Production }}
-                                        {{ $item := index $.Items $produce.ItemID }}
-                                        <form action="/game/produce" method="post">
-                                            <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
-                                            <input type="hidden" name="product" value="{{ $item.ID }}">
-                                            <tr>
-                                                <td style="width: 35%;">
-                                                    <label for="{{ $townBuilding.ID }}_{{ $item.ID }}">
-                                                        <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
-                                                        {{ $item.Name }}
-                                                    </label>
+                                {{ end }}
+                            </table>
+
+                            <table class="striped">
+                                <caption>Production</caption>
+                                <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{ range $produce, $set := $building.Production }}
+                                {{ $item := index $.Items $produce.ItemID }}
+                                {{ if $building.IsGenerator }}
+                                <form action="/game/collect" method="post">
+                                    {{ else }}
+                                    <form action="/game/produce" method="post">
+                                        {{ end }}
+                                        <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
+                                        <input type="hidden" name="product" value="{{ $item.ID }}">
+                                        <tr>
+                                            <td style="width: 35%;">
+                                                <label for="{{ $townBuilding.ID }}_{{ $item.ID }}">
+                                                    <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                                    {{ $item.Name }}
+                                                </label>
+                                            </td>
+                                            {{ if $building.IsGenerator }}
+                                                <td>
+                                                    <input id="{{ $townBuilding.ID }}_{{ $item.ID }}" type="number"
+                                                           name="quantity" value="46" disabled>
                                                 </td>
+                                                <td>
+                                                    <input type="submit" value="Collect">
+                                                </td>
+                                            {{ else }}
                                                 <td>
                                                     <input id="{{ $townBuilding.ID }}_{{ $item.ID }}" type="number"
                                                            name="quantity">
@@ -129,11 +141,54 @@
                                                 <td>
                                                     <input type="submit" value="Produce">
                                                 </td>
-                                            </tr>
-                                        </form>
+                                            {{ end }}
+                                        </tr>
+                                    </form>
                                     {{ end }}
-                                    </tbody>
-                                </table>
+                                </tbody>
+                            </table>
+
+                            {{ $queuedJobs := index $.QueuedJobs $townBuilding.ID }}
+                            {{ if $queuedJobs }}
+                                {{ range $job := $queuedJobs }}
+                                    <hr class="divider">
+                                    <div class="row reverse">
+                                        <div class="col-4 text-right">
+                                            <input type="button" class="button small error" value="Cancel">
+                                        </div>
+                                        <div class="col-8">
+                                            <strong>Consuming</strong><br>
+                                            {{ range $jobItem := $job.ProductJob.Consumption }}
+                                                {{ $item := index $.Items $jobItem.ItemID}}
+                                                <p>
+                                                    {{ $jobItem.Quantity }}x
+                                                    <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                                    {{ $item.Name }}
+                                                </p>
+                                            {{ end}}
+                                            <strong>Producing</strong><br>
+                                            {{ range $jobItem := $job.ProductJob.Production }}
+                                                {{ $item := index $.Items $jobItem.ItemID}}
+                                                <p>
+                                                    {{ $jobItem.Quantity }}x
+                                                    <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                                    {{ $item.Name }}
+                                                </p>
+                                            {{ end}}
+                                        </div>
+                                        <div class="col-12">
+                                            {{ if $job.Active }}
+                                                <p><strong>Status</strong><br>In progress</p>
+                                            {{ else }}
+                                                <p><strong>Status</strong><br>Queued</p>
+                                            {{ end }}
+                                            <p><strong>Started at</strong><br>{{ $job.CreatedAt }}</p>
+                                            {{ if $job.Active }}
+                                                <p><strong>Ready at</strong><br>{{ $job.ReadyAt }}</p>
+                                            {{ end }}
+                                        </div>
+                                    </div>
+                                {{ end }}
                             {{ end }}
                         </div>
                         <div id="tb_{{ $townBuilding.ID }}_construction" class="tb_pane_{{ $townBuilding.ID }}"
@@ -237,6 +292,7 @@
                         </p>
                         {{ range $buildingQ := .QueuedBuildings }}
                             {{ $building := index $.Buildings $buildingQ.BuildingJob.Type }}
+                            <hr class="divider">
                             <div class="row">
                                 <div class="col text-center">
                                     <img src="{{ $building.Image }}" alt="{{ $building.Name }}">
@@ -247,15 +303,16 @@
                                 </div>
                                 <div class="col text-center">
                                     {{ if $buildingQ.Active }}
-                                        <p><strong>In progress</strong></p>
+                                        <p><strong>Status</strong><br>In progress</p>
                                     {{ else }}
-                                        <p><em>Queued</em></p>
+                                        <p><strong>Status</strong><br>Queued</p>
                                     {{ end }}
-                                    Started at <strong>{{ $buildingQ.CreatedAt }}</strong>
-                                    <br>
-                                    Ready at <strong>{{ $buildingQ.ReadyAt }}</strong>
-                                    <br>
-                                    {{ $buildingQ.Progress }}% <progress max="100" value="{{ $buildingQ.Progress }}"></progress>
+                                    <p><strong>Started at</strong><br>{{ $buildingQ.CreatedAt }}</p>
+                                    {{ if $buildingQ.Active }}
+                                        <p><strong>Ready at</strong><br>{{ $buildingQ.ReadyAt }}</p>
+                                    {{ end }}
+                                    {{ $buildingQ.Progress }}%
+                                    <progress max="100" value="{{ $buildingQ.Progress }}"></progress>
                                 </div>
                                 <div class="col text-center">
                                     <a href="#" class="button error">Cancel</a>
@@ -265,10 +322,6 @@
                             <p>
                                 No buildings queued.
                             </p>
-                        {{ end }}
-
-                        {{ range $idx, $job := .QueuedJobs }}
-                            <pre>{{ $idx }} -> {{ $job }}</pre>
                         {{ end }}
                     </div>
 
@@ -283,12 +336,13 @@
                             <p>
                                 <label for="building">Building:</label>
                                 <select name="building" id="building">
-                                    <option value="">Farm</option>
-                                    <option value="">Mill</option>
-                                    <option value="">Bakery</option>
-                                    <option value="">Vineyard</option>
-                                    <option value="">Forestry</option>
-                                    <option value="">Saw Mill</option>
+                                    {{ range $key, $building := .Buildings }}
+                                        <option value="{{ $key }}">
+                                            {{ $building.Name }} &mdash;
+                                            {{ $cost := index $building.BuildCosts 1 }}
+                                            {{ $cost.Stones }}x stones, {{ $cost.Planks }}x planks
+                                        </option>
+                                    {{ end }}
                                 </select>
                             </p>
                             <input type="submit" value="Build">

@@ -3,6 +3,7 @@ package game
 import (
 	"errors"
 	"math"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -28,13 +29,14 @@ type TownBuilding struct {
 
 // Building contains all the data for buildings in the game
 type Building struct {
-	Name        string
-	Description string
-	Image       string
-	Production  map[ItemSet][]ItemSet
-	IsGenerator bool
-	Mechanics   []BuildingMechanic
-	BuildCosts  map[int]BuildingCost
+	Name           string
+	Description    string
+	Image          string
+	Production     map[ItemSet][]ItemSet
+	IsGenerator    bool
+	LastCollection time.Time
+	Mechanics      []BuildingMechanic
+	BuildCosts     map[int]BuildingCost
 }
 
 // BuildingCost contains the cost in stones and planks
