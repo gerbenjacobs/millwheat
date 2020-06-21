@@ -182,9 +182,17 @@
                                             {{ else }}
                                                 <p><strong>Status</strong><br>Queued</p>
                                             {{ end }}
-                                            <p><strong>Started at</strong><br>{{ $job.CreatedAt }}</p>
                                             {{ if $job.Active }}
+                                                <p><strong>Started at</strong><br>{{ $job.StartedAt }}</p>
                                                 <p><strong>Ready at</strong><br>{{ $job.ReadyAt }}</p>
+                                            {{ else }}
+                                                <p><strong>Queued at</strong><br>{{ $job.QueuedAt }}</p>
+                                            {{ end }}
+                                            {{ if $job.Active }}
+                                                <p><strong>Progress</strong><br>
+                                                    {{ $job.Progress }}%
+                                                    <progress max="100" value="{{ $job.Progress }}"></progress>
+                                                </p>
                                             {{ end }}
                                         </div>
                                     </div>
@@ -307,9 +315,11 @@
                                     {{ else }}
                                         <p><strong>Status</strong><br>Queued</p>
                                     {{ end }}
-                                    <p><strong>Started at</strong><br>{{ $buildingQ.CreatedAt }}</p>
                                     {{ if $buildingQ.Active }}
+                                        <p><strong>Started at</strong><br>{{ $buildingQ.StartedAt }}</p>
                                         <p><strong>Ready at</strong><br>{{ $buildingQ.ReadyAt }}</p>
+                                    {{ else }}
+                                        <p><strong>Queued at</strong><br>{{ $buildingQ.QueuedAt }}</p>
                                     {{ end }}
                                     {{ $buildingQ.Progress }}%
                                     <progress max="100" value="{{ $buildingQ.Progress }}"></progress>

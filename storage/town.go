@@ -16,10 +16,11 @@ type TownRepository struct {
 
 func NewTownRepository(towns map[uuid.UUID]*game.Town) *TownRepository {
 	defaultWarehouse := map[game.ItemID]game.WarehouseItem{
-		game.ItemID("stone"): {ItemID: game.ItemID("stone"), Quantity: 5},
-		game.ItemID("plank"): {ItemID: game.ItemID("plank"), Quantity: 12},
-		game.ItemID("wheat"): {ItemID: game.ItemID("wheat"), Quantity: 10},
-		game.ItemID("flour"): {ItemID: game.ItemID("flour"), Quantity: 4},
+		game.ItemID("stone"):    {ItemID: game.ItemID("stone"), Quantity: 5},
+		game.ItemID("plank"):    {ItemID: game.ItemID("plank"), Quantity: 12},
+		game.ItemID("wheat"):    {ItemID: game.ItemID("wheat"), Quantity: 10},
+		game.ItemID("flour"):    {ItemID: game.ItemID("flour"), Quantity: 4},
+		game.ItemID("iron_bar"): {ItemID: game.ItemID("iron_bar"), Quantity: 4},
 	}
 	warehouses := make(map[uuid.UUID]map[game.ItemID]game.WarehouseItem)
 	for id := range towns {

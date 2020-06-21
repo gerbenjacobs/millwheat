@@ -3,12 +3,10 @@ package handler
 import (
 	"errors"
 	"html/template"
-	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
@@ -31,7 +29,6 @@ type GameData struct {
 }
 
 var funcs = template.FuncMap{
-	"rand": rand.Float64,
 	"hasItemID": func(haystack []game.ItemID, needle game.ItemID) bool {
 		for _, v := range haystack {
 			if v == needle {
@@ -152,7 +149,7 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	}
 
 	// queue job
-	job := &game.Job{
+	job := &game.InputJob{
 		Type: game.JobTypeProduct,
 		ProductJob: &game.ProductJob{
 			BuildingID:  townBuilding.ID,
@@ -175,6 +172,6 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		return
 	}
 
-	spew.Dump(productionResult)
+	_ = storeAndSaveFlash(r, w, "success|Item has been queued")
 	http.Redirect(w, r, "/game", http.StatusFound)
 }

@@ -26,10 +26,28 @@ func (p *ProductionSvc) QueuedBuildings(ctx context.Context) []*game.Job {
 	return p.storage.QueuedBuildings(ctx, TownFromContext(ctx))
 }
 
-func (p *ProductionSvc) CreateJob(ctx context.Context, job *game.Job) error {
+func (p *ProductionSvc) CreateJob(ctx context.Context, inputJob *game.InputJob) error {
+	var job = new(game.Job)
+	job.InputJob = *inputJob
 	job.ID = uuid.New()
-	job.Created = time.Now().UTC()
+	job.Queued = time.Now().UTC()
 	job.Completed = time.Now().Add(job.Hours).UTC()
+
+	// check if we can make this job active
+	if job.Type == game.JobTypeProduct {
+		queuedJobs := p.QueuedJobs(ctx)
+		if _, ok := queuedJobs[job.ProductJob.BuildingID]; !ok {
+			// no jobs found for this building, make this job active.
+			job.Active = true
+			job.Started = time.Now().UTC()
+		}
+	}
+	if job.Type == game.JobTypeBuilding {
+		if len(p.QueuedBuildings(ctx)) == 0 {
+			job.Active = true
+			job.Started = time.Now().UTC()
+		}
+	}
 
 	return p.storage.CreateJob(ctx, TownFromContext(ctx), job)
 }

@@ -17,14 +17,19 @@ const (
 type JobType int
 
 type Job struct {
-	ID          uuid.UUID
+	ID uuid.UUID
+	InputJob
+	Queued    time.Time
+	Started   time.Time
+	Completed time.Time
+	Active    bool
+}
+
+type InputJob struct {
 	Type        JobType
 	ProductJob  *ProductJob
 	BuildingJob *BuildingJob
-	Created     time.Time
-	Completed   time.Time
 	Hours       time.Duration
-	Active      bool
 }
 
 type ProductJob struct {
@@ -39,15 +44,19 @@ type BuildingJob struct {
 }
 
 func (j *Job) String() string {
-	return fmt.Sprintf("[%s] (%d) %s - created at: %s -- will take: %s", j.ID, j.Type, spew.Sdump(j.ProductJob), j.Created, j.Hours)
+	return fmt.Sprintf("[%s] (%d) %s - created at: %s -- will take: %s", j.ID, j.Type, spew.Sdump(j.ProductJob), j.Queued, j.Hours)
 }
 
-func (j *Job) CreatedAt() string {
-	return j.Created.Format("2006-01-02 15:04")
+func (j *Job) QueuedAt() string {
+	return j.Queued.Format("2006-01-02 15:04")
+}
+
+func (j *Job) StartedAt() string {
+	return j.Started.Format("2006-01-02 15:04")
 }
 
 func (j *Job) ReadyAt() string {
-	ready := j.Created.Add(j.Hours)
+	ready := j.Started.Add(j.Hours)
 	return ready.Format("2006-01-02 15:04")
 }
 

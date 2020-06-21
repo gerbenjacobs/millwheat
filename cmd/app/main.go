@@ -90,6 +90,9 @@ func main() {
 		Handler:      app,
 	}
 
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	app.Tick(ctx)
+
 	// start running the server
 	go func() {
 		log.Print("Server started on " + srv.Addr)
@@ -100,6 +103,7 @@ func main() {
 
 	// wait for shutdown signals
 	<-shutdown
+	cancelFunc() // global ctx for services
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
@@ -166,29 +170,22 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 
 func fakeJobs(prodSvc services.ProductionService) {
 	ctx := context.WithValue(context.Background(), services.CtxKeyTownID, uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"))
-	_ = prodSvc.CreateJob(ctx, &game.Job{
-		ID:   uuid.New(),
+	_ = prodSvc.CreateJob(ctx, &game.InputJob{
 		Type: game.JobTypeBuilding,
 		BuildingJob: &game.BuildingJob{
 			ID:    uuid.New(),
 			Type:  game.BuildingBakery,
 			Level: 1,
 		},
-		Created:   time.Now().UTC(),
-		Completed: time.Now().Add(295 * time.Minute).UTC(),
-		Hours:     5 * time.Hour,
-		Active:    true,
+		Hours: 5 * time.Hour,
 	})
-	_ = prodSvc.CreateJob(ctx, &game.Job{
-		ID:   uuid.New(),
+	_ = prodSvc.CreateJob(ctx, &game.InputJob{
 		Type: game.JobTypeBuilding,
 		BuildingJob: &game.BuildingJob{
 			ID:    uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"),
 			Type:  game.BuildingFarm,
 			Level: 3,
 		},
-		Created:   time.Now().UTC(),
-		Completed: time.Now().Add(2 * time.Hour).UTC(),
-		Hours:     2 * time.Hour,
+		Hours: 2 * time.Hour,
 	})
 }
