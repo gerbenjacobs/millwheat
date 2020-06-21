@@ -13,16 +13,23 @@ const (
 	JobTypeProduct JobType = iota
 	JobTypeBuilding
 )
+const (
+	JobStatusQueued JobStatus = iota
+	JobStatusActive
+	JobStatusCompleted
+)
 
 type JobType int
+type JobStatus int
 
 type Job struct {
-	ID uuid.UUID
+	ID     uuid.UUID
+	TownID uuid.UUID
 	InputJob
 	Queued    time.Time
 	Started   time.Time
 	Completed time.Time
-	Active    bool
+	Status    JobStatus
 }
 
 type InputJob struct {
@@ -47,6 +54,19 @@ func (j *Job) String() string {
 	return fmt.Sprintf("[%s] (%d) %s - created at: %s -- will take: %s", j.ID, j.Type, spew.Sdump(j.ProductJob), j.Queued, j.Hours)
 }
 
+func (js JobStatus) String() string {
+	switch js {
+	case JobStatusQueued:
+		return "Queued"
+	case JobStatusActive:
+		return "In progress"
+	case JobStatusCompleted:
+		return "Completed"
+	default:
+		return "Unknown"
+	}
+}
+
 func (j *Job) QueuedAt() string {
 	return j.Queued.Format("2006-01-02 15:04")
 }
@@ -61,7 +81,7 @@ func (j *Job) ReadyAt() string {
 }
 
 func (j *Job) Progress() int {
-	if !j.Active {
+	if j.Status != JobStatusActive {
 		return 0
 	}
 
@@ -72,4 +92,16 @@ func (j *Job) Progress() int {
 
 	p := 100 - (completed/j.Hours.Minutes())*100
 	return int(math.Floor(p))
+}
+
+func (j *Job) IsCompleted() bool {
+	if j.Status != JobStatusActive {
+		return false
+	}
+
+	return j.Completed.Before(time.Now().UTC())
+}
+
+func (j *Job) IsActive() bool {
+	return j.Status == JobStatusActive
 }

@@ -20,7 +20,7 @@ func NewProductionRepository() *ProductionRepository {
 	}
 }
 
-func (p *ProductionRepository) QueuedJobs(ctx context.Context, townID uuid.UUID) map[uuid.UUID][]*game.Job {
+func (p *ProductionRepository) ProductJobsByTown(ctx context.Context, townID uuid.UUID) map[uuid.UUID][]*game.Job {
 	jbt, ok := p.jobsByTown[townID]
 	if !ok {
 		return nil
@@ -35,6 +35,7 @@ func (p *ProductionRepository) QueuedJobs(ctx context.Context, townID uuid.UUID)
 
 	return jobs
 }
+
 func (p *ProductionRepository) QueuedBuildings(ctx context.Context, townID uuid.UUID) []*game.Job {
 	jbt, ok := p.jobsByTown[townID]
 	if !ok {
@@ -56,4 +57,15 @@ func (p *ProductionRepository) CreateJob(ctx context.Context, townID uuid.UUID, 
 	p.jobs[job.ID] = job
 
 	return nil
+}
+
+func (p *ProductionRepository) ProductJobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job {
+	var jobs = make(map[uuid.UUID][]*game.Job)
+	for _, j := range p.jobs {
+		if j.Type == game.JobTypeProduct && j.IsCompleted() {
+			jobs[j.TownID] = append(jobs[j.TownID], j)
+		}
+	}
+
+	return jobs
 }

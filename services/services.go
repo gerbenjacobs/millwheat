@@ -32,4 +32,6 @@ type ProductionService interface {
 	QueuedJobs(ctx context.Context) map[uuid.UUID][]*game.Job
 	QueuedBuildings(ctx context.Context) []*game.Job
 	CreateJob(ctx context.Context, job *game.InputJob) error
+
+	ProductJobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job
 }
