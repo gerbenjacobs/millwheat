@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
 
@@ -28,7 +29,7 @@ func (p *ProductionRepository) ProductJobsByTown(ctx context.Context, townID uui
 
 	var jobs = make(map[uuid.UUID][]*game.Job)
 	for _, jb := range jbt {
-		if j, ok := p.jobs[jb]; ok && j.Type == game.JobTypeProduct {
+		if j, ok := p.jobs[jb]; ok && j.Type == game.JobTypeProduct && j.Status != game.JobStatusCompleted {
 			jobs[j.ProductJob.BuildingID] = append(jobs[j.ProductJob.BuildingID], j)
 		}
 	}
@@ -44,7 +45,7 @@ func (p *ProductionRepository) QueuedBuildings(ctx context.Context, townID uuid.
 
 	var jobs []*game.Job
 	for _, jb := range jbt {
-		if j, ok := p.jobs[jb]; ok && j.Type == game.JobTypeBuilding {
+		if j, ok := p.jobs[jb]; ok && j.Type == game.JobTypeBuilding && j.Status != game.JobStatusCompleted {
 			jobs = append(jobs, j)
 		}
 	}
@@ -55,6 +56,17 @@ func (p *ProductionRepository) QueuedBuildings(ctx context.Context, townID uuid.
 func (p *ProductionRepository) CreateJob(ctx context.Context, townID uuid.UUID, job *game.Job) error {
 	p.jobsByTown[townID] = append(p.jobsByTown[townID], job.ID)
 	p.jobs[job.ID] = job
+
+	return nil
+}
+func (p *ProductionRepository) UpdateJobStatus(ctx context.Context, jobID uuid.UUID, status game.JobStatus) error {
+	job, ok := p.jobs[jobID]
+	if !ok {
+		return errors.New("job not found")
+	}
+
+	job.Status = status
+	p.jobs[jobID] = job
 
 	return nil
 }

@@ -21,12 +21,14 @@ type TownStorage interface {
 	WarehouseItems(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error)
 	ItemsInWarehouse(ctx context.Context, townID uuid.UUID, items []game.ItemSet) bool
 	TakeFromWarehouse(ctx context.Context, townID uuid.UUID, items []game.ItemSet) error
+	GiveToWarehouse(ctx context.Context, townID uuid.UUID, items []game.ItemSet) error
 }
 
 type ProductionStorage interface {
 	ProductJobsByTown(ctx context.Context, townID uuid.UUID) map[uuid.UUID][]*game.Job
 	QueuedBuildings(ctx context.Context, townID uuid.UUID) []*game.Job
 	CreateJob(ctx context.Context, townID uuid.UUID, job *game.Job) error
+	UpdateJobStatus(ctx context.Context, jobID uuid.UUID, status game.JobStatus) error
 
 	ProductJobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job
 }

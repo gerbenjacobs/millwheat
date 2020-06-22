@@ -81,3 +81,20 @@ func (t *TownRepository) TakeFromWarehouse(ctx context.Context, townID uuid.UUID
 
 	return nil
 }
+
+func (t *TownRepository) GiveToWarehouse(ctx context.Context, townID uuid.UUID, items []game.ItemSet) error {
+	for _, is := range items {
+		i, ok := t.warehouses[townID][is.ItemID]
+		if ok && i.Quantity+is.Quantity > 100 { // TODO fix hardcode warehouse upper limit
+			// set quantity to upper limit
+			is.Quantity = 100 - i.Quantity
+		}
+
+		t.warehouses[townID][is.ItemID] = game.WarehouseItem{
+			ItemID:   i.ItemID,
+			Quantity: i.Quantity + is.Quantity,
+		}
+	}
+
+	return nil
+}

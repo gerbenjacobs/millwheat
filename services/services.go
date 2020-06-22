@@ -26,12 +26,14 @@ type TownService interface {
 	Warehouse(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error)
 	ItemsInWarehouse(ctx context.Context, items []game.ItemSet) bool
 	TakeFromWarehouse(ctx context.Context, items []game.ItemSet) error
+	GiveToWarehouse(ctx context.Context, items []game.ItemSet) error
 }
 
 type ProductionService interface {
 	QueuedJobs(ctx context.Context) map[uuid.UUID][]*game.Job
 	QueuedBuildings(ctx context.Context) []*game.Job
 	CreateJob(ctx context.Context, job *game.InputJob) error
+	UpdateJobStatus(ctx context.Context, jobID uuid.UUID, status game.JobStatus) error
 
 	ProductJobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job
 }

@@ -32,3 +32,7 @@ func (t *TownSvc) ItemsInWarehouse(ctx context.Context, items []game.ItemSet) bo
 func (t *TownSvc) TakeFromWarehouse(ctx context.Context, items []game.ItemSet) error {
 	return t.storage.TakeFromWarehouse(ctx, TownFromContext(ctx), items)
 }
+
+func (t *TownSvc) GiveToWarehouse(ctx context.Context, items []game.ItemSet) error {
+	return t.storage.GiveToWarehouse(ctx, TownFromContext(ctx), items)
+}
