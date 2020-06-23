@@ -5,8 +5,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -51,7 +51,7 @@ type BuildingJob struct {
 }
 
 func (j *Job) String() string {
-	return fmt.Sprintf("[%s] (%d) %s - created at: %s -- will take: %s", j.ID, j.Type, spew.Sdump(j.ProductJob), j.Queued, j.Hours)
+	return fmt.Sprintf("[%s] (%d) %s  -- %s %s %s -- will take: %s", j.ID, j.Type, j.Status, j.QueuedAt(), j.StartedAt(), j.Completed.Format(time.RFC3339), j.Hours)
 }
 
 func (js JobStatus) String() string {
@@ -64,6 +64,29 @@ func (js JobStatus) String() string {
 		return "Completed"
 	default:
 		return "Unknown"
+	}
+}
+
+func (jt JobType) String() string {
+	switch jt {
+	case JobTypeProduct:
+		return "Product"
+	case JobTypeBuilding:
+		return "Building"
+	default:
+		return "Unknown"
+	}
+}
+
+func (j *Job) BuildingID() uuid.UUID {
+	switch j.Type {
+	case JobTypeBuilding:
+		return j.BuildingJob.ID
+	case JobTypeProduct:
+		return j.ProductJob.BuildingID
+	default:
+		logrus.Warnf("unknown job type for job %s", j.ID)
+		return uuid.UUID{}
 	}
 }
 
@@ -86,20 +109,16 @@ func (j *Job) Progress() int {
 	}
 
 	completed := j.Completed.Sub(time.Now().UTC()).Minutes()
-	if completed == 0 {
-		return 0
+	if completed <= 0 {
+		return 100
 	}
 
 	p := 100 - (completed/j.Hours.Minutes())*100
 	return int(math.Floor(p))
 }
 
-func (j *Job) IsCompleted() bool {
-	if j.Status != JobStatusActive {
-		return false
-	}
-
-	return j.Completed.Before(time.Now().UTC())
+func (j *Job) ReadyForCompletion() bool {
+	return j.IsActive() && j.Completed.Before(time.Now().UTC())
 }
 
 func (j *Job) IsActive() bool {

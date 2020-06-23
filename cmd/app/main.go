@@ -188,14 +188,4 @@ func fakeJobs(prodSvc services.ProductionService) {
 		},
 		Hours: 2 * time.Hour,
 	})
-
-	_ = prodSvc.CreateJob(ctx, &game.InputJob{
-		Type: game.JobTypeProduct,
-		ProductJob: &game.ProductJob{
-			BuildingID:  uuid.MustParse("578ad258-e913-4831-998a-2983dd4920ed"),
-			Consumption: []game.ItemSet{{ItemID: "wheat", Quantity: 4}},
-			Production:  []game.ItemSet{{ItemID: "flour", Quantity: 8}},
-		},
-		Hours: 1 * time.Minute,
-	})
 }

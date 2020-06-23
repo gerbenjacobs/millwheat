@@ -34,6 +34,7 @@ func (h *Handler) Tick(ctx context.Context) {
 
 func (h *Handler) evaluateJobs(ctx context.Context) {
 	completedJobs := h.ProductionSvc.ProductJobsCompleted(ctx)
+	logrus.Debug("handling completed jobs")
 
 	for townID, jobs := range completedJobs {
 		for _, job := range jobs {
@@ -53,7 +54,8 @@ func (h *Handler) evaluateJobs(ctx context.Context) {
 				logrus.Errorf("failed to update job status for %s: %s", job.ID, err)
 			}
 
-			// TODO: reshuffle the queue for this building
+			// reshuffle the queue
+			h.ProductionSvc.ReshuffleQueue(ctx)
 		}
 	}
 }

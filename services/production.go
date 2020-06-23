@@ -61,19 +61,6 @@ func (p *ProductionSvc) ProductJobsCompleted(ctx context.Context) map[uuid.UUID]
 	return p.storage.ProductJobsCompleted(ctx)
 }
 
-//func (p *ProductionSvc) reshuffleQueue(ctx context.Context, jobType game.JobType) {
-//	if jobType == game.JobTypeProduct {
-//		queuedJobs := p.QueuedJobs(ctx)
-//		if _, ok := queuedJobs[job.ProductJob.BuildingID]; !ok {
-//			// no jobs found for this building, make this job active.
-//			job.Status = game.JobStatusActive
-//			job.Started = time.Now().UTC()
-//		}
-//	}
-//	if jobType == game.JobTypeBuilding {
-//		if len(p.QueuedBuildings(ctx)) == 0 {
-//			job.Status = game.JobStatusActive
-//			job.Started = time.Now().UTC()
-//		}
-//	}
-//}
+func (p *ProductionSvc) ReshuffleQueue(ctx context.Context) {
+	p.storage.ReshuffleQueue(ctx, TownFromContext(ctx))
+}

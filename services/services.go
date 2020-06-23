@@ -36,4 +36,5 @@ type ProductionService interface {
 	UpdateJobStatus(ctx context.Context, jobID uuid.UUID, status game.JobStatus) error
 
 	ProductJobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job
+	ReshuffleQueue(ctx context.Context)
 }
