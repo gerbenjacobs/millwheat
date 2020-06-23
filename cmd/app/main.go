@@ -129,6 +129,20 @@ type Configuration struct {
 
 func tempGameData() (game.Towns, game.Items, game.Buildings) {
 	tempTowns := map[uuid.UUID]*game.Town{
+		uuid.MustParse("272870c89e304a15924966e38a50f640"): {
+			ID:    uuid.MustParse("272870c89e304a15924966e38a50f640"),
+			Name:  "Bobville",
+			Owner: uuid.MustParse("ecb31b8a898e4049a9c7d18ea59a72a0"),
+			Buildings: []game.TownBuilding{
+				{
+					ID:           uuid.MustParse("cb7d9231-ac10-4b69-8a82-fda38d8e65b9"),
+					Type:         game.BuildingMill,
+					CurrentLevel: 3,
+				},
+			},
+			CreatedAt: time.Now().Add(-5 * time.Minute),
+			UpdatedAt: time.Now(),
+		},
 		uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"): {
 			ID:    uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"),
 			Name:  "Northbrook",
