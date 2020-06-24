@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/patrickmn/go-cache"
 
 	"github.com/gerbenjacobs/millwheat/game"
 )
@@ -13,15 +14,6 @@ import (
 func TestTownRepository_TakeFromWarehouse(t1 *testing.T) {
 	town1 := uuid.New()
 	town2 := uuid.New()
-
-	warehouses := map[uuid.UUID]map[game.ItemID]game.WarehouseItem{
-		town1: {
-			"wheat": game.WarehouseItem{ItemID: "wheat", Quantity: 10},
-		},
-		town2: {
-			"wheat": game.WarehouseItem{ItemID: "wheat", Quantity: 10},
-		},
-	}
 
 	itemsTaken := []game.ItemSet{{ItemID: "wheat", Quantity: 2}}
 
@@ -33,8 +25,10 @@ func TestTownRepository_TakeFromWarehouse(t1 *testing.T) {
 	}
 
 	t := &TownRepository{
-		warehouses: warehouses,
+		warehouseCache: cache.New(cache.NoExpiration, 0),
 	}
+	t.warehouseCache.Set(town1.String(), map[game.ItemID]game.WarehouseItem{"wheat": {ItemID: "wheat", Quantity: 10}}, cache.NoExpiration)
+	t.warehouseCache.Set(town2.String(), map[game.ItemID]game.WarehouseItem{"wheat": {ItemID: "wheat", Quantity: 10}}, cache.NoExpiration)
 
 	if err := t.TakeFromWarehouse(context.Background(), town1, itemsTaken); err != nil {
 		t1.Errorf("TakeFromWarehouse() error = %v", err)

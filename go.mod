@@ -15,6 +15,7 @@ require (
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mattn/go-colorable v0.1.6
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pelletier/go-toml v1.7.0 // indirect
 	github.com/sirupsen/logrus v1.5.0
 	github.com/spf13/afero v1.2.2 // indirect
