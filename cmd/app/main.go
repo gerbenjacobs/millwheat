@@ -132,7 +132,7 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 		uuid.MustParse("272870c89e304a15924966e38a50f640"): {
 			ID:    uuid.MustParse("272870c89e304a15924966e38a50f640"),
 			Name:  "Bobville",
-			Owner: uuid.MustParse("9ca8a8f012094b5880e75fa417c5e7a6"),
+			Owner: uuid.MustParse("ecb31b8a898e4049a9c7d18ea59a72a0"),
 			Buildings: []game.TownBuilding{
 				{
 					ID:           uuid.MustParse("cb7d9231-ac10-4b69-8a82-fda38d8e65b9"),

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/google/uuid"
 	"github.com/patrickmn/go-cache"
 
@@ -16,17 +15,21 @@ type TownRepository struct {
 	warehouseCache *cache.Cache
 }
 
+// defaultWarehouse returns a new map, to prevent pointer issues
+func defaultWarehouse() map[game.ItemID]game.WarehouseItem {
+	return map[game.ItemID]game.WarehouseItem{
+		"stone":    {ItemID: "stone", Quantity: 5},
+		"plank":    {ItemID: "plank", Quantity: 12},
+		"wheat":    {ItemID: "wheat", Quantity: 10},
+		"flour":    {ItemID: "flour", Quantity: 4},
+		"iron_bar": {ItemID: "iron_bar", Quantity: 4},
+	}
+}
+
 func NewTownRepository(towns map[uuid.UUID]*game.Town) *TownRepository {
 	c := cache.New(cache.NoExpiration, 0)
-	defaultWarehouse := map[game.ItemID]game.WarehouseItem{
-		game.ItemID("stone"):    {ItemID: game.ItemID("stone"), Quantity: 5},
-		game.ItemID("plank"):    {ItemID: game.ItemID("plank"), Quantity: 12},
-		game.ItemID("wheat"):    {ItemID: game.ItemID("wheat"), Quantity: 10},
-		game.ItemID("flour"):    {ItemID: game.ItemID("flour"), Quantity: 4},
-		game.ItemID("iron_bar"): {ItemID: game.ItemID("iron_bar"), Quantity: 4},
-	}
 	for id := range towns {
-		c.Set(id.String(), defaultWarehouse, cache.NoExpiration)
+		c.Set(id.String(), defaultWarehouse(), cache.NoExpiration)
 	}
 	return &TownRepository{towns: towns, warehouseCache: c}
 }
@@ -73,7 +76,7 @@ func (t *TownRepository) TakeFromWarehouse(ctx context.Context, townID uuid.UUID
 	if err != nil {
 		return err
 	}
-	spew.Dump(townID, wh, items)
+
 	for _, is := range items {
 		i, ok := wh[is.ItemID]
 		if !ok {
@@ -90,7 +93,6 @@ func (t *TownRepository) TakeFromWarehouse(ctx context.Context, townID uuid.UUID
 			Quantity: i.Quantity - is.Quantity,
 		}
 	}
-	spew.Dump(t.warehouseCache.Items())
 
 	t.warehouseCache.Set(townID.String(), wh, cache.NoExpiration)
 	return nil
