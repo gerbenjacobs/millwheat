@@ -72,10 +72,10 @@ func (p *ProductionRepository) UpdateJobStatus(ctx context.Context, jobID uuid.U
 	return nil
 }
 
-func (p *ProductionRepository) ProductJobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job {
+func (p *ProductionRepository) JobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job {
 	var jobs = make(map[uuid.UUID][]*game.Job)
 	for _, j := range p.jobs {
-		if j.Type == game.JobTypeProduct && j.ReadyForCompletion() {
+		if j.ReadyForCompletion() {
 			jobs[j.TownID] = append(jobs[j.TownID], j)
 		}
 	}
@@ -88,7 +88,7 @@ func (p *ProductionRepository) ReshuffleQueue(ctx context.Context, townID uuid.U
 		if j != nil {
 			j.Status = game.JobStatusActive
 			j.Started = time.Now().UTC()
-			j.Completed = j.Started.Add(j.Hours)
+			j.Completed = j.Started.Add(j.Duration)
 			p.jobs[j.ID] = j
 		}
 	}

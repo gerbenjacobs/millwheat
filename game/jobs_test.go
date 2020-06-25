@@ -60,7 +60,7 @@ func TestJob_Progress(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			j := &Job{
 				InputJob: InputJob{
-					Hours: time.Duration(tt.fields.Hours) * time.Hour,
+					Duration: time.Duration(tt.fields.Hours) * time.Hour,
 				},
 				Completed: tt.fields.Completed,
 				Status:    JobStatusActive,

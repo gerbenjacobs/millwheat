@@ -20,7 +20,7 @@
         </ul>
 
         <div class="row" id="town">
-            {{ range $townBuilding := .Town.Buildings }}
+            {{ range $townBuilding := .Town.OrderedBuildings }}
                 {{ $building := index $.Buildings $townBuilding.Type }}
                 <div class="col-6 col-4-md">
                     <div class="card is-full-height">

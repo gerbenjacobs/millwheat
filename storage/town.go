@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/patrickmn/go-cache"
@@ -40,6 +41,46 @@ func (t *TownRepository) Get(_ context.Context, id uuid.UUID) (*game.Town, error
 	}
 
 	return nil, errors.New("town not found")
+}
+
+func (t *TownRepository) AddBuilding(ctx context.Context, townID uuid.UUID, buildingType game.BuildingType) error {
+	town, err := t.Get(ctx, townID)
+	if err != nil {
+		return err
+	}
+
+	tb := game.TownBuilding{
+		ID:           uuid.New(),
+		Type:         buildingType,
+		CurrentLevel: 1,
+		CreatedAt:    time.Now().UTC(),
+	}
+	town.Buildings[tb.ID] = tb
+	return nil
+}
+
+func (t *TownRepository) UpgradeBuilding(ctx context.Context, townID uuid.UUID, buildingID uuid.UUID) error {
+	town, err := t.Get(ctx, townID)
+	if err != nil {
+		return err
+	}
+
+	var cb game.TownBuilding
+	for _, b := range town.Buildings {
+		if b.ID == buildingID {
+			cb = b
+			break
+		}
+	}
+	tb := game.TownBuilding{
+		ID:           buildingID,
+		Type:         cb.Type,
+		CurrentLevel: cb.CurrentLevel + 1,
+	}
+
+	town.Buildings[tb.ID] = tb
+	t.towns[townID] = town
+	return nil
 }
 
 func (t *TownRepository) WarehouseItems(_ context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error) {

@@ -33,8 +33,10 @@ func (h *Handler) Tick(ctx context.Context) {
 }
 
 func (h *Handler) evaluateJobs(ctx context.Context) {
-	completedJobs := h.ProductionSvc.ProductJobsCompleted(ctx)
-	logrus.Debug("handling completed jobs")
+	completedJobs := h.ProductionSvc.JobsCompleted(ctx)
+	if len(completedJobs) > 0 {
+		logrus.Debug("handling completed jobs")
+	}
 
 	for townID, jobs := range completedJobs {
 		for _, job := range jobs {
@@ -44,7 +46,11 @@ func (h *Handler) evaluateJobs(ctx context.Context) {
 			case game.JobTypeProduct:
 				err = h.TownSvc.GiveToWarehouse(ctx, job.ProductJob.Production)
 			case game.JobTypeBuilding:
-				// TODO: build the actual building
+				if job.BuildingJob.Level == 1 {
+					err = h.TownSvc.AddBuilding(ctx, job.BuildingJob.Type)
+				} else {
+					err = h.TownSvc.UpgradeBuilding(ctx, job.BuildingJob.ID)
+				}
 			}
 			if err != nil {
 				logrus.Errorf("failed to resolve job production: %s", err)

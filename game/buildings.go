@@ -3,6 +3,7 @@ package game
 import (
 	"errors"
 	"math"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -25,6 +26,7 @@ type TownBuilding struct {
 	ID           uuid.UUID
 	Type         BuildingType
 	CurrentLevel int
+	CreatedAt    time.Time
 }
 
 // Building contains all the data for buildings in the game
@@ -147,6 +149,9 @@ func (b Building) ConsumesList() []ItemID {
 	for i := range consume {
 		consumeList = append(consumeList, i)
 	}
+	sort.Slice(consumeList, func(i, j int) bool {
+		return consumeList[i] < consumeList[j]
+	})
 	return consumeList
 }
 
@@ -166,5 +171,8 @@ func (b Building) ProducesList() []ItemID {
 	for i := range produce {
 		produceList = append(produceList, i)
 	}
+	sort.Slice(produceList, func(i, j int) bool {
+		return produceList[i] < produceList[j]
+	})
 	return produceList
 }

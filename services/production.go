@@ -32,7 +32,7 @@ func (p *ProductionSvc) CreateJob(ctx context.Context, inputJob *game.InputJob) 
 	job.ID = uuid.New()
 	job.TownID = TownFromContext(ctx)
 	job.Queued = time.Now().UTC()
-	job.Completed = time.Now().Add(job.Hours).UTC()
+	job.Completed = time.Now().Add(job.Duration).UTC()
 
 	// check if we can make this job active
 	if job.Type == game.JobTypeProduct {
@@ -57,8 +57,8 @@ func (p *ProductionSvc) UpdateJobStatus(ctx context.Context, jobID uuid.UUID, st
 	return p.storage.UpdateJobStatus(ctx, jobID, status)
 }
 
-func (p *ProductionSvc) ProductJobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job {
-	return p.storage.ProductJobsCompleted(ctx)
+func (p *ProductionSvc) JobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job {
+	return p.storage.JobsCompleted(ctx)
 }
 
 func (p *ProductionSvc) ReshuffleQueue(ctx context.Context) {

@@ -23,6 +23,7 @@ var Buildings = game.Buildings{
 				Levels: map[int]int{
 					1: 1,
 					2: 2,
+					3: 3,
 				},
 			},
 		},
@@ -99,6 +100,9 @@ var Buildings = game.Buildings{
 		Name:        "Bakery",
 		Description: "Bakes bread for the soldiers using flour from the mill.",
 		Image:       "https://www.knightsandmerchants.net/application/files/1215/6823/6439/bakery.png",
+		Production: map[game.ItemSet][]game.ItemSet{
+			{ItemID: "bread"}: {{ItemID: "flour", IsConsumption: true}},
+		},
 		Mechanics: []game.BuildingMechanic{
 			{
 				Type:   game.MechanicConsumption,

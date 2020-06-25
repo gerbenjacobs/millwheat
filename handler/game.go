@@ -156,7 +156,7 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 			Production:  productionResult.Production,
 			Consumption: productionResult.Consumption,
 		},
-		Hours: time.Duration(productionResult.Hours) * time.Hour,
+		Duration: time.Duration(productionResult.Hours) * time.Hour,
 	}
 	if err := h.ProductionSvc.CreateJob(r.Context(), job); err != nil {
 		_ = storeAndSaveFlash(r, w, "error|Failed to queue your job")

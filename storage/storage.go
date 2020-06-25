@@ -18,6 +18,9 @@ type UserStorage interface {
 
 type TownStorage interface {
 	Get(ctx context.Context, id uuid.UUID) (*game.Town, error)
+	AddBuilding(ctx context.Context, townID uuid.UUID, buildingType game.BuildingType) error
+	UpgradeBuilding(ctx context.Context, townID uuid.UUID, buildingID uuid.UUID) error
+
 	WarehouseItems(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error)
 	ItemsInWarehouse(ctx context.Context, townID uuid.UUID, items []game.ItemSet) bool
 	TakeFromWarehouse(ctx context.Context, townID uuid.UUID, items []game.ItemSet) error
@@ -30,6 +33,6 @@ type ProductionStorage interface {
 	CreateJob(ctx context.Context, townID uuid.UUID, job *game.Job) error
 	UpdateJobStatus(ctx context.Context, jobID uuid.UUID, status game.JobStatus) error
 
-	ProductJobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job
+	JobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job
 	ReshuffleQueue(ctx context.Context, townID uuid.UUID)
 }

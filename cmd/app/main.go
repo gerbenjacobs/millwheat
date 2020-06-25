@@ -133,8 +133,8 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 			ID:    uuid.MustParse("272870c89e304a15924966e38a50f640"),
 			Name:  "Bobville",
 			Owner: uuid.MustParse("ecb31b8a898e4049a9c7d18ea59a72a0"),
-			Buildings: []game.TownBuilding{
-				{
+			Buildings: map[uuid.UUID]game.TownBuilding{
+				uuid.MustParse("cb7d9231-ac10-4b69-8a82-fda38d8e65b9"): {
 					ID:           uuid.MustParse("cb7d9231-ac10-4b69-8a82-fda38d8e65b9"),
 					Type:         game.BuildingMill,
 					CurrentLevel: 3,
@@ -147,31 +147,24 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 			ID:    uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"),
 			Name:  "Northbrook",
 			Owner: uuid.MustParse("273d94bb1cf7408da4c85feda0eeff75"),
-			Buildings: []game.TownBuilding{
-				{
+			Buildings: map[uuid.UUID]game.TownBuilding{
+				uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"): {
 					ID:           uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"),
 					Type:         game.BuildingFarm,
 					CurrentLevel: 2,
+					CreatedAt:    time.Now().UTC().Add(-2 * time.Minute),
 				},
-				{
+				uuid.MustParse("578ad258-e913-4831-998a-2983dd4920ed"): {
 					ID:           uuid.MustParse("578ad258-e913-4831-998a-2983dd4920ed"),
 					Type:         game.BuildingMill,
 					CurrentLevel: 5,
+					CreatedAt:    time.Now().UTC().Add(-1 * time.Minute),
 				},
-				//{
-				//	ID:           uuid.MustParse("c5e9a879-b1a8-4670-9aab-73b98eb21f6b"),
-				//	Type:         game.BuildingBakery,
-				//	CurrentLevel: 1,
-				//},
-				//{
-				//	ID:           uuid.MustParse("578ad257-b1a7-4671-bba5-73b98eb21f6c"),
-				//	Type:         game.BuildingButcher,
-				//	CurrentLevel: 1,
-				//},
-				{
+				uuid.MustParse("1afb2cf0-6671-4d54-9824-c15940073ce2"): {
 					ID:           uuid.MustParse("1afb2cf0-6671-4d54-9824-c15940073ce2"),
 					Type:         game.BuildingWeaponSmith,
 					CurrentLevel: 1,
+					CreatedAt:    time.Now().UTC(),
 				},
 			},
 			CreatedAt: time.Now().Add(-5 * time.Minute),
@@ -187,19 +180,19 @@ func fakeJobs(prodSvc services.ProductionService) {
 	_ = prodSvc.CreateJob(ctx, &game.InputJob{
 		Type: game.JobTypeBuilding,
 		BuildingJob: &game.BuildingJob{
-			ID:    uuid.New(),
-			Type:  game.BuildingBakery,
-			Level: 1,
-		},
-		Hours: 5 * time.Hour,
-	})
-	_ = prodSvc.CreateJob(ctx, &game.InputJob{
-		Type: game.JobTypeBuilding,
-		BuildingJob: &game.BuildingJob{
 			ID:    uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"),
 			Type:  game.BuildingFarm,
 			Level: 3,
 		},
-		Hours: 2 * time.Hour,
+		Duration: 20 * time.Second,
+	})
+	_ = prodSvc.CreateJob(ctx, &game.InputJob{
+		Type: game.JobTypeBuilding,
+		BuildingJob: &game.BuildingJob{
+			ID:    uuid.New(),
+			Type:  game.BuildingBakery,
+			Level: 1,
+		},
+		Duration: 20 * time.Second,
 	})
 }

@@ -36,7 +36,7 @@ type InputJob struct {
 	Type        JobType
 	ProductJob  *ProductJob
 	BuildingJob *BuildingJob
-	Hours       time.Duration
+	Duration    time.Duration
 }
 
 type ProductJob struct {
@@ -51,7 +51,7 @@ type BuildingJob struct {
 }
 
 func (j *Job) String() string {
-	return fmt.Sprintf("[%s] (%d) %s  -- %s %s %s -- will take: %s", j.ID, j.Type, j.Status, j.QueuedAt(), j.StartedAt(), j.Completed.Format(time.RFC3339), j.Hours)
+	return fmt.Sprintf("[%s] (%d) %s  -- %s %s %s -- will take: %s", j.ID, j.Type, j.Status, j.QueuedAt(), j.StartedAt(), j.Completed.Format(time.RFC3339), j.Duration)
 }
 
 func (js JobStatus) String() string {
@@ -99,7 +99,7 @@ func (j *Job) StartedAt() string {
 }
 
 func (j *Job) ReadyAt() string {
-	ready := j.Started.Add(j.Hours)
+	ready := j.Started.Add(j.Duration)
 	return ready.Format("2006-01-02 15:04")
 }
 
@@ -113,7 +113,7 @@ func (j *Job) Progress() int {
 		return 100
 	}
 
-	p := 100 - (completed/j.Hours.Minutes())*100
+	p := 100 - (completed/j.Duration.Minutes())*100
 	return int(math.Floor(p))
 }
 

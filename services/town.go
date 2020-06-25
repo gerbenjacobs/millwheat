@@ -21,6 +21,14 @@ func (t *TownSvc) Town(ctx context.Context, id uuid.UUID) (*game.Town, error) {
 	return t.storage.Get(ctx, id)
 }
 
+func (t *TownSvc) AddBuilding(ctx context.Context, buildingType game.BuildingType) error {
+	return t.storage.AddBuilding(ctx, TownFromContext(ctx), buildingType)
+}
+
+func (t *TownSvc) UpgradeBuilding(ctx context.Context, buildingID uuid.UUID) error {
+	return t.storage.UpgradeBuilding(ctx, TownFromContext(ctx), buildingID)
+}
+
 func (t *TownSvc) Warehouse(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error) {
 	return t.storage.WarehouseItems(ctx, townID)
 }
