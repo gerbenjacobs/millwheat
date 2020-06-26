@@ -133,6 +133,21 @@ func (b Building) CreateProduct(product ItemID, quantity, level int) (*Productio
 	}, nil
 }
 
+func CreateBuilding(building Building, level int) (*ProductionResult, error) {
+	costs, ok := building.BuildCosts[level]
+	if !ok {
+		return nil, errors.New("no build costs found for this level")
+	}
+
+	return &ProductionResult{
+		Consumption: []ItemSet{
+			{ItemID: "plank", Quantity: costs.Planks},
+			{ItemID: "stone", Quantity: costs.Stones},
+		},
+		Hours: 1,
+	}, nil
+}
+
 func (b Building) ConsumesList() []ItemID {
 	var consume = make(map[ItemID]struct{})
 	for i, set := range b.Production {

@@ -11,7 +11,7 @@ import (
 )
 
 func (h *Handler) Tick(ctx context.Context) {
-	t := time.NewTicker(1 * time.Minute)
+	t := time.NewTicker(10 * time.Second)
 
 	tickHandler := func() {
 		h.evaluateJobs(ctx)

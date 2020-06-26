@@ -69,9 +69,6 @@ func main() {
 	townSvc := services.NewTownSvc(storage.NewTownRepository(tempTowns))
 	prodSvc := services.NewProductionSvc(storage.NewProductionRepository())
 
-	// TEMP
-	fakeJobs(prodSvc)
-
 	// set up the route handler and server
 	app := handler.New(handler.Dependencies{
 		Auth:    auth,

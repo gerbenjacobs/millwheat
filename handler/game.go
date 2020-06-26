@@ -156,7 +156,7 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 			Production:  productionResult.Production,
 			Consumption: productionResult.Consumption,
 		},
-		Duration: time.Duration(productionResult.Hours) * time.Hour,
+		Duration: time.Duration(productionResult.Hours) * time.Minute,
 	}
 	if err := h.ProductionSvc.CreateJob(r.Context(), job); err != nil {
 		_ = storeAndSaveFlash(r, w, "error|Failed to queue your job")
@@ -173,5 +173,62 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	}
 
 	_ = storeAndSaveFlash(r, w, "success|Item has been queued")
+	http.Redirect(w, r, "/game", http.StatusFound)
+}
+
+func (h *Handler) queue(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	err := r.ParseForm()
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	formBuilding, err := strconv.Atoi(r.Form.Get("building"))
+	buildingType := game.BuildingType(formBuilding)
+	building, ok := gamedata.Buildings[buildingType]
+	if err != nil || !ok {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+	// get production requirements for building
+	productionResult, err := game.CreateBuilding(building, 1)
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to create your building")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+	// check if items are in warehouse
+	if !h.TownSvc.ItemsInWarehouse(r.Context(), productionResult.Consumption) {
+		_ = storeAndSaveFlash(r, w, "error|You don't have the required products; "+gamedata.ItemSetSlice(productionResult.Consumption).String())
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// extract consumption items from warehouse
+	if err := h.TownSvc.TakeFromWarehouse(r.Context(), productionResult.Consumption); err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to gather items needed")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// queue building job
+	if err := h.ProductionSvc.CreateJob(r.Context(), &game.InputJob{
+		Type: game.JobTypeBuilding,
+		BuildingJob: &game.BuildingJob{
+			ID:    uuid.New(),
+			Type:  buildingType,
+			Level: 1,
+		},
+		Duration: 20 * time.Second,
+	}); err != nil {
+		// TODO rollback warehouse items
+		_ = storeAndSaveFlash(r, w, "error|Failed to queue your building")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	_ = storeAndSaveFlash(r, w, "success|Building has been queued")
 	http.Redirect(w, r, "/game", http.StatusFound)
 }

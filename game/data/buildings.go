@@ -95,6 +95,13 @@ var Buildings = game.Buildings{
 				},
 			},
 		},
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {2, 6},
+			3: {3, 15},
+			4: {5, 50},
+			5: {7, 75},
+		},
 	},
 	game.BuildingBakery: {
 		Name:        "Bakery",
@@ -129,11 +136,25 @@ var Buildings = game.Buildings{
 				},
 			},
 		},
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {2, 6},
+			3: {3, 15},
+			4: {5, 50},
+			5: {7, 75},
+		},
 	},
 	game.BuildingPigFarm: {
 		Name:        "Pig Farm",
 		Description: "Raises pigs from piglets with love and a lot of wheat!",
 		Image:       "https://www.knightsandmerchants.net/application/files/8815/6823/6449/swinefarm.png",
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {2, 6},
+			3: {3, 15},
+			4: {5, 50},
+			5: {7, 75},
+		},
 	},
 	game.BuildingButcher: {
 		Name:        "Butcher",
@@ -189,6 +210,13 @@ var Buildings = game.Buildings{
 				},
 			},
 		},
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {2, 6},
+			3: {3, 15},
+			4: {5, 50},
+			5: {7, 75},
+		},
 	},
 	game.BuildingWeaponSmith: {
 		Name:        "Weapon Smith",
@@ -231,6 +259,13 @@ var Buildings = game.Buildings{
 					1: 1,
 				},
 			},
+		},
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {2, 6},
+			3: {3, 15},
+			4: {5, 50},
+			5: {7, 75},
 		},
 	},
 }
