@@ -65,6 +65,9 @@ func (h *Handler) game(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 	tmpl, _ := template.New("layout.html").Funcs(funcs).ParseFiles(
 		"handler/templates/layout.html",
 		"handler/templates/game.html",
+		"handler/templates/partials/town.html",
+		"handler/templates/partials/warehouse.html",
+		"handler/templates/partials/buildqueue.html",
 	)
 
 	if err := tmpl.Execute(w, GameData{

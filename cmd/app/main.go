@@ -10,18 +10,17 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
+	"github.com/mattn/go-colorable"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 
 	"github.com/gerbenjacobs/millwheat/game"
 	"github.com/gerbenjacobs/millwheat/game/data"
 	"github.com/gerbenjacobs/millwheat/handler"
 	"github.com/gerbenjacobs/millwheat/services"
 	"github.com/gerbenjacobs/millwheat/storage"
-
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/mattn/go-colorable"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 func main() {
@@ -47,7 +46,7 @@ func main() {
 	}
 
 	// load game data
-	tempTowns, tempItems, tempBuildings := tempGameData()
+	tempTowns := tempTowns()
 
 	// set up and check database
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s?parseTime=true", c.DB.User, c.DB.Password, c.DB.Database))
@@ -77,8 +76,8 @@ func main() {
 		TownSvc:       townSvc,
 		ProductionSvc: prodSvc,
 
-		Items:     tempItems,
-		Buildings: tempBuildings,
+		Items:     data.Items,
+		Buildings: data.Buildings,
 	})
 	srv := &http.Server{
 		Addr:         c.Svc.Address,
@@ -124,7 +123,7 @@ type Configuration struct {
 	}
 }
 
-func tempGameData() (game.Towns, game.Items, game.Buildings) {
+func tempTowns() game.Towns {
 	tempTowns := map[uuid.UUID]*game.Town{
 		uuid.MustParse("272870c89e304a15924966e38a50f640"): {
 			ID:    uuid.MustParse("272870c89e304a15924966e38a50f640"),
@@ -153,14 +152,14 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 				},
 				uuid.MustParse("578ad258-e913-4831-998a-2983dd4920ed"): {
 					ID:           uuid.MustParse("578ad258-e913-4831-998a-2983dd4920ed"),
-					Type:         game.BuildingMill,
-					CurrentLevel: 5,
+					Type:         game.BuildingButcher,
+					CurrentLevel: 1,
 					CreatedAt:    time.Now().UTC().Add(-1 * time.Minute),
 				},
 				uuid.MustParse("1afb2cf0-6671-4d54-9824-c15940073ce2"): {
 					ID:           uuid.MustParse("1afb2cf0-6671-4d54-9824-c15940073ce2"),
-					Type:         game.BuildingWeaponSmith,
-					CurrentLevel: 1,
+					Type:         game.BuildingPigFarm,
+					CurrentLevel: 5,
 					CreatedAt:    time.Now().UTC(),
 				},
 			},
@@ -169,27 +168,5 @@ func tempGameData() (game.Towns, game.Items, game.Buildings) {
 		},
 	}
 
-	return tempTowns, data.Items, data.Buildings
-}
-
-func fakeJobs(prodSvc services.ProductionService) {
-	ctx := context.WithValue(context.Background(), services.CtxKeyTownID, uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"))
-	_ = prodSvc.CreateJob(ctx, &game.InputJob{
-		Type: game.JobTypeBuilding,
-		BuildingJob: &game.BuildingJob{
-			ID:    uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"),
-			Type:  game.BuildingFarm,
-			Level: 3,
-		},
-		Duration: 20 * time.Second,
-	})
-	_ = prodSvc.CreateJob(ctx, &game.InputJob{
-		Type: game.JobTypeBuilding,
-		BuildingJob: &game.BuildingJob{
-			ID:    uuid.New(),
-			Type:  game.BuildingBakery,
-			Level: 1,
-		},
-		Duration: 20 * time.Second,
-	})
+	return tempTowns
 }

@@ -1,0 +1,74 @@
+{{ define "partial-buildqueue" }}
+    <div class="row" id="buildqueue">
+        <div class="col">
+            <div class="card is-full-height" style="background: #d3d3d7;">
+                <nav id="queue_tabs" class="tabs" role="tablist">
+                    <a id="queue_tab_queue" aria-controls="queue_pane_queue" class="active">Build queue</a>
+                    <a id="queue_tab_building" aria-controls="queue_pane_building">New building</a>
+                </nav>
+                <div id="queue_pane_queue" class="queue_pane" role="tabpanel" tabindex="0"
+                     aria-labelledby="queue_tab_queue">
+                    <!-- Queue -->
+                    <p>
+                        At your current level you can have up to <strong>3</strong> buildings in the queue.
+                    </p>
+                    {{ range $buildingQ := .QueuedBuildings }}
+                        {{ $building := index $.Buildings $buildingQ.BuildingJob.Type }}
+                        <hr class="divider">
+                        <div class="row">
+                            <div class="col text-center">
+                                <img src="{{ $building.Image }}" alt="{{ $building.Name }}">
+                            </div>
+                            <div class="col text-center">
+                                <h4>{{ $building.Name }}</h4>
+                                Level {{ $buildingQ.BuildingJob.Level }}
+                            </div>
+                            <div class="col text-center">
+                                <p><strong>Status</strong><br>{{ $buildingQ.Status }}</p>
+                                {{ if $buildingQ.IsActive }}
+                                    <p><strong>Started at</strong><br>{{ $buildingQ.StartedAt }}</p>
+                                    <p><strong>Ready at</strong><br>{{ $buildingQ.ReadyAt }}</p>
+                                {{ else }}
+                                    <p><strong>Queued at</strong><br>{{ $buildingQ.QueuedAt }}</p>
+                                {{ end }}
+                                {{ $buildingQ.Progress }}%
+                                <progress max="100" value="{{ $buildingQ.Progress }}"></progress>
+                            </div>
+                            <div class="col text-center">
+                                <a href="#" class="button error">Cancel</a>
+                            </div>
+                        </div>
+                    {{ else }}
+                        <p>
+                            No buildings queued.
+                        </p>
+                    {{ end }}
+                </div>
+
+                <div id="queue_pane_building" class="queue_pane" role="tabpanel" tabindex="0"
+                     aria-labelledby="queue_tab_building" hidden>
+                    <!-- Form -->
+                    <p>
+                        At your current level you can have up to <strong>10</strong> buildings.
+                        You currently have <strong>{{ len .Town.Buildings }}</strong>.
+                    </p>
+                    <form action="/game/queue" method="post">
+                        <p>
+                            <label for="building">Building:</label>
+                            <select name="building" id="building">
+                                {{ range $key, $building := .Buildings }}
+                                    <option value="{{ $key }}">
+                                        {{ $building.Name }} &mdash;
+                                        {{ $cost := index $building.BuildCosts 1 }}
+                                        {{ $cost.Stones }}x stones, {{ $cost.Planks }}x planks
+                                    </option>
+                                {{ end }}
+                            </select>
+                        </p>
+                        <input type="submit" value="Build">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}

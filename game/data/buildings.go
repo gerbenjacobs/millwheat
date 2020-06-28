@@ -10,7 +10,7 @@ var Buildings = game.Buildings{
 	game.BuildingFarm: {
 		Name:        "Farm",
 		Description: "Grows wheat in the fields.",
-		Image:       "https://www.knightsandmerchants.net/application/files/7515/6823/6441/farm.png",
+		Image:       "/images/buildings/farm.png",
 		Production: map[game.ItemSet][]game.ItemSet{
 			{ItemID: "wheat"}: {},
 		},
@@ -18,8 +18,9 @@ var Buildings = game.Buildings{
 		LastCollection: time.Now().Add(-2 * time.Hour).UTC(),
 		Mechanics: []game.BuildingMechanic{
 			{
-				Type: game.MechanicOutput,
-				Name: "Wheat per hour",
+				Type:   game.MechanicOutput,
+				Name:   "Wheat per hour",
+				ItemID: "wheat",
 				Levels: map[int]int{
 					1: 1,
 					2: 2,
@@ -38,7 +39,7 @@ var Buildings = game.Buildings{
 	game.BuildingMill: {
 		Name:        "Mill",
 		Description: "Mills wheat into bags of flour.",
-		Image:       "https://www.knightsandmerchants.net/application/files/9415/6823/6446/mill.png",
+		Image:       "/images/buildings/mill.png",
 		Production: map[game.ItemSet][]game.ItemSet{
 			{ItemID: "flour"}: {{ItemID: "wheat", IsConsumption: true}},
 		},
@@ -106,7 +107,7 @@ var Buildings = game.Buildings{
 	game.BuildingBakery: {
 		Name:        "Bakery",
 		Description: "Bakes bread for the soldiers using flour from the mill.",
-		Image:       "https://www.knightsandmerchants.net/application/files/1215/6823/6439/bakery.png",
+		Image:       "/images/buildings/bakery.png",
 		Production: map[game.ItemSet][]game.ItemSet{
 			{ItemID: "bread"}: {{ItemID: "flour", IsConsumption: true}},
 		},
@@ -147,7 +148,41 @@ var Buildings = game.Buildings{
 	game.BuildingPigFarm: {
 		Name:        "Pig Farm",
 		Description: "Raises pigs from piglets with love and a lot of wheat!",
-		Image:       "https://www.knightsandmerchants.net/application/files/8815/6823/6449/swinefarm.png",
+		Image:       "/images/buildings/pigfarm.png",
+		Production: map[game.ItemSet][]game.ItemSet{
+			{ItemID: "pig"}: {{ItemID: "wheat", IsConsumption: true}},
+		},
+		Mechanics: []game.BuildingMechanic{
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Pigs per hour",
+				ItemID: "pig",
+				Levels: map[int]int{
+					1: 1,
+					2: 2,
+					3: 3,
+					4: 4,
+					5: 4,
+				},
+			},
+			{
+				Type:   game.MechanicEfficiency,
+				Name:   "Pigs per wheat",
+				ItemID: "wheat",
+				Levels: map[int]int{
+					1:  1,
+					2:  1,
+					3:  1,
+					4:  1,
+					5:  2,
+					6:  2,
+					7:  2,
+					8:  3,
+					9:  3,
+					10: 3,
+				},
+			},
+		},
 		BuildCosts: map[int]game.BuildingCost{
 			1: {1, 3},
 			2: {2, 6},
@@ -159,7 +194,7 @@ var Buildings = game.Buildings{
 	game.BuildingButcher: {
 		Name:        "Butcher",
 		Description: "Turns pigs into meat and hide.",
-		Image:       "https://www.knightsandmerchants.net/application/files/2215/6823/6440/butchers.png",
+		Image:       "/images/buildings/butcher.png",
 		Production: map[game.ItemSet][]game.ItemSet{
 			{ItemID: "pig", IsConsumption: true}: {{ItemID: "hide"}, {ItemID: "meat"}},
 		},
@@ -221,7 +256,7 @@ var Buildings = game.Buildings{
 	game.BuildingWeaponSmith: {
 		Name:        "Weapon Smith",
 		Description: "Use iron bars and planks to create weaponry.",
-		Image:       "https://www.knightsandmerchants.net/application/files/8615/6823/6451/weaponsworkshop.png",
+		Image:       "/images/buildings/weaponsmith.png",
 		Production: map[game.ItemSet][]game.ItemSet{
 			{ItemID: "sword"}: {
 				{ItemID: "iron_bar", IsConsumption: true},

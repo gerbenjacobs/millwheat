@@ -1,0 +1,49 @@
+{{ define "partial-warehouse" }}
+    <div class="row" id="warehouse">
+        <div class="col">
+            <div class="card">
+                <header>
+                    <h3>Warehouse</h3>
+                </header>
+                <div class="row">
+                    <div class="col">
+                        <table class="striped">
+                            <thead>
+                            <tr>
+                                <th style="width: 4rem;">&nbsp;</th>
+                                <th>Name</th>
+                                <th style="width: 4rem;">Quantity</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{ range $itemID := .WarehouseList }}
+                            {{ $item := index $.Items $itemID }}
+                            <tr>
+                                <td><img src="{{ $item.Image }}" alt="{{ $item.Name }}"></td>
+                                <td>{{ $item.Name }}</td>
+                                <td>{{ with (index $.Warehouse $item.ID) }} {{ .Quantity }} {{ end }}</td>
+                            </tr>
+                            {{ if hasItemID $.WarehouseBreakpoints $item.ID }}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col">
+                        <table class="striped">
+                            <thead>
+                            <tr>
+                                <th style="width: 4rem;">&nbsp;</th>
+                                <th>Name</th>
+                                <th style="width: 4rem;">Quantity</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{ end }}
+                            {{ end }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}
