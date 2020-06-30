@@ -145,10 +145,11 @@ func tempTowns() game.Towns {
 			Owner: uuid.MustParse("273d94bb1cf7408da4c85feda0eeff75"),
 			Buildings: map[uuid.UUID]game.TownBuilding{
 				uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"): {
-					ID:           uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"),
-					Type:         game.BuildingFarm,
-					CurrentLevel: 2,
-					CreatedAt:    time.Now().UTC().Add(-2 * time.Minute),
+					ID:             uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"),
+					Type:           game.BuildingFarm,
+					CurrentLevel:   2,
+					LastCollection: time.Now().Add(-2 * time.Hour).UTC(),
+					CreatedAt:      time.Now().UTC().Add(-2 * time.Minute),
 				},
 				uuid.MustParse("578ad258-e913-4831-998a-2983dd4920ed"): {
 					ID:           uuid.MustParse("578ad258-e913-4831-998a-2983dd4920ed"),

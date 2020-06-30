@@ -9,6 +9,7 @@ import (
 	"github.com/patrickmn/go-cache"
 
 	"github.com/gerbenjacobs/millwheat/game"
+	"github.com/gerbenjacobs/millwheat/game/data"
 )
 
 type TownRepository struct {
@@ -19,8 +20,8 @@ type TownRepository struct {
 // defaultWarehouse returns a new map, to prevent pointer issues
 func defaultWarehouse() map[game.ItemID]game.WarehouseItem {
 	return map[game.ItemID]game.WarehouseItem{
-		"stone":    {ItemID: "stone", Quantity: 5},
-		"plank":    {ItemID: "plank", Quantity: 12},
+		"stone":    {ItemID: "stone", Quantity: 100},
+		"plank":    {ItemID: "plank", Quantity: 100},
 		"wheat":    {ItemID: "wheat", Quantity: 10},
 		"flour":    {ItemID: "flour", Quantity: 4},
 		"iron_bar": {ItemID: "iron_bar", Quantity: 4},
@@ -36,11 +37,26 @@ func NewTownRepository(towns map[uuid.UUID]*game.Town) *TownRepository {
 }
 
 func (t *TownRepository) Get(_ context.Context, id uuid.UUID) (*game.Town, error) {
-	if town, ok := t.towns[id]; ok {
-		return town, nil
+	town, ok := t.towns[id]
+	if !ok {
+		return nil, errors.New("town not found")
 	}
 
-	return nil, errors.New("town not found")
+	// calculate current production for generator buildings
+	for id, tb := range town.Buildings {
+		b, ok := data.Buildings[tb.Type]
+		if !ok || !b.IsGenerator {
+			continue
+		}
+		cp, err := tb.GetCurrentProduction(b)
+		if err != nil {
+			continue
+		}
+		tb.CurrentProduction = cp.Quantity
+		town.Buildings[id] = tb
+	}
+
+	return town, nil
 }
 
 func (t *TownRepository) AddBuilding(ctx context.Context, townID uuid.UUID, buildingType game.BuildingType) error {
@@ -50,10 +66,11 @@ func (t *TownRepository) AddBuilding(ctx context.Context, townID uuid.UUID, buil
 	}
 
 	tb := game.TownBuilding{
-		ID:           uuid.New(),
-		Type:         buildingType,
-		CurrentLevel: 1,
-		CreatedAt:    time.Now().UTC(),
+		ID:             uuid.New(),
+		Type:           buildingType,
+		CurrentLevel:   1,
+		LastCollection: time.Now().UTC(),
+		CreatedAt:      time.Now().UTC(),
 	}
 	town.Buildings[tb.ID] = tb
 	return nil

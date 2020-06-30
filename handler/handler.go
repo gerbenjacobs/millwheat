@@ -53,6 +53,7 @@ func New(dependencies Dependencies) *Handler {
 	r.GET("/game", h.AuthMiddleware(h.game))
 	r.POST("/game/produce", h.AuthMiddleware(h.produce))
 	r.POST("/game/queue", h.AuthMiddleware(h.queue))
+	r.POST("/game/collect", h.AuthMiddleware(h.collect))
 
 	r.GET("/help/*page", h.helpPages)
 

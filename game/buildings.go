@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -23,22 +24,23 @@ type BuildingType int
 
 // TownBuilding represents an instance of a building, located in a town
 type TownBuilding struct {
-	ID           uuid.UUID
-	Type         BuildingType
-	CurrentLevel int
-	CreatedAt    time.Time
+	ID                uuid.UUID
+	Type              BuildingType
+	CurrentLevel      int
+	LastCollection    time.Time
+	CurrentProduction int
+	CreatedAt         time.Time
 }
 
 // Building contains all the data for buildings in the game
 type Building struct {
-	Name           string
-	Description    string
-	Image          string
-	Production     map[ItemSet][]ItemSet
-	IsGenerator    bool
-	LastCollection time.Time
-	Mechanics      []BuildingMechanic
-	BuildCosts     map[int]BuildingCost
+	Name        string
+	Description string
+	Image       string
+	Production  map[ItemSet][]ItemSet
+	IsGenerator bool
+	Mechanics   []BuildingMechanic
+	BuildCosts  map[int]BuildingCost
 }
 
 // BuildingCost contains the cost in stones and planks
@@ -131,6 +133,55 @@ func (b Building) CreateProduct(product ItemID, quantity, level int) (*Productio
 		Production:  produce,
 		Hours:       int(hours),
 	}, nil
+}
+
+// GeneratedProduct picks the itemID that's produced by a generator building
+func (b Building) GeneratedProduct() (ItemID, error) {
+	if !b.IsGenerator {
+		return "", errors.New("building is not a generator")
+	}
+	for item, subItems := range b.Production {
+		if !item.IsConsumption {
+			return item.ItemID, nil
+		}
+
+		for _, subItem := range subItems {
+			if !subItem.IsConsumption {
+				return subItem.ItemID, nil
+			}
+		}
+	}
+
+	return "", errors.New("no generated product found")
+}
+
+func (tb TownBuilding) GetCurrentProduction(b Building) (*ItemSet, error) {
+	t := time.Since(tb.LastCollection)
+	// TODO: replace minutes with hours again
+	hours := int(math.Floor(t.Minutes()))
+	if hours < 1 {
+		return nil, errors.New("building not ready for collection")
+	}
+
+	if !b.IsGenerator {
+		logrus.Warnf("tried to collect from building that is not a generator: %s %s", tb.ID, tb.Type)
+		return nil, errors.New("building is not a generator that can be collected from")
+	}
+
+	itemID, err := b.GeneratedProduct()
+	if err != nil {
+		logrus.Errorf("building %s has no generated product", tb.Type)
+		return nil, errors.New("building has no generated product")
+	}
+
+	return &ItemSet{
+		ItemID:   itemID,
+		Quantity: hours * b.MaxProduction(itemID, tb.CurrentLevel),
+	}, nil
+}
+
+func (tb TownBuilding) LastCollectionAt() string {
+	return tb.LastCollection.Format("2006-01-02 15:04")
 }
 
 func CreateBuilding(building Building, level int) (*ProductionResult, error) {

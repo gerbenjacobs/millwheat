@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -233,5 +234,60 @@ func (h *Handler) queue(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	}
 
 	_ = storeAndSaveFlash(r, w, "success|Building has been queued")
+	http.Redirect(w, r, "/game", http.StatusFound)
+}
+
+func (h *Handler) collect(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	err := r.ParseForm()
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// get town
+	currentTown, err := h.TownSvc.Town(r.Context(), services.TownFromContext(r.Context()))
+	if err != nil {
+		logrus.Errorf("failed to get current town: %v", err)
+		_ = storeAndSaveFlash(r, w, "error|Failed to load your town")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// get building
+	var townBuilding *game.TownBuilding
+	var building *game.Building
+	for _, tb := range currentTown.Buildings {
+		if r.Form.Get("building") == tb.ID.String() {
+			townB := tb
+			b := h.Buildings[tb.Type]
+
+			townBuilding = &townB
+			building = &b
+		}
+	}
+	if townBuilding == nil || building == nil {
+		_ = storeAndSaveFlash(r, w, "info|This building is not found")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	cp, err := townBuilding.GetCurrentProduction(*building)
+	if err != nil {
+		logrus.Warnf("failed to collect resources for %s: %s", townBuilding.ID, err)
+		_ = storeAndSaveFlash(r, w, "error|Can't collect items: "+err.Error())
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+	if err = h.TownSvc.GiveToWarehouse(r.Context(), []game.ItemSet{*cp}); err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to put items in warehouse")
+		http.Redirect(w, r, "/game", http.StatusFound)
+	}
+
+	townBuilding.CurrentProduction = 0
+	townBuilding.LastCollection = time.Now().UTC()
+	currentTown.Buildings[townBuilding.ID] = *townBuilding
+
+	_ = storeAndSaveFlash(r, w, fmt.Sprintf("success|%d %s has been stored in your warehouse", cp.Quantity, cp.ItemID))
 	http.Redirect(w, r, "/game", http.StatusFound)
 }

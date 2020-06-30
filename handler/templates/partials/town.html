@@ -62,6 +62,12 @@
                                     <td>{{ index $mechanic.Levels $townBuilding.CurrentLevel }}</td>
                                 </tr>
                             {{ end }}
+                            {{ if $building.IsGenerator }}
+                                <tr>
+                                    <th>Last collected</th>
+                                    <td>{{ $townBuilding.LastCollectionAt }}</td>
+                                </tr>
+                            {{ end }}
                         </table>
                     </div>
                     <div id="tb_{{ $townBuilding.ID }}_production" class="tb_pane_{{ $townBuilding.ID }}"
@@ -106,7 +112,8 @@
                                         {{ if $building.IsGenerator }}
                                             <td>
                                                 <input id="{{ $townBuilding.ID }}_{{ $item.ID }}" type="number"
-                                                       name="quantity" value="46" disabled>
+                                                       name="quantity" value="{{ $townBuilding.CurrentProduction }}"
+                                                       disabled>
                                             </td>
                                             <td>
                                                 <input type="submit" value="Collect">

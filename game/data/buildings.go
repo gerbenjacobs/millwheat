@@ -1,8 +1,6 @@
 package data
 
 import (
-	"time"
-
 	"github.com/gerbenjacobs/millwheat/game"
 )
 
@@ -14,8 +12,7 @@ var Buildings = game.Buildings{
 		Production: map[game.ItemSet][]game.ItemSet{
 			{ItemID: "wheat"}: {},
 		},
-		IsGenerator:    true,
-		LastCollection: time.Now().Add(-2 * time.Hour).UTC(),
+		IsGenerator: true,
 		Mechanics: []game.BuildingMechanic{
 			{
 				Type:   game.MechanicOutput,
