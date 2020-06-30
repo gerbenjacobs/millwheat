@@ -291,3 +291,55 @@ func (h *Handler) collect(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	_ = storeAndSaveFlash(r, w, fmt.Sprintf("success|%d %s has been stored in your warehouse", cp.Quantity, cp.ItemID))
 	http.Redirect(w, r, "/game", http.StatusFound)
 }
+
+func (h *Handler) cancel(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	err := r.ParseForm()
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	id := r.Form.Get("job")
+	if id == "" {
+		id = r.Form.Get("building")
+	}
+	if id == "" {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	jobID, err := uuid.Parse(id)
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// Collect returnable resources
+	resources, err := h.ProductionSvc.RevertJobResources(r.Context(), jobID)
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to get your items back: "+err.Error())
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// Cancel job && reshuffle
+	if err = h.ProductionSvc.CancelJob(r.Context(), jobID); err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to cancel your job: "+err.Error())
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+	h.ProductionSvc.ReshuffleQueue(r.Context())
+
+	// Apply resources to warehouse
+	if err = h.TownSvc.GiveToWarehouse(r.Context(), resources); err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to put your items in the warehouse: "+err.Error())
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	_ = storeAndSaveFlash(r, w, "success|Job has been cancelled")
+	http.Redirect(w, r, "/game", http.StatusFound)
+}

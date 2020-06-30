@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/gerbenjacobs/millwheat/game"
+	"github.com/gerbenjacobs/millwheat/game/data"
 )
 
 type ProductionRepository struct {
@@ -70,6 +71,62 @@ func (p *ProductionRepository) UpdateJobStatus(ctx context.Context, jobID uuid.U
 	p.jobs[jobID] = job
 
 	return nil
+}
+
+func (p *ProductionRepository) CancelJob(ctx context.Context, townID uuid.UUID, jobID uuid.UUID) error {
+	jobs, ok := p.jobsByTown[townID]
+	if !ok {
+		return errors.New("jobs not found for town")
+	}
+
+	var found bool
+	var newJobs []uuid.UUID
+	for _, job := range jobs {
+		if job == jobID {
+			found = true
+		} else {
+			newJobs = append(newJobs, job)
+		}
+	}
+
+	if !found {
+		return errors.New("no matching job found in this town")
+	}
+
+	job, ok := p.jobs[jobID]
+	if !ok {
+		return errors.New("jobs not found")
+	}
+
+	if job.Status == game.JobStatusCompleted {
+		return errors.New("job is already completed")
+	}
+
+	delete(p.jobs, jobID)
+	p.jobsByTown[townID] = newJobs
+
+	return nil
+}
+
+func (p *ProductionRepository) RevertJobResources(ctx context.Context, townID uuid.UUID, jobID uuid.UUID) ([]game.ItemSet, error) {
+	job, ok := p.jobs[jobID]
+	if !ok {
+		return nil, errors.New("job not found")
+	}
+
+	var items []game.ItemSet
+	switch job.Type {
+	case game.JobTypeProduct:
+		items = job.ProductJob.Consumption
+	case game.JobTypeBuilding:
+		building, err := game.CreateBuilding(data.Buildings[job.BuildingJob.Type], job.BuildingJob.Level)
+		if err != nil {
+			return nil, errors.New("failed to find building")
+		}
+		items = building.Consumption
+	}
+
+	return items, nil
 }
 
 func (p *ProductionRepository) JobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job {

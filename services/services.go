@@ -37,6 +37,8 @@ type ProductionService interface {
 	QueuedBuildings(ctx context.Context) []*game.Job
 	CreateJob(ctx context.Context, job *game.InputJob) error
 	UpdateJobStatus(ctx context.Context, jobID uuid.UUID, status game.JobStatus) error
+	CancelJob(ctx context.Context, jobID uuid.UUID) error
+	RevertJobResources(ctx context.Context, jobID uuid.UUID) ([]game.ItemSet, error)
 
 	JobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job
 	ReshuffleQueue(ctx context.Context)

@@ -32,6 +32,8 @@ type ProductionStorage interface {
 	QueuedBuildings(ctx context.Context, townID uuid.UUID) []*game.Job
 	CreateJob(ctx context.Context, townID uuid.UUID, job *game.Job) error
 	UpdateJobStatus(ctx context.Context, jobID uuid.UUID, status game.JobStatus) error
+	CancelJob(ctx context.Context, townID uuid.UUID, jobID uuid.UUID) error
+	RevertJobResources(ctx context.Context, townID uuid.UUID, jobID uuid.UUID) ([]game.ItemSet, error)
 
 	JobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job
 	ReshuffleQueue(ctx context.Context, townID uuid.UUID)

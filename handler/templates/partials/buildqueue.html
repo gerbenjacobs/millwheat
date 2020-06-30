@@ -35,7 +35,10 @@
                                 <progress max="100" value="{{ $buildingQ.Progress }}"></progress>
                             </div>
                             <div class="col text-center">
-                                <a href="#" class="button error">Cancel</a>
+                                <form action="/game/cancel" method="post">
+                                    <input type="hidden" name="building" value="{{ $buildingQ.ID }}">
+                                    <input type="submit" class="button error" value="Cancel">
+                                </form>
                             </div>
                         </div>
                     {{ else }}

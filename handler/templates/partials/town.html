@@ -139,7 +139,10 @@
                                 <hr class="divider">
                                 <div class="row reverse">
                                     <div class="col-4 text-right">
-                                        <input type="button" class="button small error" value="Cancel">
+                                        <form action="/game/cancel" method="post">
+                                            <input type="hidden" name="job" value="{{ $job.ID }}">
+                                            <input type="submit" class="button small error" value="Cancel">
+                                        </form>
                                     </div>
                                     <div class="col-8">
                                         <strong>Consuming</strong><br>

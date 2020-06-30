@@ -57,6 +57,14 @@ func (p *ProductionSvc) UpdateJobStatus(ctx context.Context, jobID uuid.UUID, st
 	return p.storage.UpdateJobStatus(ctx, jobID, status)
 }
 
+func (p *ProductionSvc) CancelJob(ctx context.Context, jobID uuid.UUID) error {
+	return p.storage.CancelJob(ctx, TownFromContext(ctx), jobID)
+}
+
+func (p *ProductionSvc) RevertJobResources(ctx context.Context, jobID uuid.UUID) ([]game.ItemSet, error) {
+	return p.storage.RevertJobResources(ctx, TownFromContext(ctx), jobID)
+}
+
 func (p *ProductionSvc) JobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job {
 	return p.storage.JobsCompleted(ctx)
 }
