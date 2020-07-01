@@ -17,6 +17,8 @@ const (
 	BuildingPigFarm
 	BuildingButcher
 	BuildingWeaponSmith
+	BuildingForestry
+	BuildingSawMill
 )
 
 type Buildings map[BuildingType]Building
@@ -174,9 +176,13 @@ func (tb TownBuilding) GetCurrentProduction(b Building) (*ItemSet, error) {
 		return nil, errors.New("building has no generated product")
 	}
 
+	quantity := hours * b.MaxProduction(itemID, tb.CurrentLevel)
+	if quantity < 1 {
+		return nil, errors.New("no produce ready for collection")
+	}
 	return &ItemSet{
 		ItemID:   itemID,
-		Quantity: hours * b.MaxProduction(itemID, tb.CurrentLevel),
+		Quantity: quantity,
 	}, nil
 }
 
@@ -196,6 +202,20 @@ func CreateBuilding(building Building, level int) (*ProductionResult, error) {
 			{ItemID: "stone", Quantity: costs.Stones},
 		},
 		Hours: 1,
+	}, nil
+}
+
+func RecoverBuilding(building Building, level int) (*ProductionResult, error) {
+	costs, ok := building.BuildCosts[level]
+	if !ok {
+		return nil, errors.New("no build costs found for this level")
+	}
+
+	return &ProductionResult{
+		Consumption: []ItemSet{
+			{ItemID: "plank", Quantity: costs.Planks / 2},
+			{ItemID: "stone", Quantity: costs.Stones / 2},
+		},
 	}, nil
 }
 
@@ -241,4 +261,23 @@ func (b Building) ProducesList() []ItemID {
 		return produceList[i] < produceList[j]
 	})
 	return produceList
+}
+
+func (bt BuildingType) String() string {
+	switch bt {
+	case BuildingFarm:
+		return "Farm"
+	case BuildingMill:
+		return "Mill"
+	case BuildingBakery:
+		return "Bakery"
+	case BuildingPigFarm:
+		return "Pig Farm"
+	case BuildingButcher:
+		return "Butcher"
+	case BuildingWeaponSmith:
+		return "Weapon Smith"
+	default:
+		return "Unknown building"
+	}
 }

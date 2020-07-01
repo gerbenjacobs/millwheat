@@ -180,24 +180,15 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	http.Redirect(w, r, "/game", http.StatusFound)
 }
 
-func (h *Handler) queue(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := r.ParseForm()
-	if err != nil {
-		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
-		http.Redirect(w, r, "/game", http.StatusFound)
-		return
-	}
-
-	formBuilding, err := strconv.Atoi(r.Form.Get("building"))
-	buildingType := game.BuildingType(formBuilding)
+func (h *Handler) upgradeBuilding(w http.ResponseWriter, r *http.Request, buildingID *uuid.UUID, buildingType game.BuildingType, level int) {
 	building, ok := gamedata.Buildings[buildingType]
-	if err != nil || !ok {
+	if !ok {
 		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
 		http.Redirect(w, r, "/game", http.StatusFound)
 		return
 	}
 	// get production requirements for building
-	productionResult, err := game.CreateBuilding(building, 1)
+	productionResult, err := game.CreateBuilding(building, level)
 	if err != nil {
 		_ = storeAndSaveFlash(r, w, "error|Failed to create your building")
 		http.Redirect(w, r, "/game", http.StatusFound)
@@ -217,15 +208,21 @@ func (h *Handler) queue(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 		return
 	}
 
+	// set or create building id
+	bID := uuid.New()
+	if buildingID != nil {
+		bID = *buildingID
+	}
+
 	// queue building job
 	if err := h.ProductionSvc.CreateJob(r.Context(), &game.InputJob{
 		Type: game.JobTypeBuilding,
 		BuildingJob: &game.BuildingJob{
-			ID:    uuid.New(),
+			ID:    bID,
 			Type:  buildingType,
-			Level: 1,
+			Level: level,
 		},
-		Duration: 20 * time.Second,
+		Duration: 20 * time.Second, // TODO: fix time
 	}); err != nil {
 		// TODO rollback warehouse items
 		_ = storeAndSaveFlash(r, w, "error|Failed to queue your building")
@@ -235,6 +232,21 @@ func (h *Handler) queue(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 
 	_ = storeAndSaveFlash(r, w, "success|Building has been queued")
 	http.Redirect(w, r, "/game", http.StatusFound)
+}
+
+func (h *Handler) queue(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	err := r.ParseForm()
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	formBuilding, err := strconv.Atoi(r.Form.Get("building"))
+	buildingType := game.BuildingType(formBuilding)
+
+	// do the building upgrading work
+	h.upgradeBuilding(w, r, nil, buildingType, 1)
 }
 
 func (h *Handler) collect(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -341,5 +353,108 @@ func (h *Handler) cancel(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 	}
 
 	_ = storeAndSaveFlash(r, w, "success|Job has been cancelled")
+	http.Redirect(w, r, "/game", http.StatusFound)
+}
+
+func (h *Handler) upgrade(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	err := r.ParseForm()
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	id := r.Form.Get("building")
+	if id == "" {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	buildingID, err := uuid.Parse(id)
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// get town
+	currentTown, err := h.TownSvc.Town(r.Context(), services.TownFromContext(r.Context()))
+	if err != nil {
+		logrus.Errorf("failed to get current town: %v", err)
+		_ = storeAndSaveFlash(r, w, "error|Failed to load your town")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	building, ok := currentTown.Buildings[buildingID]
+	if !ok {
+		_ = storeAndSaveFlash(r, w, "error|Building not found")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// do the building upgrading work
+	h.upgradeBuilding(w, r, &buildingID, building.Type, building.CurrentLevel+1)
+}
+
+func (h *Handler) demolish(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	err := r.ParseForm()
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	id := r.Form.Get("building")
+	if id == "" {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	buildingID, err := uuid.Parse(id)
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// fetch recovered resources
+	currentTown, err := h.TownSvc.Town(r.Context(), services.TownFromContext(r.Context()))
+	if err != nil {
+		logrus.Errorf("failed to get current town: %v", err)
+		error500(w, errors.New("failed to load town"))
+		return
+	}
+	tb, ok := currentTown.Buildings[buildingID]
+	if !ok {
+		_ = storeAndSaveFlash(r, w, "error|Failed to locate building")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// demolish building
+	if err = h.TownSvc.RemoveBuilding(r.Context(), buildingID); err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to demolish your building")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// give recovered resources to warehouse
+	b, ok := gamedata.Buildings[tb.Type]
+	pr, err := game.RecoverBuilding(b, tb.CurrentLevel)
+	if !ok || err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to recover some of the buildings resources")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+	if err = h.TownSvc.GiveToWarehouse(r.Context(), pr.Consumption); err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to put your items in the warehouse: "+err.Error())
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	_ = storeAndSaveFlash(r, w, "success|Building has been demolished")
 	http.Redirect(w, r, "/game", http.StatusFound)
 }

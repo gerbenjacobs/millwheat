@@ -60,7 +60,7 @@
                             <label for="building">Building:</label>
                             <select name="building" id="building">
                                 {{ range $key, $building := .Buildings }}
-                                    <option value="{{ $key }}">
+                                    <option value="{{ printf "%d" $key }}">
                                         {{ $building.Name }} &mdash;
                                         {{ $cost := index $building.BuildCosts 1 }}
                                         {{ $cost.Stones }}x stones, {{ $cost.Planks }}x planks

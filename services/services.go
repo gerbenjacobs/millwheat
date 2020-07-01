@@ -25,6 +25,7 @@ type TownService interface {
 	Town(ctx context.Context, id uuid.UUID) (*game.Town, error)
 	AddBuilding(ctx context.Context, buildingType game.BuildingType) error
 	UpgradeBuilding(ctx context.Context, buildingID uuid.UUID) error
+	RemoveBuilding(ctx context.Context, buildingID uuid.UUID) error
 
 	Warehouse(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error)
 	ItemsInWarehouse(ctx context.Context, items []game.ItemSet) bool

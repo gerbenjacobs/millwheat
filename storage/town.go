@@ -89,14 +89,32 @@ func (t *TownRepository) UpgradeBuilding(ctx context.Context, townID uuid.UUID, 
 			break
 		}
 	}
-	tb := game.TownBuilding{
-		ID:           buildingID,
-		Type:         cb.Type,
-		CurrentLevel: cb.CurrentLevel + 1,
+
+	cb.CurrentLevel = cb.CurrentLevel + 1
+	town.Buildings[buildingID] = cb
+	t.towns[townID] = town
+	return nil
+}
+
+func (t *TownRepository) RemoveBuilding(ctx context.Context, townID uuid.UUID, buildingID uuid.UUID) error {
+	town, err := t.Get(ctx, townID)
+	if err != nil {
+		return err
 	}
 
-	town.Buildings[tb.ID] = tb
-	t.towns[townID] = town
+	var found bool
+	for _, b := range town.Buildings {
+		if b.ID == buildingID {
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return errors.New("building not found for town")
+	}
+
+	delete(town.Buildings, buildingID)
 	return nil
 }
 

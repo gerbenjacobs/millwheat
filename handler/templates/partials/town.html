@@ -203,8 +203,15 @@
                             </tbody>
                         </table>
                         <footer class="is-right">
-                            <a href="#" class="button small success">Upgrade</a>
-                            <a href="#" class="button small error">Demolish</a>
+                            <form action="/game/upgrade" method="post">
+                                <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
+                                <input type="submit" value="Upgrade" class="button small success">
+                            </form>
+
+                            <form action="/game/demolish" method="post">
+                                <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
+                                <input type="submit" value="Demolish" class="button small error">
+                            </form>
                         </footer>
                     </div>
                 </div>
