@@ -46,7 +46,7 @@ func main() {
 	}
 
 	// load game data
-	tempTowns := tempTowns()
+	_ = tempTowns()
 
 	// set up and check database
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s?parseTime=true", c.DB.User, c.DB.Password, c.DB.Database))
@@ -65,14 +65,16 @@ func main() {
 		log.Fatalf("failed to start user service: %v", err)
 	}
 
-	townSvc := services.NewTownSvc(storage.NewTownRepository(tempTowns))
-	prodSvc := services.NewProductionSvc(storage.NewProductionRepository())
+	townSvc := services.NewTownSvc(storage.NewTownRepository(db))
+	prodSvc := services.NewProductionSvc(storage.NewProductionRepository(db))
+	gameSvc := services.NewGameSvc(townSvc, prodSvc, data.Items, data.Buildings)
 
 	// set up the route handler and server
 	app := handler.New(handler.Dependencies{
 		Auth:    auth,
 		UserSvc: userSvc,
 
+		GameSvc:       gameSvc,
 		TownSvc:       townSvc,
 		ProductionSvc: prodSvc,
 

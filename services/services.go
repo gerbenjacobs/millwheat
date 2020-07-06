@@ -21,11 +21,21 @@ type UserService interface {
 	Update(ctx context.Context, user *app.User) (*app.User, error)
 }
 
+type GameService interface {
+	Produce(ctx context.Context, buildingID uuid.UUID, set game.ItemSet) error
+	Collect(ctx context.Context, buildingID uuid.UUID) error
+	AddBuilding(ctx context.Context, buildingType game.BuildingType) error
+	UpgradeBuilding(ctx context.Context, buildingType game.BuildingType) error
+	DemolishBuilding(ctx context.Context, buildingID uuid.UUID) error
+	CancelJob(ctx context.Context, jobID uuid.UUID) error
+}
+
 type TownService interface {
 	Town(ctx context.Context, id uuid.UUID) (*game.Town, error)
 	AddBuilding(ctx context.Context, buildingType game.BuildingType) error
 	UpgradeBuilding(ctx context.Context, buildingID uuid.UUID) error
 	RemoveBuilding(ctx context.Context, buildingID uuid.UUID) error
+	BuildingCollected(ctx context.Context, buildingID uuid.UUID) error
 
 	Warehouse(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error)
 	ItemsInWarehouse(ctx context.Context, items []game.ItemSet) bool

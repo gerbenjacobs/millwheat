@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -96,82 +95,28 @@ func (h *Handler) produce(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		return
 	}
 
-	// get town
-	currentTown, err := h.TownSvc.Town(r.Context(), services.TownFromContext(r.Context()))
+	// parse form data
+	buildingID, err := uuid.Parse(r.Form.Get("building"))
 	if err != nil {
-		logrus.Errorf("failed to get current town: %v", err)
-		error500(w, errors.New("failed to load town"))
-		return
-	}
-
-	// get building
-	var townBuilding *game.TownBuilding
-	var building *game.Building
-	for _, tb := range currentTown.Buildings {
-		if r.Form.Get("building") == tb.ID.String() {
-			townB := tb
-			b := h.Buildings[tb.Type]
-
-			townBuilding = &townB
-			building = &b
-		}
-	}
-	if townBuilding == nil || building == nil {
-		_ = storeAndSaveFlash(r, w, "info|This building is not found")
+		_ = storeAndSaveFlash(r, w, "error|Invalid building provided")
 		http.Redirect(w, r, "/game", http.StatusFound)
 		return
 	}
-
-	// check if product has any effect in this building
 	qty, err := strconv.Atoi(r.Form.Get("quantity"))
 	if err != nil || qty <= 0 {
 		_ = storeAndSaveFlash(r, w, "info|You have supplied an invalid number")
 		http.Redirect(w, r, "/game", http.StatusFound)
 		return
 	}
-
-	product := game.ItemID(r.Form.Get("product"))
-	if !building.CanDealWith(product) {
-		_ = storeAndSaveFlash(r, w, "info|This product can not be made here")
-		http.Redirect(w, r, "/game", http.StatusFound)
-		return
+	itemSet := game.ItemSet{
+		ItemID:   game.ItemID(r.Form.Get("product")),
+		Quantity: qty,
 	}
 
 	// produce item
-	productionResult, err := building.CreateProduct(product, qty, townBuilding.CurrentLevel)
-	if err != nil {
-		_ = storeAndSaveFlash(r, w, "error|Failed to create your product")
-		http.Redirect(w, r, "/game", http.StatusFound)
-		return
-	}
-
-	// check if items are in warehouse
-	if !h.TownSvc.ItemsInWarehouse(r.Context(), productionResult.Consumption) {
-		_ = storeAndSaveFlash(r, w, "error|You don't have the required products; "+gamedata.ItemSetSlice(productionResult.Consumption).String())
-		http.Redirect(w, r, "/game", http.StatusFound)
-		return
-	}
-
-	// queue job
-	job := &game.InputJob{
-		Type: game.JobTypeProduct,
-		ProductJob: &game.ProductJob{
-			BuildingID:  townBuilding.ID,
-			Production:  productionResult.Production,
-			Consumption: productionResult.Consumption,
-		},
-		Duration: time.Duration(productionResult.Hours) * time.Minute,
-	}
-	if err := h.ProductionSvc.CreateJob(r.Context(), job); err != nil {
-		_ = storeAndSaveFlash(r, w, "error|Failed to queue your job")
-		http.Redirect(w, r, "/game", http.StatusFound)
-		return
-	}
-
-	// extract consumption items from warehouse
-	if err := h.TownSvc.TakeFromWarehouse(r.Context(), productionResult.Consumption); err != nil {
-		// TODO undo job without returning items
-		_ = storeAndSaveFlash(r, w, "error|Failed to gather items needed")
+	if err := h.GameSvc.Produce(r.Context(), buildingID, itemSet); err != nil {
+		logrus.Errorf("failed to produce: %s", err)
+		_ = storeAndSaveFlash(r, w, "error|Failed to produce your item: "+err.Error())
 		http.Redirect(w, r, "/game", http.StatusFound)
 		return
 	}
@@ -257,50 +202,22 @@ func (h *Handler) collect(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		return
 	}
 
-	// get town
-	currentTown, err := h.TownSvc.Town(r.Context(), services.TownFromContext(r.Context()))
+	// parse form data
+	buildingID, err := uuid.Parse(r.Form.Get("building"))
 	if err != nil {
-		logrus.Errorf("failed to get current town: %v", err)
-		_ = storeAndSaveFlash(r, w, "error|Failed to load your town")
+		_ = storeAndSaveFlash(r, w, "error|Invalid building provided")
 		http.Redirect(w, r, "/game", http.StatusFound)
 		return
 	}
 
-	// get building
-	var townBuilding *game.TownBuilding
-	var building *game.Building
-	for _, tb := range currentTown.Buildings {
-		if r.Form.Get("building") == tb.ID.String() {
-			townB := tb
-			b := h.Buildings[tb.Type]
-
-			townBuilding = &townB
-			building = &b
-		}
-	}
-	if townBuilding == nil || building == nil {
-		_ = storeAndSaveFlash(r, w, "info|This building is not found")
+	// collect
+	if err := h.GameSvc.Collect(r.Context(), buildingID); err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to collect: "+err.Error())
 		http.Redirect(w, r, "/game", http.StatusFound)
 		return
 	}
 
-	cp, err := townBuilding.GetCurrentProduction(*building)
-	if err != nil {
-		logrus.Warnf("failed to collect resources for %s: %s", townBuilding.ID, err)
-		_ = storeAndSaveFlash(r, w, "error|Can't collect items: "+err.Error())
-		http.Redirect(w, r, "/game", http.StatusFound)
-		return
-	}
-	if err = h.TownSvc.GiveToWarehouse(r.Context(), []game.ItemSet{*cp}); err != nil {
-		_ = storeAndSaveFlash(r, w, "error|Failed to put items in warehouse")
-		http.Redirect(w, r, "/game", http.StatusFound)
-	}
-
-	townBuilding.CurrentProduction = 0
-	townBuilding.LastCollection = time.Now().UTC()
-	currentTown.Buildings[townBuilding.ID] = *townBuilding
-
-	_ = storeAndSaveFlash(r, w, fmt.Sprintf("success|%d %s has been stored in your warehouse", cp.Quantity, cp.ItemID))
+	_ = storeAndSaveFlash(r, w, "success|Items have been stored in your warehouse")
 	http.Redirect(w, r, "/game", http.StatusFound)
 }
 

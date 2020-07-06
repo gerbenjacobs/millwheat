@@ -24,6 +24,7 @@ type Dependencies struct {
 	UserSvc services.UserService
 
 	// game services
+	GameSvc       services.GameService
 	TownSvc       services.TownService
 	ProductionSvc services.ProductionService
 

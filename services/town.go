@@ -33,6 +33,10 @@ func (t *TownSvc) RemoveBuilding(ctx context.Context, buildingID uuid.UUID) erro
 	return t.storage.RemoveBuilding(ctx, TownFromContext(ctx), buildingID)
 }
 
+func (t *TownSvc) BuildingCollected(ctx context.Context, buildingID uuid.UUID) error {
+	return t.storage.BuildingCollected(ctx, TownFromContext(ctx), buildingID)
+}
+
 func (t *TownSvc) Warehouse(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error) {
 	return t.storage.WarehouseItems(ctx, townID)
 }

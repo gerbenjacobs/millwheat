@@ -2,7 +2,9 @@ package storage
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,9 +14,15 @@ import (
 	"github.com/gerbenjacobs/millwheat/game/data"
 )
 
+var (
+	CacheDurationTown      = 6 * time.Hour
+	CacheDurationWarehouse = 6 * time.Hour
+)
+
 type TownRepository struct {
-	towns          map[uuid.UUID]*game.Town
+	db             *sql.DB
 	warehouseCache *cache.Cache
+	townCache      *cache.Cache
 }
 
 // defaultWarehouse returns a new map, to prevent pointer issues
@@ -28,18 +36,22 @@ func defaultWarehouse() map[game.ItemID]game.WarehouseItem {
 	}
 }
 
-func NewTownRepository(towns map[uuid.UUID]*game.Town) *TownRepository {
-	c := cache.New(cache.NoExpiration, 0)
-	for id := range towns {
-		c.Set(id.String(), defaultWarehouse(), cache.NoExpiration)
-	}
-	return &TownRepository{towns: towns, warehouseCache: c}
+func NewTownRepository(db *sql.DB) *TownRepository {
+	c := cache.New(CacheDurationTown, time.Hour)
+	tc := cache.New(CacheDurationWarehouse, time.Hour)
+
+	return &TownRepository{db: db, townCache: tc, warehouseCache: c}
 }
 
-func (t *TownRepository) Get(_ context.Context, id uuid.UUID) (*game.Town, error) {
-	town, ok := t.towns[id]
+func (t *TownRepository) Get(ctx context.Context, id uuid.UUID) (town *game.Town, err error) {
+	tc, ok := t.townCache.Get(id.String())
 	if !ok {
-		return nil, errors.New("town not found")
+		town, err = t.getTownFromDatabase(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		town, _ = tc.(*game.Town)
 	}
 
 	// calculate current production for generator buildings
@@ -60,11 +72,6 @@ func (t *TownRepository) Get(_ context.Context, id uuid.UUID) (*game.Town, error
 }
 
 func (t *TownRepository) AddBuilding(ctx context.Context, townID uuid.UUID, buildingType game.BuildingType) error {
-	town, err := t.Get(ctx, townID)
-	if err != nil {
-		return err
-	}
-
 	tb := game.TownBuilding{
 		ID:             uuid.New(),
 		Type:           buildingType,
@@ -72,50 +79,53 @@ func (t *TownRepository) AddBuilding(ctx context.Context, townID uuid.UUID, buil
 		LastCollection: time.Now().UTC(),
 		CreatedAt:      time.Now().UTC(),
 	}
-	town.Buildings[tb.ID] = tb
-	return nil
+
+	return t.addBuildingToDatabase(ctx, townID, tb)
+}
+
+func (t *TownRepository) doesHaveBuilding(ctx context.Context, townID uuid.UUID, buildingID uuid.UUID) (*game.TownBuilding, error) {
+	town, err := t.Get(ctx, townID)
+	if err != nil {
+		return nil, fmt.Errorf("town not found: %w", err)
+	}
+
+	for _, b := range town.Buildings {
+		if b.ID == buildingID {
+			return &b, nil
+		}
+	}
+
+	return nil, errors.New("building not found")
 }
 
 func (t *TownRepository) UpgradeBuilding(ctx context.Context, townID uuid.UUID, buildingID uuid.UUID) error {
-	town, err := t.Get(ctx, townID)
+	cb, err := t.doesHaveBuilding(ctx, townID, buildingID)
 	if err != nil {
 		return err
-	}
-
-	var cb game.TownBuilding
-	for _, b := range town.Buildings {
-		if b.ID == buildingID {
-			cb = b
-			break
-		}
 	}
 
 	cb.CurrentLevel = cb.CurrentLevel + 1
-	town.Buildings[buildingID] = cb
-	t.towns[townID] = town
-	return nil
+	return t.upgradeBuildingInDatabase(ctx, townID, *cb)
 }
 
 func (t *TownRepository) RemoveBuilding(ctx context.Context, townID uuid.UUID, buildingID uuid.UUID) error {
-	town, err := t.Get(ctx, townID)
+	_, err := t.doesHaveBuilding(ctx, townID, buildingID)
 	if err != nil {
 		return err
 	}
 
-	var found bool
-	for _, b := range town.Buildings {
-		if b.ID == buildingID {
-			found = true
-			break
-		}
+	return t.removeBuildingInDatabase(ctx, townID, buildingID)
+}
+
+func (t *TownRepository) BuildingCollected(ctx context.Context, townID uuid.UUID, buildingID uuid.UUID) error {
+	cb, err := t.doesHaveBuilding(ctx, townID, buildingID)
+	if err != nil {
+		return err
 	}
 
-	if !found {
-		return errors.New("building not found for town")
-	}
-
-	delete(town.Buildings, buildingID)
-	return nil
+	cb.LastCollection = time.Now().UTC()
+	cb.CurrentProduction = 0
+	return t.updateBuildingCollection(ctx, townID, *cb)
 }
 
 func (t *TownRepository) WarehouseItems(_ context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error) {
@@ -170,8 +180,7 @@ func (t *TownRepository) TakeFromWarehouse(ctx context.Context, townID uuid.UUID
 		}
 	}
 
-	t.warehouseCache.Set(townID.String(), wh, cache.NoExpiration)
-	return nil
+	return t.updateWarehouseInDatabase(ctx, townID, wh)
 }
 
 func (t *TownRepository) GiveToWarehouse(ctx context.Context, townID uuid.UUID, items []game.ItemSet) error {
@@ -192,6 +201,5 @@ func (t *TownRepository) GiveToWarehouse(ctx context.Context, townID uuid.UUID, 
 		}
 	}
 
-	t.warehouseCache.Set(townID.String(), wh, cache.NoExpiration)
-	return nil
+	return t.updateWarehouseInDatabase(ctx, townID, wh)
 }

@@ -41,7 +41,7 @@ func (h *Handler) AuthMiddleware(f httprouter.Handle) httprouter.Handle {
 
 func customLoggingMiddleware(handler http.Handler) http.Handler {
 	return handlers.CustomLoggingHandler(os.Stdout, handler, func(_ io.Writer, p handlers.LogFormatterParams) {
-		if p.StatusCode < 200 || p.StatusCode > 299 && p.StatusCode != 304 {
+		if p.StatusCode < 200 || p.StatusCode > 304 {
 			logrus.Debugf("%d %s \"%s %s\" %d \"%s\"", p.StatusCode, p.Request.Proto, p.Request.Method, p.URL.String(), p.Size, p.Request.Header.Get("User-Agent"))
 		}
 	})
