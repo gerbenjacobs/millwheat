@@ -14,6 +14,7 @@ type Town struct {
 	Owner     uuid.UUID
 	Name      string
 	Buildings map[uuid.UUID]TownBuilding
+	Warehouse map[ItemID]WarehouseItem
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

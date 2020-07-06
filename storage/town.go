@@ -15,14 +15,12 @@ import (
 )
 
 var (
-	CacheDurationTown      = 6 * time.Hour
-	CacheDurationWarehouse = 6 * time.Hour
+	CacheDurationTown = 6 * time.Hour
 )
 
 type TownRepository struct {
-	db             *sql.DB
-	warehouseCache *cache.Cache
-	townCache      *cache.Cache
+	db        *sql.DB
+	townCache *cache.Cache
 }
 
 // defaultWarehouse returns a new map, to prevent pointer issues
@@ -38,9 +36,8 @@ func defaultWarehouse() map[game.ItemID]game.WarehouseItem {
 
 func NewTownRepository(db *sql.DB) *TownRepository {
 	c := cache.New(CacheDurationTown, time.Hour)
-	tc := cache.New(CacheDurationWarehouse, time.Hour)
 
-	return &TownRepository{db: db, townCache: tc, warehouseCache: c}
+	return &TownRepository{db: db, townCache: c}
 }
 
 func (t *TownRepository) Get(ctx context.Context, id uuid.UUID) (town *game.Town, err error) {
@@ -128,13 +125,12 @@ func (t *TownRepository) BuildingCollected(ctx context.Context, townID uuid.UUID
 	return t.updateBuildingCollection(ctx, townID, *cb)
 }
 
-func (t *TownRepository) WarehouseItems(_ context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error) {
-	wh, ok := t.warehouseCache.Get(townID.String())
-	if !ok {
-		return nil, errors.New("warehouse not found")
+func (t *TownRepository) WarehouseItems(ctx context.Context, townID uuid.UUID) (map[game.ItemID]game.WarehouseItem, error) {
+	town, err := t.Get(ctx, townID)
+	if err != nil {
+		return nil, err
 	}
-
-	return wh.(map[game.ItemID]game.WarehouseItem), nil
+	return town.Warehouse, nil
 }
 
 func (t *TownRepository) ItemsInWarehouse(ctx context.Context, townID uuid.UUID, items []game.ItemSet) bool {

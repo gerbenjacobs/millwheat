@@ -36,9 +36,9 @@ func (t *TownRepository) getTownFromDatabase(ctx context.Context, id uuid.UUID) 
 		buildings = b
 	}
 	town.Buildings = buildings
+	town.Warehouse = warehouse
 
 	t.townCache.Set(id.String(), town, CacheDurationTown)
-	t.warehouseCache.Set(id.String(), warehouse, CacheDurationWarehouse)
 	return town, nil
 }
 
@@ -80,8 +80,10 @@ func (t *TownRepository) updateWarehouseInDatabase(ctx context.Context, townID u
 		return err
 	}
 
-	t.warehouseCache.Set(townID.String(), wh, CacheDurationWarehouse)
-
+	// update town struct and save to cache
+	town, _ := t.Get(ctx, townID)
+	town.Warehouse = wh
+	t.townCache.Set(townID.String(), town, CacheDurationTown)
 	return nil
 }
 
