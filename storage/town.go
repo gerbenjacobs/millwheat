@@ -185,8 +185,8 @@ func (t *TownRepository) GiveToWarehouse(ctx context.Context, townID uuid.UUID, 
 		return err
 	}
 	for _, is := range items {
-		i, ok := wh[is.ItemID]
-		if ok && i.Quantity+is.Quantity > 100 { // TODO fix hardcode warehouse upper limit
+		i, _ := wh[is.ItemID]
+		if i.Quantity+is.Quantity > 100 { // TODO fix hardcode warehouse upper limit
 			// set quantity to upper limit
 			is.Quantity = 100 - i.Quantity
 		}
