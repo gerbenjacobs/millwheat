@@ -82,6 +82,7 @@ func (t *TownRepository) updateWarehouseInDatabase(ctx context.Context, townID u
 
 	// update town struct and save to cache
 	town, _ := t.Get(ctx, townID)
+	town.UpdatedAt = time.Now().UTC()
 	town.Warehouse = wh
 	t.townCache.Set(townID.String(), town, CacheDurationTown)
 	return nil
