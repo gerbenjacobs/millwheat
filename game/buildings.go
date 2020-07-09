@@ -2,23 +2,28 @@ package game
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
+//go:generate stringer -linecomment -trimprefix=Building -type=BuildingType
 const (
 	BuildingFarm BuildingType = iota
 	BuildingMill
 	BuildingBakery
-	BuildingPigFarm
+	BuildingPigFarm // Pig Farm
 	BuildingButcher
-	BuildingWeaponSmith
+	BuildingWeaponSmith // Weapon Smith
 	BuildingForestry
-	BuildingSawMill
+	BuildingSawMill // Saw Mill
+	BuildingQuarry
+	BuildingTannery
 )
 
 type Buildings map[BuildingType]Building
@@ -39,7 +44,7 @@ type Building struct {
 	Name        string
 	Description string
 	Image       string
-	Production  map[ItemSet][]ItemSet
+	Production  map[ItemSet]ItemSetSlice
 	IsGenerator bool
 	Mechanics   []BuildingMechanic
 	BuildCosts  map[int]BuildingCost
@@ -58,10 +63,13 @@ type ItemSet struct {
 	IsConsumption bool
 }
 
+// ItemSetSlice is a container for itemset slices used mainly for String() functions
+type ItemSetSlice []ItemSet
+
 // ProductionResult contains calculated values for producing an item
 type ProductionResult struct {
-	Consumption []ItemSet
-	Production  []ItemSet
+	Consumption ItemSetSlice
+	Production  ItemSetSlice
 	Hours       int
 }
 
@@ -76,8 +84,8 @@ func (b Building) CanDealWith(id ItemID) bool {
 }
 
 func (b Building) CreateProduct(product ItemID, quantity, level int) (*ProductionResult, error) {
-	var consume []ItemSet
-	var produce []ItemSet
+	var consume ItemSetSlice
+	var produce ItemSetSlice
 	var isConsumable = false
 	for item, subItems := range b.Production {
 		if item.ItemID == product {
@@ -197,7 +205,7 @@ func CreateBuilding(building Building, level int) (*ProductionResult, error) {
 	}
 
 	return &ProductionResult{
-		Consumption: []ItemSet{
+		Consumption: ItemSetSlice{
 			{ItemID: "plank", Quantity: costs.Planks},
 			{ItemID: "stone", Quantity: costs.Stones},
 		},
@@ -212,7 +220,7 @@ func RecoverBuilding(building Building, level int) (*ProductionResult, error) {
 	}
 
 	return &ProductionResult{
-		Consumption: []ItemSet{
+		Consumption: ItemSetSlice{
 			{ItemID: "plank", Quantity: costs.Planks / 2},
 			{ItemID: "stone", Quantity: costs.Stones / 2},
 		},
@@ -263,21 +271,15 @@ func (b Building) ProducesList() []ItemID {
 	return produceList
 }
 
-func (bt BuildingType) String() string {
-	switch bt {
-	case BuildingFarm:
-		return "Farm"
-	case BuildingMill:
-		return "Mill"
-	case BuildingBakery:
-		return "Bakery"
-	case BuildingPigFarm:
-		return "Pig Farm"
-	case BuildingButcher:
-		return "Butcher"
-	case BuildingWeaponSmith:
-		return "Weapon Smith"
-	default:
-		return "Unknown building"
+func (is ItemSet) String() string {
+	return fmt.Sprintf("%dx %s", is.Quantity, is.ItemID)
+}
+
+func (iss ItemSetSlice) String() string {
+	var s []string
+	for _, i := range iss {
+		s = append(s, fmt.Sprintf("%s", i))
 	}
+
+	return strings.Join(s, ", ")
 }

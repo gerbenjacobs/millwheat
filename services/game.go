@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 
 	"github.com/gerbenjacobs/millwheat/game"
 )
@@ -87,6 +88,9 @@ func (g *GameSvc) Produce(ctx context.Context, buildingID uuid.UUID, set game.It
 		return err
 	}
 
+	logrus.
+		WithField("town", TownFromContext(ctx)).
+		Debugf("producing %s in %s", job.ProductJob.Production, building.Name)
 	return nil
 }
 
@@ -105,6 +109,10 @@ func (g *GameSvc) Collect(ctx context.Context, buildingID uuid.UUID) error {
 	if err = g.townSvc.GiveToWarehouse(ctx, []game.ItemSet{*cp}); err != nil {
 		return err
 	}
+
+	logrus.
+		WithField("town", TownFromContext(ctx)).
+		Debugf("collecting %s in %s", cp, building.Name)
 
 	// update database
 	return g.townSvc.BuildingCollected(ctx, buildingID)

@@ -9,7 +9,7 @@ var Buildings = game.Buildings{
 		Name:        "Farm",
 		Description: "Grows wheat in the fields.",
 		Image:       "/images/buildings/farm.png",
-		Production: map[game.ItemSet][]game.ItemSet{
+		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "wheat"}: {},
 		},
 		IsGenerator: true,
@@ -37,7 +37,7 @@ var Buildings = game.Buildings{
 		Name:        "Mill",
 		Description: "Mills wheat into bags of flour.",
 		Image:       "/images/buildings/mill.png",
-		Production: map[game.ItemSet][]game.ItemSet{
+		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "flour"}: {{ItemID: "wheat", IsConsumption: true}},
 		},
 		Mechanics: []game.BuildingMechanic{
@@ -105,7 +105,7 @@ var Buildings = game.Buildings{
 		Name:        "Bakery",
 		Description: "Bakes bread for the soldiers using flour from the mill.",
 		Image:       "/images/buildings/bakery.png",
-		Production: map[game.ItemSet][]game.ItemSet{
+		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "bread"}: {{ItemID: "flour", IsConsumption: true}},
 		},
 		Mechanics: []game.BuildingMechanic{
@@ -146,7 +146,7 @@ var Buildings = game.Buildings{
 		Name:        "Pig Farm",
 		Description: "Raises pigs from piglets with love and a lot of wheat!",
 		Image:       "/images/buildings/pigfarm.png",
-		Production: map[game.ItemSet][]game.ItemSet{
+		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "pig"}: {{ItemID: "wheat", IsConsumption: true}},
 		},
 		Mechanics: []game.BuildingMechanic{
@@ -192,7 +192,7 @@ var Buildings = game.Buildings{
 		Name:        "Butcher",
 		Description: "Turns pigs into meat and hide.",
 		Image:       "/images/buildings/butcher.png",
-		Production: map[game.ItemSet][]game.ItemSet{
+		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "pig", IsConsumption: true}: {{ItemID: "hide"}, {ItemID: "meat"}},
 		},
 		Mechanics: []game.BuildingMechanic{
@@ -254,7 +254,7 @@ var Buildings = game.Buildings{
 		Name:        "Weapon Smith",
 		Description: "Use iron bars and planks to create weaponry.",
 		Image:       "/images/buildings/weaponsmith.png",
-		Production: map[game.ItemSet][]game.ItemSet{
+		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "sword"}: {
 				{ItemID: "iron_bar", IsConsumption: true},
 			},
@@ -304,7 +304,7 @@ var Buildings = game.Buildings{
 		Name:        "Forestry",
 		Description: "Nourishes the forests with saplings and takes out old wood",
 		Image:       "https://www.knightsandmerchants.net/application/files/7315/6823/6438/woodcutters.png",
-		Production: map[game.ItemSet][]game.ItemSet{
+		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "log"}: {},
 		},
 		IsGenerator: true,
@@ -332,7 +332,7 @@ var Buildings = game.Buildings{
 		Name:        "Saw Mill",
 		Description: "Saws large logs into planks on a big table saw",
 		Image:       "https://www.knightsandmerchants.net/application/files/4715/6823/6447/sawmill.png",
-		Production: map[game.ItemSet][]game.ItemSet{
+		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "plank"}: {{ItemID: "log", IsConsumption: true}},
 		},
 		Mechanics: []game.BuildingMechanic{
@@ -385,6 +385,68 @@ var Buildings = game.Buildings{
 					8:  18,
 					9:  21,
 					10: 24,
+				},
+			},
+		},
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {2, 6},
+			3: {3, 15},
+			4: {5, 50},
+			5: {7, 75},
+		},
+	},
+	game.BuildingQuarry: {
+		Name:        "Stone Quarry",
+		Description: "Quarries the mine for raw stone and turns it into stone blocks.",
+		Image:       "https://www.knightsandmerchants.net/application/files/7115/6823/6446/quarry.png",
+		IsGenerator: true,
+		Production: map[game.ItemSet]game.ItemSetSlice{
+			{ItemID: "stone"}: {},
+		},
+		Mechanics: []game.BuildingMechanic{
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Stone per hour",
+				ItemID: "stone",
+				Levels: map[int]int{
+					1: 1,
+					2: 2,
+					3: 3,
+				},
+			},
+		},
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {2, 6},
+			3: {3, 15},
+			4: {5, 50},
+			5: {7, 75},
+		},
+	},
+	game.BuildingTannery: {
+		Name:        "Tannery",
+		Description: "Tanner prepares hides for leather production.",
+		Image:       "https://www.knightsandmerchants.net/application/files/3615/6823/6450/tannery.png",
+		Production: map[game.ItemSet]game.ItemSetSlice{
+			{ItemID: "leather"}: {{ItemID: "hide", IsConsumption: true}},
+		},
+		Mechanics: []game.BuildingMechanic{
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Leather per hour",
+				ItemID: "leather",
+				Levels: map[int]int{
+					1:  1,
+					2:  2,
+					3:  4,
+					4:  6,
+					5:  8,
+					6:  10,
+					7:  12,
+					8:  12,
+					9:  12,
+					10: 12,
 				},
 			},
 		},

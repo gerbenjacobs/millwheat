@@ -1,19 +1,14 @@
 package data
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/gerbenjacobs/millwheat/game"
 )
-
-type ItemSetSlice []game.ItemSet
 
 // WarehouseOrder determines the way the warehouse will be displayed.
 var WarehouseOrder = []game.ItemID{
 	"stone", "plank", "log", "wheat", "flour", "bread", "wine",
 	"pig", "meat", "hide", "leather", "iron", "coal", "iron_bar",
-	"woodenshield", "leather_armour", "horse", "iron_platearmour", "sword", "crossbow", "lance",
+	"wooden_shield", "leather_armour", "iron_platearmour", "horse", "sword", "crossbow", "lance",
 }
 
 // WarehouseOrderBreakpoints determines when the warehouse starts a new column
@@ -58,7 +53,7 @@ var Items = game.Items{
 	},
 	"wine": game.Item{
 		ID:          "wine",
-		Name:        "Wine barrels",
+		Name:        "Wine Barrels",
 		Description: "-",
 		Image:       "/images/items/wine.png",
 	},
@@ -82,7 +77,7 @@ var Items = game.Items{
 	},
 	"leather": game.Item{
 		ID:          "leather",
-		Name:        "Leather rolls",
+		Name:        "Leather Rolls",
 		Description: "-",
 		Image:       "/images/items/leather.png",
 	},
@@ -116,8 +111,8 @@ var Items = game.Items{
 		Description: "-",
 		Image:       "/images/items/leather_armour.gif",
 	},
-	"woodenshield": game.Item{
-		ID:          "woodenshield",
+	"wooden_shield": game.Item{
+		ID:          "wooden_shield",
 		Name:        "Wooden Shield",
 		Description: "-",
 		Image:       "/images/items/woodenshield.png",
@@ -146,13 +141,4 @@ var Items = game.Items{
 		Description: "-",
 		Image:       "/images/items/lance.gif",
 	},
-}
-
-func (is ItemSetSlice) String() string {
-	var s []string
-	for _, i := range is {
-		s = append(s, fmt.Sprintf("%dx %s", i.Quantity, Items[i.ItemID].Name))
-	}
-
-	return strings.Join(s, ", ")
 }

@@ -101,17 +101,17 @@
                                 <form action="/game/produce" method="post">
                                     {{ end }}
                                     <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
-                                    <input type="hidden" name="product" value="{{ $item.ID }}">
+                                    <input type="hidden" name="product" value="{{ $item.ID.AsKey }}">
                                     <tr>
                                         <td style="width: 35%;">
-                                            <label for="{{ $townBuilding.ID }}_{{ $item.ID }}">
+                                            <label for="{{ $townBuilding.ID }}_{{ $item.ID.AsKey }}">
                                                 <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
                                                 {{ $item.Name }}
                                             </label>
                                         </td>
                                         {{ if $building.IsGenerator }}
                                             <td>
-                                                <input id="{{ $townBuilding.ID }}_{{ $item.ID }}" type="number"
+                                                <input id="{{ $townBuilding.ID }}_{{ $item.ID.AsKey }}" type="number"
                                                        name="quantity" value="{{ $townBuilding.CurrentProduction }}"
                                                        disabled>
                                             </td>
@@ -120,7 +120,7 @@
                                             </td>
                                         {{ else }}
                                             <td>
-                                                <input id="{{ $townBuilding.ID }}_{{ $item.ID }}" type="number"
+                                                <input id="{{ $townBuilding.ID }}_{{ $item.ID.AsKey }}" type="number"
                                                        name="quantity">
                                             </td>
                                             <td>

@@ -141,7 +141,7 @@ func (h *Handler) upgradeBuilding(w http.ResponseWriter, r *http.Request, buildi
 	}
 	// check if items are in warehouse
 	if !h.TownSvc.ItemsInWarehouse(r.Context(), productionResult.Consumption) {
-		_ = storeAndSaveFlash(r, w, "error|You don't have the required products; "+gamedata.ItemSetSlice(productionResult.Consumption).String())
+		_ = storeAndSaveFlash(r, w, "error|You don't have the required products; "+productionResult.Consumption.String())
 		http.Redirect(w, r, "/game", http.StatusFound)
 		return
 	}

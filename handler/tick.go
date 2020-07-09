@@ -11,6 +11,7 @@ import (
 )
 
 func (h *Handler) Tick(ctx context.Context) {
+	// TODO set this to normal value like once every minute
 	t := time.NewTicker(10 * time.Second)
 
 	tickHandler := func() {
@@ -34,9 +35,6 @@ func (h *Handler) Tick(ctx context.Context) {
 
 func (h *Handler) evaluateJobs(ctx context.Context) {
 	completedJobs := h.ProductionSvc.JobsCompleted(ctx)
-	if len(completedJobs) > 0 {
-		logrus.Debug("handling completed jobs")
-	}
 
 	for townID, jobs := range completedJobs {
 		for _, job := range jobs {
@@ -45,12 +43,18 @@ func (h *Handler) evaluateJobs(ctx context.Context) {
 			switch job.Type {
 			case game.JobTypeProduct:
 				err = h.TownSvc.GiveToWarehouse(ctx, job.ProductJob.Production)
+				logrus.
+					WithField("town", townID).
+					Debugf("created %s, took %s", job.ProductJob.Production, job.Completed.Sub(job.Started))
 			case game.JobTypeBuilding:
 				if job.BuildingJob.Level == 1 {
 					err = h.TownSvc.AddBuilding(ctx, job.BuildingJob.Type)
 				} else {
 					err = h.TownSvc.UpgradeBuilding(ctx, job.BuildingJob.ID)
 				}
+				logrus.
+					WithField("town", townID).
+					Debugf("construction of %s at level %d, took %s", job.BuildingJob.Type, job.BuildingJob.Level, job.Completed.Sub(job.Started))
 			}
 			if err != nil {
 				logrus.Errorf("failed to resolve job production: %s", err)

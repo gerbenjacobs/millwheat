@@ -41,8 +41,8 @@ type InputJob struct {
 
 type ProductJob struct {
 	BuildingID  uuid.UUID
-	Consumption []ItemSet
-	Production  []ItemSet
+	Consumption ItemSetSlice
+	Production  ItemSetSlice
 }
 type BuildingJob struct {
 	ID    uuid.UUID
