@@ -25,7 +25,7 @@ type GameService interface {
 	Produce(ctx context.Context, buildingID uuid.UUID, set game.ItemSet) error
 	Collect(ctx context.Context, buildingID uuid.UUID) error
 	AddBuilding(ctx context.Context, buildingType game.BuildingType) error
-	UpgradeBuilding(ctx context.Context, buildingType game.BuildingType) error
+	UpgradeBuilding(ctx context.Context, buildingID uuid.UUID) error
 	DemolishBuilding(ctx context.Context, buildingID uuid.UUID) error
 	CancelJob(ctx context.Context, jobID uuid.UUID) error
 }
