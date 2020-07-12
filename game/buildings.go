@@ -24,6 +24,9 @@ const (
 	BuildingSawMill // Saw Mill
 	BuildingQuarry
 	BuildingTannery
+	BuildingCoalMine // Coal Mine
+	BuildingIronMine // Iron Mine
+	BuildingBlacksmith
 )
 
 type Buildings map[BuildingType]Building
@@ -112,12 +115,18 @@ func (b Building) CreateProduct(product ItemID, quantity, level int) (*Productio
 
 	// Calculate consumption and production via efficiency along with estimated time in hours
 	for i, c := range consume {
-		e := b.MaxEfficiency(c.ItemID, level)
-		if e == 0 {
+		maxEfficiency := b.MaxEfficiency(c.ItemID, level)
+		maxConsumption := b.MaxConsumption(c.ItemID, level)
+
+		if maxEfficiency == 0 && maxConsumption == 0 {
 			consume[i].Quantity = quantity
+		} else if maxEfficiency > 0 {
+			// efficiency is applied, so consume less; divide
+			consume[i].Quantity = int(math.Ceil(float64(quantity) / float64(maxEfficiency)))
 		} else {
-			// consume less; divide
-			consume[i].Quantity = int(math.Ceil(float64(quantity) / float64(e)))
+			// efficiency has priority, then consumption is checked
+			consume[i].Quantity = maxConsumption * quantity
+
 		}
 	}
 	for i, p := range produce {
@@ -129,7 +138,6 @@ func (b Building) CreateProduct(product ItemID, quantity, level int) (*Productio
 			produce[i].Quantity = quantity * e
 		}
 	}
-
 	var div int
 	if isConsumable {
 		div = b.MaxConsumption(product, level)

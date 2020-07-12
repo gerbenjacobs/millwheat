@@ -302,8 +302,8 @@ var Buildings = game.Buildings{
 	},
 	game.BuildingForestry: {
 		Name:        "Forestry",
-		Description: "Nourishes the forests with saplings and takes out old wood",
-		Image:       "https://www.knightsandmerchants.net/application/files/7315/6823/6438/woodcutters.png",
+		Description: "Nourishes the forests with saplings and takes out old wood.",
+		Image:       "/images/buildings/woodcutter.png",
 		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "log"}: {},
 		},
@@ -330,8 +330,8 @@ var Buildings = game.Buildings{
 	},
 	game.BuildingSawMill: {
 		Name:        "Saw Mill",
-		Description: "Saws large logs into planks on a big table saw",
-		Image:       "https://www.knightsandmerchants.net/application/files/4715/6823/6447/sawmill.png",
+		Description: "Saws large logs into planks on a big table saw.",
+		Image:       "/images/buildings/sawmill.png",
 		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "plank"}: {{ItemID: "log", IsConsumption: true}},
 		},
@@ -399,7 +399,7 @@ var Buildings = game.Buildings{
 	game.BuildingQuarry: {
 		Name:        "Stone Quarry",
 		Description: "Quarries the mine for raw stone and turns it into stone blocks.",
-		Image:       "https://www.knightsandmerchants.net/application/files/7115/6823/6446/quarry.png",
+		Image:       "/images/buildings/quarry.png",
 		IsGenerator: true,
 		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "stone"}: {},
@@ -427,7 +427,7 @@ var Buildings = game.Buildings{
 	game.BuildingTannery: {
 		Name:        "Tannery",
 		Description: "Tanner prepares hides for leather production.",
-		Image:       "https://www.knightsandmerchants.net/application/files/3615/6823/6450/tannery.png",
+		Image:       "/images/buildings/tannery.png",
 		Production: map[game.ItemSet]game.ItemSetSlice{
 			{ItemID: "leather"}: {{ItemID: "hide", IsConsumption: true}},
 		},
@@ -456,6 +456,115 @@ var Buildings = game.Buildings{
 			3: {3, 15},
 			4: {5, 50},
 			5: {7, 75},
+		},
+	},
+	game.BuildingCoalMine: {
+		Name:        "Coal Mine",
+		Description: "Mines coal from under the ground.",
+		Image:       "/images/buildings/coalmine.png",
+		Production: map[game.ItemSet]game.ItemSetSlice{
+			{ItemID: "coal"}: {},
+		},
+		IsGenerator: true,
+		Mechanics: []game.BuildingMechanic{
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Coal per hour",
+				ItemID: "coal",
+				Levels: map[int]int{
+					1: 1,
+					2: 2,
+					3: 3,
+				},
+			},
+		},
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {2, 6},
+			3: {3, 15},
+			4: {5, 50},
+			5: {7, 75},
+		},
+	},
+	game.BuildingIronMine: {
+		Name:        "Iron Mine",
+		Description: "Mines iron from deep into the mountains.",
+		Image:       "/images/buildings/ironmine.png",
+		Production: map[game.ItemSet]game.ItemSetSlice{
+			{ItemID: "iron"}: {},
+		},
+		IsGenerator: true,
+		Mechanics: []game.BuildingMechanic{
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Iron per hour",
+				ItemID: "iron",
+				Levels: map[int]int{
+					1: 1,
+					2: 2,
+					3: 3,
+				},
+			},
+		},
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {2, 6},
+			3: {3, 15},
+			4: {5, 50},
+			5: {7, 75},
+		},
+	},
+	game.BuildingBlacksmith: {
+		Name:        "Blacksmith",
+		Description: "Smiths iron bars out of coal and iron ore.",
+		Image:       "/images/buildings/blacksmith.png",
+		Production: map[game.ItemSet]game.ItemSetSlice{
+			{ItemID: "iron_bar"}: {{ItemID: "coal", IsConsumption: true}, {ItemID: "iron", IsConsumption: true}},
+		},
+		Mechanics: []game.BuildingMechanic{
+			{
+				Type:   game.MechanicConsumption,
+				Name:   "Coal per iron bar",
+				ItemID: "coal",
+				Levels: map[int]int{
+					1: 4,
+					2: 3,
+					3: 2,
+					4: 1,
+					5: 1,
+				},
+			},
+			{
+				Type:   game.MechanicConsumption,
+				Name:   "Iron per iron bar",
+				ItemID: "iron",
+				Levels: map[int]int{
+					1: 2,
+					2: 2,
+					3: 2,
+					4: 1,
+					5: 1,
+				},
+			},
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Iron Bars per hour",
+				ItemID: "iron_bar",
+				Levels: map[int]int{
+					1: 1,
+					2: 1,
+					3: 2,
+					4: 2,
+					5: 3,
+				},
+			},
+		},
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {3, 6},
+			3: {5, 9},
+			4: {8, 12},
+			5: {13, 15},
 		},
 	},
 }

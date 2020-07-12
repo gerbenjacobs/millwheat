@@ -52,9 +52,9 @@ func (id ItemID) String() string {
 	case "leather":
 		return "Leather Rolls"
 	case "iron":
-		return "Iron Ore"
+		return "Iron"
 	case "coal":
-		return "Coal Ore"
+		return "Coal"
 	case "iron_bar":
 		return "Iron Bars"
 	case "horse":

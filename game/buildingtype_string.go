@@ -18,11 +18,14 @@ func _() {
 	_ = x[BuildingSawMill-7]
 	_ = x[BuildingQuarry-8]
 	_ = x[BuildingTannery-9]
+	_ = x[BuildingCoalMine-10]
+	_ = x[BuildingIronMine-11]
+	_ = x[BuildingBlacksmith-12]
 }
 
-const _BuildingType_name = "FarmMillBakeryPig FarmButcherWeapon SmithForestrySaw MillQuarryTannery"
+const _BuildingType_name = "FarmMillBakeryPig FarmButcherWeapon SmithForestrySaw MillQuarryTanneryCoal MineIron MineBlacksmith"
 
-var _BuildingType_index = [...]uint8{0, 4, 8, 14, 22, 29, 41, 49, 57, 63, 70}
+var _BuildingType_index = [...]uint8{0, 4, 8, 14, 22, 29, 41, 49, 57, 63, 70, 79, 88, 98}
 
 func (i BuildingType) String() string {
 	if i < 0 || i >= BuildingType(len(_BuildingType_index)-1) {

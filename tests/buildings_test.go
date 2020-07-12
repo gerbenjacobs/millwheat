@@ -123,6 +123,36 @@ func TestBuilding_CreateProduct(t *testing.T) {
 				Hours: 1,
 			},
 		},
+		{
+			name:     "1 iron bar for level 1 blacksmith",
+			building: gamedata.Buildings[game.BuildingBlacksmith],
+			args:     args{"iron_bar", 1, 1},
+			want: &game.ProductionResult{
+				Consumption: []game.ItemSet{
+					{ItemID: "coal", Quantity: 4, IsConsumption: true},
+					{ItemID: "iron", Quantity: 2, IsConsumption: true},
+				},
+				Production: []game.ItemSet{
+					{ItemID: "iron_bar", Quantity: 1},
+				},
+				Hours: 1,
+			},
+		},
+		{
+			name:     "2 iron bars for level 3 blacksmith",
+			building: gamedata.Buildings[game.BuildingBlacksmith],
+			args:     args{"iron_bar", 2, 3},
+			want: &game.ProductionResult{
+				Consumption: []game.ItemSet{
+					{ItemID: "coal", Quantity: 4, IsConsumption: true},
+					{ItemID: "iron", Quantity: 4, IsConsumption: true},
+				},
+				Production: []game.ItemSet{
+					{ItemID: "iron_bar", Quantity: 2},
+				},
+				Hours: 1,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
