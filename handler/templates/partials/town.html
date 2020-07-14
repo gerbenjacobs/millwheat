@@ -56,7 +56,7 @@
                                     {{ end }}
                                 </td>
                             </tr>
-                            {{ range $mechanic := $building.Mechanics }}
+                            {{ range $mechanic := $building.MechanicsList }}
                                 <tr>
                                     <th>{{ $mechanic.Name }}</th>
                                     <td>{{ index $mechanic.Levels $townBuilding.CurrentLevel }}</td>
@@ -73,7 +73,7 @@
                     <div id="tb_{{ $townBuilding.ID }}_production" class="tb_pane_{{ $townBuilding.ID }}"
                          role="tabpanel" tabindex="0" hidden>
                         <table class="striped">
-                            {{ range $mechanic := $building.Mechanics }}
+                            {{ range $mechanic := $building.MechanicsList }}
                                 <tr>
                                     <td>
                                         <strong>{{ $mechanic.Name }}</strong><br>
@@ -121,7 +121,7 @@
                                         {{ else }}
                                             <td>
                                                 <input id="{{ $townBuilding.ID }}_{{ $item.ID.AsKey }}" type="number"
-                                                       name="quantity">
+                                                       name="quantity" min="1">
                                             </td>
                                             <td>
                                                 <input type="submit" value="Produce">

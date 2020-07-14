@@ -227,6 +227,7 @@ func RecoverBuilding(building Building, level int) (*ProductionResult, error) {
 		return nil, errors.New("no build costs found for this level")
 	}
 
+	// TODO think about this set up, do we want to return floored value of division by 2?
 	return &ProductionResult{
 		Consumption: ItemSetSlice{
 			{ItemID: "plank", Quantity: costs.Planks / 2},

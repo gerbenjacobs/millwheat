@@ -1,5 +1,9 @@
 package game
 
+import (
+	"sort"
+)
+
 const (
 	MechanicConsumption MechanicType = iota
 	MechanicEfficiency
@@ -19,6 +23,17 @@ type BuildingMechanic struct {
 
 func (m MechanicType) String() string {
 	return []string{"Consumption", "Efficiency", "Output"}[m]
+}
+
+func (b Building) MechanicsList() []BuildingMechanic {
+	var mList []BuildingMechanic
+	for _, i := range b.Mechanics {
+		mList = append(mList, i)
+	}
+	sort.Slice(b.Mechanics, func(i, j int) bool {
+		return mList[i].Type < mList[j].Type
+	})
+	return mList
 }
 
 func (b Building) MaxConsumption(itemID ItemID, level int) int {
