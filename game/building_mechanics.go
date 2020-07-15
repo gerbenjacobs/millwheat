@@ -30,7 +30,10 @@ func (b Building) MechanicsList() []BuildingMechanic {
 	for _, i := range b.Mechanics {
 		mList = append(mList, i)
 	}
-	sort.Slice(b.Mechanics, func(i, j int) bool {
+	sort.SliceStable(b.Mechanics, func(i, j int) bool {
+		if mList[i].Type == mList[j].Type {
+			return mList[i].Name < mList[j].Name
+		}
 		return mList[i].Type < mList[j].Type
 	})
 	return mList
