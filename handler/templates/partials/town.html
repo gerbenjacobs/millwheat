@@ -72,6 +72,14 @@
                     </div>
                     <div id="tb_{{ $townBuilding.ID }}_production" class="tb_pane_{{ $townBuilding.ID }}"
                          role="tabpanel" tabindex="0" hidden>
+                        {{ if $townBuilding.IsWarehouse }}
+                            <table class="striped">
+                                <tr>
+                                    <th>Max items</th>
+                                    <td>100</td>
+                                </tr>
+                            </table>
+                        {{ else }}
                         <table class="striped">
                             {{ range $mechanic := $building.MechanicsList }}
                                 <tr>
@@ -94,12 +102,8 @@
                             </thead>
                             <tbody>
                             {{ range $produce, $set := $building.Production }}
-                            {{ $item := index $.Items $produce.ItemID }}
-                            {{ if $building.IsGenerator }}
-                            <form action="/game/collect" method="post">
-                                {{ else }}
-                                <form action="/game/produce" method="post">
-                                    {{ end }}
+                                {{ $item := index $.Items $produce.ItemID }}
+                                <form action="/game/{{ $building.ActionURL }}" method="post">
                                     <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
                                     <input type="hidden" name="product" value="{{ $item.ID.AsKey }}">
                                     <tr>
@@ -129,9 +133,10 @@
                                         {{ end }}
                                     </tr>
                                 </form>
-                                {{ end }}
+                            {{ end }}
                             </tbody>
                         </table>
+                            {{ end }}
 
                         {{ $queuedJobs := index $.QueuedJobs $townBuilding.ID }}
                         {{ if $queuedJobs }}

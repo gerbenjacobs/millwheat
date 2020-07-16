@@ -27,6 +27,9 @@ const (
 	BuildingCoalMine // Coal Mine
 	BuildingIronMine // Iron Mine
 	BuildingBlacksmith
+	BuildingArmourSmith // Armour Smith
+	BuildingStables
+	BuildingWarehouse
 )
 
 type Buildings map[BuildingType]Building
@@ -173,6 +176,13 @@ func (b Building) GeneratedProduct() (ItemID, error) {
 	return "", errors.New("no generated product found")
 }
 
+func (b Building) ActionURL() string {
+	if b.IsGenerator {
+		return "collect"
+	}
+	return "produce"
+}
+
 func (tb TownBuilding) GetCurrentProduction(b Building) (*ItemSet, error) {
 	t := time.Since(tb.LastCollection)
 	// TODO: replace minutes with hours again
@@ -204,6 +214,10 @@ func (tb TownBuilding) GetCurrentProduction(b Building) (*ItemSet, error) {
 
 func (tb TownBuilding) LastCollectionAt() string {
 	return tb.LastCollection.Format("2006-01-02 15:04")
+}
+
+func (tb TownBuilding) IsWarehouse() bool {
+	return tb.Type == BuildingWarehouse
 }
 
 func CreateBuilding(building Building, level int) (*ProductionResult, error) {
