@@ -119,12 +119,9 @@ func (p *ProductionRepository) CancelJob(ctx context.Context, townID uuid.UUID, 
 	}
 
 	var found bool
-	var newJobs []uuid.UUID
 	for _, job := range jobs {
 		if job == jobID {
 			found = true
-		} else {
-			newJobs = append(newJobs, job)
 		}
 	}
 

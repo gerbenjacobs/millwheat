@@ -654,7 +654,7 @@ var Buildings = game.Buildings{
 			{
 				Type:   game.MechanicConsumption,
 				Name:   "Wheat per horse",
-				ItemID: "horse",
+				ItemID: "wheat",
 				Levels: map[int]int{
 					1:  4,
 					2:  4,
@@ -698,6 +698,19 @@ var Buildings = game.Buildings{
 		Name:        "Warehouse",
 		Description: "Giant warehouse shared by the guilds of the town.",
 		Image:       "https://www.knightsandmerchants.net/application/files/3515/6823/6449/storehouse.png",
+		Mechanics: []game.BuildingMechanic{
+			{
+				Type: game.MechanicEfficiency,
+				Name: "Max quantity",
+				Levels: map[int]int{
+					1: 100,
+					2: 130,
+					3: 175,
+					4: 225,
+					5: 300,
+				},
+			},
+		},
 		BuildCosts: map[int]game.BuildingCost{
 			1: {1, 3},
 			2: {2, 6},
