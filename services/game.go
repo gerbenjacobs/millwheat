@@ -55,7 +55,7 @@ func (g *GameSvc) Produce(ctx context.Context, buildingID uuid.UUID, set game.It
 			Consumption: productionResult.Consumption,
 		},
 		// TODO: change minute to hour
-		Duration: time.Duration(productionResult.Hours) * time.Minute,
+		Duration: time.Duration(productionResult.Hours) * time.Hour,
 	}
 	if err := g.prodSvc.CreateJob(ctx, job); err != nil {
 		// return back items
@@ -224,7 +224,7 @@ func (g *GameSvc) upgradeBuilding(ctx context.Context, buildingID *uuid.UUID, bu
 			Type:  buildingType,
 			Level: level,
 		},
-		Duration: 20 * time.Second, // TODO: fix time
+		Duration: 3600 * time.Second, // TODO: fix time
 	}); err != nil {
 		// return back items
 		_ = g.townSvc.GiveToWarehouse(ctx, productionResult.Consumption)

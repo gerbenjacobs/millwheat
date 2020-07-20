@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -100,6 +101,9 @@ func (p *ProductionRepository) QueuedBuildings(ctx context.Context, townID uuid.
 			jobs = append(jobs, j)
 		}
 	}
+	sort.Slice(jobs, func(i, j int) bool {
+		return jobs[i].Queued.Before(jobs[j].Queued)
+	})
 
 	return jobs
 }

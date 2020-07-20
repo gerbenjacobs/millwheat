@@ -16,6 +16,8 @@ import (
 
 var (
 	CacheDurationTown = 6 * time.Hour
+
+	defaultWarehouseLimit = 100
 )
 
 type TownRepository struct {
@@ -184,11 +186,12 @@ func (t *TownRepository) GiveToWarehouse(ctx context.Context, townID uuid.UUID, 
 	if err != nil {
 		return err
 	}
+	currentLimit := t.warehouseLimit(townID)
 	for _, is := range items {
 		i, _ := wh[is.ItemID]
-		if i.Quantity+is.Quantity > 100 { // TODO fix hardcode warehouse upper limit
+		if i.Quantity+is.Quantity > currentLimit { // TODO fix hardcode warehouse upper limit
 			// set quantity to upper limit
-			is.Quantity = 100 - i.Quantity
+			is.Quantity = currentLimit - i.Quantity
 		}
 
 		wh[is.ItemID] = game.WarehouseItem{
@@ -198,4 +201,18 @@ func (t *TownRepository) GiveToWarehouse(ctx context.Context, townID uuid.UUID, 
 	}
 
 	return t.updateWarehouseInDatabase(ctx, townID, wh)
+}
+
+func (t *TownRepository) warehouseLimit(townID uuid.UUID) int {
+	town, err := t.Get(context.Background(), townID)
+	if err != nil {
+		return defaultWarehouseLimit
+	}
+	for _, tb := range town.Buildings {
+		if tb.IsWarehouse() {
+			return data.Buildings[tb.Type].MaxEfficiency("slots", tb.CurrentLevel)
+		}
+	}
+
+	return defaultWarehouseLimit
 }

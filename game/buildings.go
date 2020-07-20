@@ -47,6 +47,7 @@ type TownBuilding struct {
 
 // Building contains all the data for buildings in the game
 type Building struct {
+	Type        BuildingType
 	Name        string
 	Description string
 	Image       string
@@ -77,6 +78,18 @@ type ProductionResult struct {
 	Consumption ItemSetSlice
 	Production  ItemSetSlice
 	Hours       int
+}
+
+func (bl Buildings) Sorted() []Building {
+	var buildings = make([]Building, len(bl))
+	for k, b := range bl {
+		b.Type = k
+		buildings[k] = b
+	}
+	sort.SliceStable(buildings, func(i, j int) bool {
+		return buildings[i].Name < buildings[j].Name
+	})
+	return buildings
 }
 
 func (b Building) CanDealWith(id ItemID) bool {
@@ -186,7 +199,7 @@ func (b Building) ActionURL() string {
 func (tb TownBuilding) GetCurrentProduction(b Building) (*ItemSet, error) {
 	t := time.Since(tb.LastCollection)
 	// TODO: replace minutes with hours again
-	hours := int(math.Floor(t.Minutes()))
+	hours := int(math.Floor(t.Hours()))
 	if hours < 1 {
 		return nil, errors.New("building not ready for collection")
 	}

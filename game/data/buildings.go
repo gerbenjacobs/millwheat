@@ -700,8 +700,9 @@ var Buildings = game.Buildings{
 		Image:       "https://www.knightsandmerchants.net/application/files/3515/6823/6449/storehouse.png",
 		Mechanics: []game.BuildingMechanic{
 			{
-				Type: game.MechanicEfficiency,
-				Name: "Max quantity",
+				Type:   game.MechanicEfficiency,
+				Name:   "Max quantity",
+				ItemID: "slots",
 				Levels: map[int]int{
 					1: 100,
 					2: 130,
