@@ -5,13 +5,79 @@
 {{ define "content" }}
     <div class="padding">
         <h2>{{ .Town.Name }}</h2>
-        <p>
-            <strong>Current User:</strong> {{ .User.ID }}<br>
-            <strong>Town ID:</strong> {{ .Town.ID }}<br>
-            <strong>Town Owner:</strong> {{ .Town.Owner }}<br>
-            <strong>Town created:</strong> {{ .Town.FormattedCreatedAt }}<br>
-            <strong>Town updated:</strong> {{ .Town.FormattedUpdatedAt }}<br>
-        </p>
+
+        <div class="row">
+            <div class="col-6" id="town-overview">
+                <div class="card is-full-height" style="background: darkseagreen url('https://www.knightsandmerchants.net/application/files/2715/6823/6447/schoolhouse.png') 95% 90% no-repeat;">
+                    <header>
+                        <h3>Town</h3>
+                    </header>
+                    <table>
+                        <tr>
+                            <th>Town</th>
+                            <td>{{ .Town.Name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Region</th>
+                            <td>Alyria</td>
+                        </tr>
+                        <tr>
+                            <th>Leader</th>
+                            <td>Queen Beronia IV</td>
+                        </tr>
+                        <tr>
+                            <th>Guild</th>
+                            <td><em>N/A</em></td>
+                        </tr>
+                        <tr>
+                            <th>Score</th>
+                            <td>
+                                Town score: 130<br>
+                                Player score: 45<br>
+                            </td>
+                        </tr>
+                    </table>
+{{/*                    <p>*/}}
+{{/*                        <strong>Current User:</strong> {{ .User.ID }}<br>*/}}
+{{/*                        <strong>Town ID:</strong> {{ .Town.ID }}<br>*/}}
+{{/*                        <strong>Town Owner:</strong> {{ .Town.Owner }}<br>*/}}
+{{/*                        <strong>Town created:</strong> {{ .Town.FormattedCreatedAt }}<br>*/}}
+{{/*                        <strong>Town updated:</strong> {{ .Town.FormattedUpdatedAt }}<br>*/}}
+{{/*                    </p>*/}}
+                </div>
+            </div>
+            <div class="col-6" id="battle-season">
+                <div class="card is-full-height" style="background: lightslategray url('https://www.knightsandmerchants.net/application/files/2315/6823/6440/barracks.png') 95% 90% no-repeat;">
+                    <header>
+                        <h3>Battle</h3>
+                    </header>
+                    <table>
+                        <tr>
+                            <th>Current season</th>
+                            <td>Spring &mdash; Year 1</td>
+                        </tr>
+                        <tr>
+                            <th>Last battle</th>
+                            <td><a href="#">Battle of Aria</a><br>Alyria &mdash; <em>1023 vs 957</em> &mdash; Herkoonni</td>
+                        </tr>
+                        <tr>
+                            <th>Upcoming battle</th>
+                            <td><a href="#">Battle of Wulraven</a></td>
+                        </tr>
+                        <tr>
+                            <th>Warriors supplied</th>
+                            <td>
+                                <ul>
+                                    <li style="list-style: url('/images/items/crossbow.gif')">Archers: 10</li>
+                                    <li style="list-style: url('/images/items/sword.png')">Infantry: 12</li>
+                                    <li style="list-style: url('/images/items/lance.gif')">Calvary: 4</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
 
         <ul class="topnav">
             <li><a href="#town" class="button small">Town</a></li>

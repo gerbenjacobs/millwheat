@@ -63,6 +63,16 @@ Some other possible buildings:
 - Siege workshop (planks, metal -> ballista, catapult)
 - Market (required to trade with other towns)
 
+Even more possibilities:
+
+- Apiary
+-- allows mead?
+- Chandler (candle maker/wax)
+- Cooper (barrel making)
+- Alchemist/Apothecary
+- Cloth/dye
+- Hemp/flax/ropemaker 
+
 These are probably not used within the game, but they're here for informational purposes
 
 - Farmer (farm, vineyard)

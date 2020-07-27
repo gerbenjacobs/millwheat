@@ -16,12 +16,14 @@
     color: #5a3e2d;
     border-bottom: 2px solid var(--color-primary);
 }
-.tabs>a.active,
-.tabs>a:hover {
-    opacity:1;
-    border-bottom:2px solid var(--color-error);
+
+.tabs > a.active,
+.tabs > a:hover {
+    opacity: 1;
+    border-bottom: 2px solid var(--color-error);
 }
-.tabs>a.active {
+
+.tabs > a.active {
     font-weight: bold;
 }
 
@@ -132,4 +134,12 @@ h1, h2 {
 
 hr.divider {
     border-bottom: 2px solid var(--color-primary);
+}
+
+#battle-season {
+    color: #ffffff;
+}
+#battle-season a {
+    font-weight: bold;
+    color: #586572;
 }
