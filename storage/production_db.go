@@ -16,7 +16,7 @@ import (
 func (p *ProductionRepository) getJobsByTownFromDatabase(ctx context.Context, townID uuid.UUID) ([]uuid.UUID, error) {
 	tid, _ := townID.MarshalBinary()
 
-	rows, err := p.db.QueryContext(ctx, "SELECT id FROM jobs WHERE townId = ?", tid)
+	rows, err := p.db.QueryContext(ctx, "SELECT id FROM jobs WHERE townId = ? ORDER BY queued", tid)
 	if err != nil {
 		return nil, err
 	}

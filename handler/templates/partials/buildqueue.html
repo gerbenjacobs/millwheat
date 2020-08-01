@@ -21,7 +21,10 @@
                             </div>
                             <div class="col text-center">
                                 <h4>{{ $building.Name }}</h4>
-                                Level {{ $buildingQ.BuildingJob.Level }}
+                                Level {{ $buildingQ.BuildingJob.Level }}<br>
+                                {{ $buildCosts := index $building.BuildCosts $buildingQ.BuildingJob.Level }}
+                                <img src="/images/items/stone.png" alt="Stones"> {{ $buildCosts.Stones }}x<br>
+                                <img src="/images/items/plank.png" alt="Planks"> {{ $buildCosts.Planks }}x<br>
                             </div>
                             <div class="col text-center">
                                 <p><strong>Status</strong><br>{{ $buildingQ.Status }}</p>

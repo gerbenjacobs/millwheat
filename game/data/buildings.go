@@ -720,4 +720,32 @@ var Buildings = game.Buildings{
 			5: {7, 75},
 		},
 	},
+	game.BuildingVineyard: {
+		Name:        "Vineyard",
+		Description: "Grapevines adorn the hillside, barrels and tubs of wine in different stages are placed around the building",
+		Image:       "https://www.knightsandmerchants.net/application/files/7915/6823/6451/vineyard.png",
+		Production: map[game.ItemSet]game.ItemSetSlice{
+			{ItemID: "wine"}: {},
+		},
+		IsGenerator: true,
+		Mechanics: []game.BuildingMechanic{
+			{
+				Type:   game.MechanicOutput,
+				Name:   "Wine Barrels per hour",
+				ItemID: "wine",
+				Levels: map[int]int{
+					1: 1,
+					2: 1,
+					3: 2,
+				},
+			},
+		},
+		BuildCosts: map[int]game.BuildingCost{
+			1: {1, 3},
+			2: {2, 6},
+			3: {3, 15},
+			4: {5, 50},
+			5: {7, 75},
+		},
+	},
 }

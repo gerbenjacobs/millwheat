@@ -30,6 +30,7 @@ const (
 	BuildingArmourSmith // Armour Smith
 	BuildingStables
 	BuildingWarehouse
+	BuildingVineyard
 )
 
 type Buildings map[BuildingType]Building
