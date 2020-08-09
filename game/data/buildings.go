@@ -273,6 +273,7 @@ var Buildings = game.Buildings{
 				ItemID: "sword",
 				Levels: map[int]int{
 					1: 1,
+					2: 2,
 				},
 			},
 			{
@@ -281,6 +282,7 @@ var Buildings = game.Buildings{
 				ItemID: "crossbow",
 				Levels: map[int]int{
 					1: 1,
+					2: 2,
 				},
 			},
 			{
@@ -289,6 +291,7 @@ var Buildings = game.Buildings{
 				ItemID: "lance",
 				Levels: map[int]int{
 					1: 1,
+					2: 2,
 				},
 			},
 		},

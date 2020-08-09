@@ -1,0 +1,54 @@
+{{ define "partial-barracks" }}
+    <div class="row" id="barracks">
+        <div class="col">
+            <div class="card is-full-height" style="background: #b8a77d;">
+                <nav id="barracks_tabs" class="tabs" role="tablist">
+                    <a id="barracks_tab_queue" aria-controls="barracks_pane_queue" class="active">Barracks</a>
+                    <a id="barracks_tab_building" aria-controls="barracks_pane_building">Recruit warriors</a>
+                </nav>
+                <div id="barracks_pane_queue" class="barracks_pane" role="tabpanel" tabindex="0"
+                     aria-labelledby="barracks_tab_queue">
+                    <p>
+                        These are the warriors you have currently supplied <strong>Queen Bohemia</strong>
+                        for the upcoming battle <strong>Battle of Ulpira</strong>.
+                    </p>
+                    <p>
+                        You have until <em>{{ .UpcomingBattle.Start.Format "Jan 02, 2006 15:04:05" }}</em> to supply more warriors before the battle commences.
+                    </p>
+                    <ul>
+                        {{ range $warrior := .MyWarriors }}
+                            <li style="list-style: url({{ $warrior.Image }})">
+                                {{ $warrior.Type }}: {{ $warrior.Quantity }}
+                            </li>
+                        {{ else }}
+                            <li><em>None</em></li>
+                        {{ end }}
+                    </ul>
+                </div>
+
+                <div id="barracks_pane_building" class="barracks_pane" role="tabpanel" tabindex="0"
+                     aria-labelledby="barracks_tab_building" hidden>
+                    <!-- Form -->
+                    <p>
+                        Recruit warriors
+                    </p>
+                    <form action="/game/warriors" method="post">
+                        <p>
+                            <label for="warriorType">Warrior:</label>
+                            <select name="warriorType" id="warriorType">
+                                {{ range $warrior := .WarriorTypes}}
+                                    <option value="{{ printf "%d" $warrior }}">{{ $warrior }}</option>
+                                {{ end }}
+                            </select>
+                        </p>
+                        <p>
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" id="quantity" name="quantity" min="1">
+                        </p>
+                        <input type="submit" value="Recruit">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}

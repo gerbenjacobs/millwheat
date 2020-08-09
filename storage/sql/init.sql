@@ -64,3 +64,17 @@ ALTER TABLE `jobs`
     ADD PRIMARY KEY (`id`),
     ADD INDEX (`townId`);
 COMMIT;
+
+CREATE TABLE `warriors`
+(
+    `battleId`    binary(16)   NOT NULL,
+    `armyId`      binary(16)   NOT NULL,
+    `townId`      binary(16)   NOT NULL,
+    `warriorType` int unsigned NOT NULL,
+    `quantity`    int          NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+ALTER TABLE `warriors`
+    ADD PRIMARY KEY (battleId, armyId, townId, warriorType);
+COMMIT;

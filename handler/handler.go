@@ -27,6 +27,7 @@ type Dependencies struct {
 	GameSvc       services.GameService
 	TownSvc       services.TownService
 	ProductionSvc services.ProductionService
+	BattleSvc     services.BattleService
 
 	// game data
 	Items     game.Items
@@ -58,6 +59,7 @@ func New(dependencies Dependencies) *Handler {
 	r.POST("/game/cancel", h.AuthMiddleware(h.cancel))
 	r.POST("/game/upgrade", h.AuthMiddleware(h.upgrade))
 	r.POST("/game/demolish", h.AuthMiddleware(h.demolish))
+	r.POST("/game/warriors", h.AuthMiddleware(h.warriors))
 
 	r.GET("/help/*page", h.helpPages)
 

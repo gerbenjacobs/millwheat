@@ -16,14 +16,22 @@ import (
 
 type GameData struct {
 	PageUser
-	Town                 *game.Town
-	Buildings            game.Buildings
-	Items                game.Items
+	Town         *game.Town
+	Buildings    game.Buildings
+	Items        game.Items
+	WarriorTypes []game.WarriorType
+
 	Warehouse            map[game.ItemID]game.WarehouseItem
 	WarehouseList        []game.ItemID
 	WarehouseBreakpoints []game.ItemID
-	QueuedJobs           map[uuid.UUID][]*game.Job
-	QueuedBuildings      []*game.Job
+
+	QueuedJobs      map[uuid.UUID][]*game.Job
+	QueuedBuildings []*game.Job
+
+	Season         *game.Season
+	LastBattle     *game.Battle
+	UpcomingBattle *game.Battle
+	MyWarriors     []game.Warrior
 }
 
 var funcs = template.FuncMap{
@@ -60,24 +68,59 @@ func (h *Handler) game(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		return
 	}
 
+	// Battle data
+	season, err := h.BattleSvc.Season(r.Context())
+	if err != nil {
+		logrus.Errorf("failed to get season: %v", err)
+		error500(w, errors.New("failed to load season"))
+		return
+	}
+	lastBattle, err := h.BattleSvc.LastBattle(r.Context())
+	if err != nil {
+		logrus.Errorf("failed to get lastBattle: %v", err)
+		error500(w, errors.New("failed to load lastBattle"))
+		return
+	}
+	upcomingBattle, err := h.BattleSvc.UpcomingBattle(r.Context())
+	if err != nil {
+		logrus.Errorf("failed to get upcoming battle: %v", err)
+		error500(w, errors.New("failed to load upcoming battle"))
+		return
+	}
+	warriors, err := h.BattleSvc.MyWarriors(r.Context())
+	if err != nil {
+		logrus.Errorf("failed to get my warriors: %v", err)
+		error500(w, errors.New("failed to load warriors"))
+		return
+	}
+
 	tmpl, _ := template.New("layout.html").Funcs(funcs).ParseFiles(
 		"handler/templates/layout.html",
 		"handler/templates/game.html",
 		"handler/templates/partials/town.html",
 		"handler/templates/partials/warehouse.html",
 		"handler/templates/partials/buildqueue.html",
+		"handler/templates/partials/barracks.html",
 	)
 
 	if err := tmpl.Execute(w, GameData{
-		PageUser:             data,
-		Town:                 currentTown,
-		Buildings:            h.Buildings,
-		Items:                h.Items,
+		PageUser:     data,
+		Town:         currentTown,
+		Buildings:    h.Buildings,
+		Items:        h.Items,
+		WarriorTypes: game.WarriorTypes,
+
 		Warehouse:            warehouse,
 		WarehouseList:        gamedata.WarehouseOrder,
 		WarehouseBreakpoints: gamedata.WarehouseOrderBreakpoints,
-		QueuedJobs:           h.ProductionSvc.QueuedJobs(r.Context()),
-		QueuedBuildings:      h.ProductionSvc.QueuedBuildings(r.Context()),
+
+		QueuedJobs:      h.ProductionSvc.QueuedJobs(r.Context()),
+		QueuedBuildings: h.ProductionSvc.QueuedBuildings(r.Context()),
+
+		Season:         season,
+		LastBattle:     lastBattle,
+		UpcomingBattle: upcomingBattle,
+		MyWarriors:     warriors,
 	}); err != nil {
 		logrus.Errorf("failed to execute layout: %v", err)
 		error500(w, errors.New("failed to create layout"))
@@ -284,5 +327,39 @@ func (h *Handler) cancel(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 	}
 
 	_ = storeAndSaveFlash(r, w, "success|Job has been cancelled")
+	http.Redirect(w, r, "/game", http.StatusFound)
+}
+
+func (h *Handler) warriors(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	// handle form data
+	err := r.ParseForm()
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Failed to submit your data")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	warriorType, err := game.WarriorTypeFromString(r.Form.Get("warriorType"))
+	if err != nil {
+		_ = storeAndSaveFlash(r, w, "error|Invalid warrior type provided")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+	qty, err := strconv.Atoi(r.Form.Get("quantity"))
+	if err != nil || qty <= 0 {
+		_ = storeAndSaveFlash(r, w, "info|You have supplied an invalid number")
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	// actually produce the items
+	if err := h.GameSvc.CreateWarriors(r.Context(), warriorType, qty); err != nil {
+		logrus.Errorf("failed to produce: %s", err)
+		_ = storeAndSaveFlash(r, w, "error|Failed to produce your warrior: "+err.Error())
+		http.Redirect(w, r, "/game", http.StatusFound)
+		return
+	}
+
+	_ = storeAndSaveFlash(r, w, "success|Warrior has been trained")
 	http.Redirect(w, r, "/game", http.StatusFound)
 }

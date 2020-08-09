@@ -28,6 +28,7 @@ type GameService interface {
 	UpgradeBuilding(ctx context.Context, buildingID uuid.UUID) error
 	DemolishBuilding(ctx context.Context, buildingID uuid.UUID) error
 	CancelJob(ctx context.Context, jobID uuid.UUID) error
+	CreateWarriors(ctx context.Context, warriorType game.WarriorType, quantity int) error
 }
 
 type TownService interface {
@@ -53,4 +54,17 @@ type ProductionService interface {
 
 	JobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job
 	ReshuffleQueue(ctx context.Context)
+}
+
+type BattleService interface {
+	// Season returns the current season
+	Season(ctx context.Context) (*game.Season, error)
+	// LastBattle returns the last battle
+	LastBattle(ctx context.Context) (*game.Battle, error)
+	// UpcomingBattle returns the upcoming battle
+	UpcomingBattle(ctx context.Context) (*game.Battle, error)
+	// AddWarrior adds a warrior to the current battle and army
+	AddWarrior(ctx context.Context, battleId, armyId, townId uuid.UUID, warriorType game.WarriorType, quantity int) error
+	// MyWarriors returns a list of your current provided warriors
+	MyWarriors(ctx context.Context) ([]game.Warrior, error)
 }

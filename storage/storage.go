@@ -40,3 +40,10 @@ type ProductionStorage interface {
 	JobsCompleted(ctx context.Context) map[uuid.UUID][]*game.Job
 	ReshuffleQueue(ctx context.Context, townID uuid.UUID)
 }
+
+type BattleStorage interface {
+	AddWarrior(ctx context.Context, battleId, armyId, townId uuid.UUID, warriorType game.WarriorType, quantity int) error
+	WarriorsFromTown(ctx context.Context, townId, battleId uuid.UUID) ([]game.Warrior, error)
+	AllWarriorsForBattle(ctx context.Context, battleId uuid.UUID) ([]game.Army, error)
+	CurrentWarriors(ctx context.Context, battleId, armyId, townId uuid.UUID) ([]game.Warrior, error)
+}

@@ -13,16 +13,22 @@ import (
 )
 
 type GameSvc struct {
-	townSvc TownService
-	prodSvc ProductionService
+	townSvc   TownService
+	prodSvc   ProductionService
+	battleSvc BattleService
 
 	// game data
 	Items     game.Items
 	Buildings game.Buildings
 }
 
-func NewGameSvc(townSvc TownService, prodSvc ProductionService, items game.Items, buildings game.Buildings) *GameSvc {
-	return &GameSvc{townSvc: townSvc, prodSvc: prodSvc, Items: items, Buildings: buildings}
+func NewGameSvc(townSvc TownService, prodSvc ProductionService, battleSvc BattleService, items game.Items, buildings game.Buildings) *GameSvc {
+	return &GameSvc{
+		townSvc:   townSvc,
+		prodSvc:   prodSvc,
+		battleSvc: battleSvc,
+		Items:     items,
+		Buildings: buildings}
 }
 
 func (g *GameSvc) Produce(ctx context.Context, buildingID uuid.UUID, set game.ItemSet) error {
@@ -159,6 +165,20 @@ func (g *GameSvc) CancelJob(ctx context.Context, jobID uuid.UUID) error {
 		Debugf("canceled job, returning %s", resources)
 
 	return nil
+}
+
+func (g *GameSvc) CreateWarriors(ctx context.Context, warriorType game.WarriorType, quantity int) error {
+	costs, err := game.CalculateWarriorCosts(warriorType, quantity)
+	if err != nil {
+		return err
+	}
+
+	// extract consumption items from warehouse
+	if err := g.townSvc.TakeFromWarehouse(ctx, costs); err != nil {
+		return err
+	}
+
+	return g.battleSvc.AddWarrior(ctx, TMPCurrentBattleId, TMPArmyId, TownFromContext(ctx), warriorType, quantity)
 }
 
 func (g *GameSvc) getBuilding(ctx context.Context, buildingID uuid.UUID) (*game.TownBuilding, *game.Building, error) {

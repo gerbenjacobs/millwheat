@@ -8,7 +8,8 @@
 
         <div class="row">
             <div class="col-6" id="town-overview">
-                <div class="card is-full-height" style="background: #d2d378 url('https://www.knightsandmerchants.net/application/files/2715/6823/6447/schoolhouse.png') 400px 180px no-repeat;">
+                <div class="card is-full-height"
+                     style="background: #d2d378 url('https://www.knightsandmerchants.net/application/files/2715/6823/6447/schoolhouse.png') 400px 180px no-repeat;">
                     <header>
                         <h3>Town</h3>
                     </header>
@@ -37,40 +38,51 @@
                             </td>
                         </tr>
                     </table>
-{{/*                    <p>*/}}
-{{/*                        <strong>Current User:</strong> {{ .User.ID }}<br>*/}}
-{{/*                        <strong>Town ID:</strong> {{ .Town.ID }}<br>*/}}
-{{/*                        <strong>Town Owner:</strong> {{ .Town.Owner }}<br>*/}}
-{{/*                        <strong>Town created:</strong> {{ .Town.FormattedCreatedAt }}<br>*/}}
-{{/*                        <strong>Town updated:</strong> {{ .Town.FormattedUpdatedAt }}<br>*/}}
-{{/*                    </p>*/}}
+                    {{/*                    <p>*/}}
+                    {{/*                        <strong>Current User:</strong> {{ .User.ID }}<br>*/}}
+                    {{/*                        <strong>Town ID:</strong> {{ .Town.ID }}<br>*/}}
+                    {{/*                        <strong>Town Owner:</strong> {{ .Town.Owner }}<br>*/}}
+                    {{/*                        <strong>Town created:</strong> {{ .Town.FormattedCreatedAt }}<br>*/}}
+                    {{/*                        <strong>Town updated:</strong> {{ .Town.FormattedUpdatedAt }}<br>*/}}
+                    {{/*                    </p>*/}}
                 </div>
             </div>
             <div class="col-6" id="battle-season">
-                <div class="card is-full-height" style="background: lightslategray url('https://www.knightsandmerchants.net/application/files/2315/6823/6440/barracks.png') 370px 150px no-repeat;">
+                <div class="card is-full-height"
+                     style="background: lightslategray url('https://www.knightsandmerchants.net/application/files/2315/6823/6440/barracks.png') 370px 150px no-repeat;">
                     <header>
                         <h3>Battle</h3>
                     </header>
                     <table>
                         <tr>
                             <th>Current season</th>
-                            <td>Spring &mdash; Year 1</td>
+                            <td>{{ .Season.Name }} &mdash; Year {{ .Season.Year }}</td>
                         </tr>
                         <tr>
                             <th>Last battle</th>
-                            <td><a href="#">Battle of Aria</a><br>Alyria &mdash; <em>1023 vs 957</em> &mdash; Herkoonni</td>
+                            <td>
+                                <a href="#{{ .LastBattle.ID }}">{{ .LastBattle.Name }}</a>
+                                <br>
+                                {{ .LastBattle.Attackers.Name }} &mdash;
+                                <em>{{ .LastBattle.Attackers.Score }} vs {{ .LastBattle.Defenders.Score }}</em>
+                                &mdash; {{ .LastBattle.Defenders.Name }}
+                            </td>
                         </tr>
                         <tr>
                             <th>Upcoming battle</th>
-                            <td><a href="#">Battle of Wulraven</a></td>
+                            <td><a href="#{{ .UpcomingBattle.ID }}">{{ .UpcomingBattle.Name }}</a></td>
                         </tr>
                         <tr>
                             <th>Warriors supplied</th>
                             <td>
                                 <ul>
-                                    <li style="list-style: url('/images/items/crossbow.gif')">Archers: 10</li>
-                                    <li style="list-style: url('/images/items/sword.png')">Infantry: 12</li>
-                                    <li style="list-style: url('/images/items/lance.gif')">Cavalry: 4</li>
+                                    {{ range $warrior := .MyWarriors }}
+                                        <li style="list-style: url({{ $warrior.Image }})">
+                                            {{ $warrior.Type }}: {{ $warrior.Quantity }}
+                                        </li>
+                                    {{ else }}
+                                        <li><em>None</em></li>
+                                    {{ end }}
                                 </ul>
                             </td>
                         </tr>
@@ -83,10 +95,13 @@
             <li><a href="#town" class="button small">Town</a></li>
             <li><a href="#warehouse" class="button small">Warehouse</a></li>
             <li><a href="#buildqueue" class="button small">Build queue</a></li>
+            <li><a href="#barracks" class="button small">Barracks</a></li>
         </ul>
 
         {{ template "partial-town" . }}
         {{ template "partial-warehouse" . }}
         {{ template "partial-buildqueue" . }}
+        {{ template "partial-barracks" . }}
+
     </div>
 {{ end }}

@@ -67,7 +67,9 @@ func main() {
 
 	townSvc := services.NewTownSvc(storage.NewTownRepository(db))
 	prodSvc := services.NewProductionSvc(storage.NewProductionRepository(db))
-	gameSvc := services.NewGameSvc(townSvc, prodSvc, data.Items, data.Buildings)
+	battleSvc := services.NewBattleSvc(storage.NewBattleRepo(db))
+
+	gameSvc := services.NewGameSvc(townSvc, prodSvc, battleSvc, data.Items, data.Buildings)
 
 	// set up the route handler and server
 	app := handler.New(handler.Dependencies{
@@ -77,6 +79,7 @@ func main() {
 		GameSvc:       gameSvc,
 		TownSvc:       townSvc,
 		ProductionSvc: prodSvc,
+		BattleSvc:     battleSvc,
 
 		Items:     data.Items,
 		Buildings: data.Buildings,
