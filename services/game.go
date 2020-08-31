@@ -178,7 +178,12 @@ func (g *GameSvc) CreateWarriors(ctx context.Context, warriorType game.WarriorTy
 		return err
 	}
 
-	return g.battleSvc.AddWarrior(ctx, TMPCurrentBattleId, TMPArmyId, TownFromContext(ctx), warriorType, quantity)
+	if err := g.battleSvc.AddWarrior(ctx, TMPCurrentBattleId, TMPArmyId, TownFromContext(ctx), warriorType, quantity); err != nil {
+		// return back items
+		_ = g.townSvc.GiveToWarehouse(ctx, costs)
+	}
+
+	return err
 }
 
 func (g *GameSvc) getBuilding(ctx context.Context, buildingID uuid.UUID) (*game.TownBuilding, *game.Building, error) {

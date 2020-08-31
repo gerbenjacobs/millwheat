@@ -29,14 +29,11 @@
                 <div id="barracks_pane_building" class="barracks_pane" role="tabpanel" tabindex="0"
                      aria-labelledby="barracks_tab_building" hidden>
                     <!-- Form -->
-                    <p>
-                        Recruit warriors
-                    </p>
                     <form action="/game/warriors" method="post">
                         <p>
                             <label for="warriorType">Warrior:</label>
                             <select name="warriorType" id="warriorType">
-                                {{ range $warrior := .WarriorTypes}}
+                                {{ range $warrior := .WarriorTypes }}
                                     <option value="{{ printf "%d" $warrior }}">{{ $warrior }}</option>
                                 {{ end }}
                             </select>
@@ -47,6 +44,22 @@
                         </p>
                         <input type="submit" value="Recruit">
                     </form>
+                    <div class="row">
+                        {{ range $warrior := .WarriorTypes }}
+                            <div class="col">
+                               <strong>{{ $warrior }}</strong>
+                                {{ $costs := index $.WarriorCosts $warrior }}
+                                <ul>
+                                {{ range $cost_item := $costs }}
+                                    {{ $item := index $.Items $cost_item.ItemID }}
+                                    <li style="list-style: url({{ $item.Image }})">
+                                        {{ $cost_item.Quantity }}x {{ $item.Name }}
+                                    </li>
+                                {{ end }}
+                                </ul>
+                            </div>
+                        {{ end }}
+                    </div>
                 </div>
             </div>
         </div>

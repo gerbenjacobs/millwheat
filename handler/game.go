@@ -20,6 +20,7 @@ type GameData struct {
 	Buildings    game.Buildings
 	Items        game.Items
 	WarriorTypes []game.WarriorType
+	WarriorCosts map[game.WarriorType]game.ItemSetSlice
 
 	Warehouse            map[game.ItemID]game.WarehouseItem
 	WarehouseList        []game.ItemID
@@ -109,6 +110,7 @@ func (h *Handler) game(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		Buildings:    h.Buildings,
 		Items:        h.Items,
 		WarriorTypes: game.WarriorTypes,
+		WarriorCosts: game.WarriorCosts,
 
 		Warehouse:            warehouse,
 		WarehouseList:        gamedata.WarehouseOrder,

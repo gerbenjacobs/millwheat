@@ -62,6 +62,18 @@ func TestCalculateWarriorCosts(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "create 14 lance warrior",
+			args: args{warriorType: WarriorLance, quantity: 14},
+			want: ItemSetSlice{
+				{ItemID: "lance", Quantity: 14},
+				{ItemID: "iron_platearmour", Quantity: 14},
+				{ItemID: "horse", Quantity: 14},
+				{ItemID: "wine", Quantity: 14},
+				{ItemID: "meat", Quantity: 14},
+			},
+			wantErr: false,
+		},
+		{
 			name:    "create 1 wrong warrior type",
 			args:    args{warriorType: 88, quantity: 1},
 			wantErr: true,
