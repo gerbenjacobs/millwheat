@@ -176,7 +176,7 @@ func (t *TownRepository) TakeFromWarehouse(ctx context.Context, townID uuid.UUID
 		}
 
 		newWh[is.ItemID] = game.WarehouseItem{
-			ItemID:   i.ItemID,
+			ItemID:   is.ItemID,
 			Quantity: i.Quantity - is.Quantity,
 		}
 	}
@@ -204,7 +204,7 @@ func (t *TownRepository) GiveToWarehouse(ctx context.Context, townID uuid.UUID, 
 		}
 
 		wh[is.ItemID] = game.WarehouseItem{
-			ItemID:   i.ItemID,
+			ItemID:   is.ItemID,
 			Quantity: i.Quantity + is.Quantity,
 		}
 	}
