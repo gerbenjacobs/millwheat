@@ -60,7 +60,6 @@ func (g *GameSvc) Produce(ctx context.Context, buildingID uuid.UUID, set game.It
 			Production:  productionResult.Production,
 			Consumption: productionResult.Consumption,
 		},
-		// TODO: change minute to hour
 		Duration: time.Duration(productionResult.Hours) * time.Hour,
 	}
 	if err := g.prodSvc.CreateJob(ctx, job); err != nil {
