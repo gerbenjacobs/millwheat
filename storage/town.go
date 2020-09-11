@@ -163,6 +163,9 @@ func (t *TownRepository) TakeFromWarehouse(ctx context.Context, townID uuid.UUID
 
 	// do changes in temporary warehouse struct
 	newWh := make(map[game.ItemID]game.WarehouseItem)
+	for _, i := range wh {
+		newWh[i.ItemID] = i
+	}
 
 	for _, is := range items {
 		i, ok := wh[is.ItemID]
@@ -175,15 +178,10 @@ func (t *TownRepository) TakeFromWarehouse(ctx context.Context, townID uuid.UUID
 			return errors.New("not enough quantity")
 		}
 
-		newWh[is.ItemID] = game.WarehouseItem{
-			ItemID:   is.ItemID,
+		newWh[i.ItemID] = game.WarehouseItem{
+			ItemID:   i.ItemID,
 			Quantity: i.Quantity - is.Quantity,
 		}
-	}
-
-	// add all items to new tmp warehouse
-	for _, i := range wh {
-		newWh[i.ItemID] = i
 	}
 
 	return t.updateWarehouseInDatabase(ctx, townID, newWh)
@@ -203,8 +201,8 @@ func (t *TownRepository) GiveToWarehouse(ctx context.Context, townID uuid.UUID, 
 			is.Quantity = currentLimit - i.Quantity
 		}
 
-		wh[is.ItemID] = game.WarehouseItem{
-			ItemID:   is.ItemID,
+		wh[i.ItemID] = game.WarehouseItem{
+			ItemID:   i.ItemID,
 			Quantity: i.Quantity + is.Quantity,
 		}
 	}
