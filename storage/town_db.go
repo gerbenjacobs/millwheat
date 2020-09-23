@@ -12,12 +12,32 @@ import (
 	"github.com/gerbenjacobs/millwheat/game"
 )
 
+type warehouseDTO map[string]int
+
+func whToDTO(wh map[game.ItemID]game.WarehouseItem) warehouseDTO {
+	dto := make(warehouseDTO)
+	for _, wi := range wh {
+		dto[wi.ItemID.AsKey()] = wi.Quantity
+	}
+	return dto
+}
+
+func dtoToWH(dto warehouseDTO) map[game.ItemID]game.WarehouseItem {
+	wh := make(map[game.ItemID]game.WarehouseItem)
+	for k, v := range dto {
+		wh[game.ItemID(k)] = game.WarehouseItem{
+			ItemID:   game.ItemID(k),
+			Quantity: v,
+		}
+	}
+	return wh
+}
+
 func (t *TownRepository) getTownFromDatabase(ctx context.Context, id uuid.UUID) (*game.Town, error) {
 	tid, _ := id.MarshalBinary()
 	row := t.db.QueryRowContext(ctx, "SELECT id, owner, name, warehouse, createdAt, updatedAt FROM towns WHERE id = ?", tid)
 
 	town := new(game.Town)
-	warehouse := make(map[game.ItemID]game.WarehouseItem)
 	var whBytes []byte
 	err := row.Scan(&town.ID, &town.Owner, &town.Name, &whBytes, &town.CreatedAt, &town.UpdatedAt)
 	switch {
@@ -27,7 +47,8 @@ func (t *TownRepository) getTownFromDatabase(ctx context.Context, id uuid.UUID) 
 		return nil, fmt.Errorf("unknown error while scanning town: %v", err)
 	}
 
-	if err = json.Unmarshal(whBytes, &warehouse); err != nil {
+	var whDTO warehouseDTO
+	if err = json.Unmarshal(whBytes, &whDTO); err != nil {
 		return nil, err
 	}
 	buildings := make(map[uuid.UUID]game.TownBuilding)
@@ -36,7 +57,7 @@ func (t *TownRepository) getTownFromDatabase(ctx context.Context, id uuid.UUID) 
 		buildings = b
 	}
 	town.Buildings = buildings
-	town.Warehouse = warehouse
+	town.Warehouse = dtoToWH(whDTO)
 
 	t.townCache.Set(id.String(), town, CacheDurationTown)
 	return town, nil
@@ -69,7 +90,7 @@ func (t *TownRepository) getBuildingsFromDatabase(ctx context.Context, townID uu
 
 func (t *TownRepository) updateWarehouseInDatabase(ctx context.Context, townID uuid.UUID, wh map[game.ItemID]game.WarehouseItem) error {
 	tid, _ := townID.MarshalBinary()
-	whBytes, err := json.Marshal(wh)
+	whBytes, err := json.Marshal(whToDTO(wh))
 	if err != nil {
 		return err
 	}

@@ -195,7 +195,11 @@ func (t *TownRepository) GiveToWarehouse(ctx context.Context, townID uuid.UUID, 
 
 	currentLimit := t.warehouseLimit(townID)
 	for _, is := range items {
-		i, _ := wh[is.ItemID]
+		i, ok := wh[is.ItemID]
+		if !ok {
+			i.Quantity = 0
+			i.ItemID = is.ItemID
+		}
 		if i.Quantity+is.Quantity > currentLimit {
 			// set quantity to upper limit
 			is.Quantity = currentLimit - i.Quantity
