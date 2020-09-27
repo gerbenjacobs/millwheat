@@ -5,9 +5,15 @@
             <div class="col-6 col-4-md">
                 <div class="card is-full-height">
                     <header>
-                        <h3>{{ $building.Name }}</h3>
+                        <h3>
+                            <a href="/game/building/{{ $townBuilding.ID}}">
+                                {{ $building.Name }}
+                            </a>
+                        </h3>
                     </header>
-                    <img src="{{ $building.Image }}" alt="{{ $building.Name }}" class="pull-right">
+                    <a href="/game/building/{{ $townBuilding.ID}}">
+                        <img src="{{ $building.Image }}" alt="{{ $building.Name }}" class="pull-right">
+                    </a>
                     <p>{{ $building.Description }}</p>
                     <span class="clearfix">&nbsp;</span>
                     <nav class="tabs is-full" role="tablist">

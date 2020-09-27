@@ -1,0 +1,264 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{define "flashes"}}{{ .Flashes }}{{end}}
+
+
+{{ define "content" }}
+    {{ $townBuilding := .CurrentTownBuilding }}
+    {{ $building := .CurrentBuilding }}
+
+    <div class="padding">
+        <h2>
+            {{ $building.Name }}
+            in
+            {{ .Town.Name }}
+        </h2>
+
+        <div class="col">
+            <a href="/game" class="button small">Back to Town</a>
+        </div>
+
+        <div class="col">
+            <div class="card is-full-height">
+                <header>
+                    <h3>{{ $building.Name }} </h3>
+                </header>
+                <img src="{{ $building.Image }}" alt="{{ $building.Name }}" class="pull-right">
+                <p>{{ $building.Description }}</p>
+                <span class="clearfix">&nbsp;</span>
+                <div class="row">
+                    <div class="col-6">
+                        <div id="tb_{{ $townBuilding.ID }}_overview">
+                            <h3>Overview</h3>
+                            <table class="striped">
+                                <tr>
+                                    <th style="width: 50%;">Level</th>
+                                    <td>{{ $townBuilding.CurrentLevel }}</td>
+                                </tr>
+                                {{ if not $townBuilding.IsWarehouse }}
+                                    <tr>
+                                        <th>Consumes</th>
+                                        <td>
+                                            {{ range $consume := $building.ConsumesList }}
+                                                {{ $item := index $.Items $consume }}
+                                                <p>
+                                                    <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                                    {{ $item.Name }}
+                                                </p>
+                                            {{ else }}
+                                                <em>Nothing</em>
+                                            {{ end }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Produces</th>
+                                        <td>
+                                            {{ range $produce := $building.ProducesList }}
+                                                {{ $item := index $.Items $produce }}
+                                                <p>
+                                                    <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                                    {{ $item.Name }}
+                                                </p>
+                                            {{ else }}
+                                                <em>Nothing</em>
+                                            {{ end }}
+                                        </td>
+                                    </tr>
+                                {{ end }}
+                                {{ range $mechanic := $building.MechanicsList }}
+                                    <tr>
+                                        <th>{{ $mechanic.Name }}</th>
+                                        <td>{{ index $mechanic.Levels $townBuilding.CurrentLevel }}</td>
+                                    </tr>
+                                {{ end }}
+                                {{ if $building.IsGenerator }}
+                                    <tr>
+                                        <th>Last collected</th>
+                                        <td>{{ $townBuilding.LastCollectionAt }}</td>
+                                    </tr>
+                                {{ end }}
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div id="tb_{{ $townBuilding.ID }}_production">
+                            <h3>Production</h3>
+                            <table class="striped">
+                                {{ range $mechanic := $building.MechanicsList }}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ $mechanic.Name }}</strong><br>
+                                            <em>{{ $mechanic.Type }}</em>
+                                        </td>
+                                        <td>{{ index $mechanic.Levels $townBuilding.CurrentLevel }}</td>
+                                    </tr>
+                                {{ end }}
+                            </table>
+
+                            {{ if not $townBuilding.IsWarehouse }}
+                                <table class="striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{ range $produce, $set := $building.Production }}
+                                        {{ $item := index $.Items $produce.ItemID }}
+                                        <form action="/game/{{ $building.ActionURL }}" method="post">
+                                            <input type="hidden" name="buildingpage" value="1">
+                                            <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
+                                            <input type="hidden" name="product" value="{{ $item.ID.AsKey }}">
+                                            <tr>
+                                                <td style="width: 35%;">
+                                                    <label for="{{ $townBuilding.ID }}_{{ $item.ID.AsKey }}">
+                                                        <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                                        {{ $item.Name }}
+                                                    </label>
+                                                </td>
+                                                {{ if $building.IsGenerator }}
+                                                    <td>
+                                                        <input id="{{ $townBuilding.ID }}_{{ $item.ID.AsKey }}"
+                                                               type="number"
+                                                               name="quantity"
+                                                               value="{{ $townBuilding.CurrentProduction }}"
+                                                               disabled>
+                                                    </td>
+                                                    <td>
+                                                        <input type="submit" value="Collect">
+                                                    </td>
+                                                {{ else }}
+                                                    <td>
+                                                        <input id="{{ $townBuilding.ID }}_{{ $item.ID.AsKey }}"
+                                                               type="number"
+                                                               name="quantity" min="1">
+                                                    </td>
+                                                    <td>
+                                                        <input type="submit" value="Produce">
+                                                    </td>
+                                                {{ end }}
+                                            </tr>
+                                        </form>
+                                    {{ end }}
+                                    </tbody>
+                                </table>
+                            {{ end }}
+                        </div>
+                    </div>
+                </div>
+
+                {{ $queuedJobs := index $.QueuedJobs $townBuilding.ID }}
+                {{ if $queuedJobs }}
+                    <div id="tb_{{ $townBuilding.ID }}_queuedjobs">
+                        <h3>Queued jobs</h3>
+                        {{ range $job := $queuedJobs }}
+                            <hr class="divider">
+
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Consuming</strong><br>
+                                    {{ range $jobItem := $job.ProductJob.Consumption }}
+                                        {{ $item := index $.Items $jobItem.ItemID}}
+                                        <p>
+                                            {{ $jobItem.Quantity }}x
+                                            <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                            {{ $item.Name }}
+                                        </p>
+                                    {{ end }}
+                                    <strong>Producing</strong><br>
+                                    {{ range $jobItem := $job.ProductJob.Production }}
+                                        {{ $item := index $.Items $jobItem.ItemID}}
+                                        <p>
+                                            {{ $jobItem.Quantity }}x
+                                            <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
+                                            {{ $item.Name }}
+                                        </p>
+                                    {{ end }}
+                                </div>
+                                <div class="col">
+                                    <p><strong>Status</strong><br>{{ $job.Status }}</p>
+                                    {{ if $job.IsActive }}
+                                        <p><strong>Progress</strong><br>
+                                            {{ $job.Progress }}%
+                                            <progress max="100" value="{{ $job.Progress }}"></progress>
+                                        </p>
+                                    {{ end }}
+                                </div>
+                                <div class="col">
+                                    {{ if $job.IsActive }}
+                                        <p><strong>Started at</strong><br>{{ $job.StartedAt }}</p>
+                                        <p><strong>Ready at</strong><br>{{ $job.ReadyAt }}</p>
+                                    {{ else }}
+                                        <p><strong>Queued at</strong><br>{{ $job.QueuedAt }}</p>
+                                    {{ end }}
+                                </div>
+                                <div class="col">
+                                    <form action="/game/cancel" method="post">
+                                        <input type="hidden" name="buildingpage" value="1">
+                                        <input type="hidden" name="job" value="{{ $job.ID }}">
+                                        <input type="submit" class="button small error" value="Cancel">
+                                    </form>
+                                </div>
+                            </div>
+                        {{ end }}
+                    </div>
+                {{ end }}
+
+                <div id="tb_{{ $townBuilding.ID }}_construction">
+                    <h3>Construction</h3>
+                    <table class="striped">
+                        <thead>
+                        <tr>
+                            <th>Level</th>
+                            <th colspan="2">Building costs</th>
+                            <th>Mechanics</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{ range $level, $cost := $building.BuildCosts }}
+                            <tr>
+                                <th>Lvl {{ $level }}</th>
+                                <td>
+                                    <img src="/images/items/stone.png" alt="Stones">
+                                    {{ $cost.Stones }}x
+                                </td>
+                                <td>
+                                    <img src="/images/items/plank.png" alt="Planks">
+                                    {{ $cost.Planks }}x
+                                </td>
+
+                                <td>
+                                    {{ range $mechanic := $building.MechanicsList }}
+                                        [<em>{{ $mechanic.Type }}</em>]
+                                        {{ index $mechanic.Levels $level }}&times;
+                                        <strong>{{ $mechanic.Name }}</strong>
+                                        <br>
+                                    {{ end }}
+                                </td>
+                            </tr>
+                        {{ end }}
+                        </tbody>
+                    </table>
+                    <footer class="is-right">
+                        <form action="/game/upgrade" method="post">
+                            <input type="hidden" name="buildingpage" value="1">
+                            <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
+                            <input type="submit" value="Upgrade" class="button small success">
+                        </form>
+
+                        <form action="/game/demolish" method="post">
+                            <input type="hidden" name="buildingpage" value="1">
+                            <input type="hidden" name="building" value="{{ $townBuilding.ID }}">
+                            <input type="submit" value="Demolish" class="button small error">
+                        </form>
+                    </footer>
+                </div>
+            </div>
+        </div>
+
+        {{ template "partial-warehouse" . }}
+
+    </div>
+{{ end }}

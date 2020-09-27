@@ -32,3 +32,11 @@ func redirect(url string) httprouter.Handle {
 		http.Redirect(w, r, url, http.StatusPermanentRedirect)
 	}
 }
+
+func redirectPage(r *http.Request) string {
+	if r.Form.Get("buildingpage") == "1" {
+		return "/game/building/" + r.Form.Get("building")
+	}
+
+	return "/game"
+}
