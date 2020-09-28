@@ -117,6 +117,15 @@
                                                         <img src="{{ $item.Image }}" alt="{{ $item.Name }}">
                                                         {{ $item.Name }}
                                                     </label>
+                                                    <br>
+                                                    <ul>
+                                                        {{ range $s := $set }}
+                                                            {{ $sitem := index $.Items $s.ItemID }}
+                                                            <li style="list-style: url('{{ $sitem.Image }}')">
+                                                                {{ $s.ItemID }}
+                                                            </li>
+                                                        {{ end }}
+                                                    </ul>
                                                 </td>
                                                 {{ if $building.IsGenerator }}
                                                     <td>
@@ -232,7 +241,7 @@
                                 <td>
                                     {{ range $mechanic := $building.MechanicsList }}
                                         [<em>{{ $mechanic.Type }}</em>]
-                                        {{ index $mechanic.Levels $level }}&times;
+                                                                      {{ index $mechanic.Levels $level }}&times;
                                         <strong>{{ $mechanic.Name }}</strong>
                                         <br>
                                     {{ end }}

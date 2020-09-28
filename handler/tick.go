@@ -11,7 +11,6 @@ import (
 )
 
 func (h *Handler) Tick(ctx context.Context) {
-	// TODO set this to normal value like once every minute
 	t := time.NewTicker(1 * time.Minute)
 
 	tickHandler := func() {
