@@ -14,22 +14,22 @@ import (
 
 //go:generate stringer -linecomment -trimprefix=Building -type=BuildingType
 const (
-	BuildingFarm BuildingType = iota
+	BuildingWarehouse BuildingType = iota
+	BuildingFarm
 	BuildingMill
 	BuildingBakery
 	BuildingPigFarm // Pig Farm
 	BuildingButcher
 	BuildingWeaponSmith // Weapon Smith
 	BuildingForestry
-	BuildingSawMill // Saw Mill
 	BuildingQuarry
+	BuildingSawMill // Saw Mill
 	BuildingTannery
 	BuildingCoalMine // Coal Mine
 	BuildingIronMine // Iron Mine
 	BuildingBlacksmith
 	BuildingArmourSmith // Armour Smith
 	BuildingStables
-	BuildingWarehouse
 	BuildingVineyard
 )
 

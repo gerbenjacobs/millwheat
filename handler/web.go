@@ -61,6 +61,7 @@ func (h *Handler) joinNow(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	}
 	e := r.Form.Get("email")
 	p := r.Form.Get("password")
+	t := r.Form.Get("town")
 
 	if e == "" || p == "" {
 		_ = storeAndSaveFlash(r, w, "error|Email and/or password was empty")
@@ -87,6 +88,18 @@ func (h *Handler) joinNow(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		http.Redirect(w, r, "/join", http.StatusFound)
 		return
 	}
+
+	town, err := h.TownSvc.Create(r.Context(), user.ID, t)
+	if err != nil {
+		// TODO h.UserSvc.Delete()
+		logrus.Errorf("failed to create town: %v", err)
+		_ = storeAndSaveFlash(r, w, "error|Failed to create your account, please try again")
+		http.Redirect(w, r, "/join", http.StatusFound)
+		return
+	}
+
+	user.CurrentTown = town.ID
+	_, _ = h.UserSvc.Update(r.Context(), user)
 
 	// log the user in
 	http.SetCookie(w, &http.Cookie{

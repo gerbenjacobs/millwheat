@@ -17,6 +17,20 @@ func NewTownSvc(storage storage.TownStorage) *TownSvc {
 	return &TownSvc{storage: storage}
 }
 
+func (t *TownSvc) Create(ctx context.Context, owner uuid.UUID, townName string) (*game.Town, error) {
+	town, err := t.storage.Create(ctx, owner, townName)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = t.storage.AddBuilding(ctx, town.ID, game.BuildingWarehouse)
+	_ = t.storage.AddBuilding(ctx, town.ID, game.BuildingForestry)
+	_ = t.storage.AddBuilding(ctx, town.ID, game.BuildingQuarry)
+	_ = t.storage.AddBuilding(ctx, town.ID, game.BuildingSawMill)
+
+	return town, nil
+}
+
 func (t *TownSvc) Town(ctx context.Context, id uuid.UUID) (*game.Town, error) {
 	return t.storage.Get(ctx, id)
 }

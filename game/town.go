@@ -33,8 +33,12 @@ func (t *Town) OrderedBuildings() []TownBuilding {
 		buildings = append(buildings, b)
 	}
 
-	sort.Slice(buildings, func(i, j int) bool {
-		return buildings[i].CreatedAt.Before(buildings[j].CreatedAt)
+	sort.SliceStable(buildings, func(i, j int) bool {
+		if buildings[i].CreatedAt.Equal(buildings[j].CreatedAt) {
+			return buildings[i].Type < buildings[j].Type
+		} else {
+			return buildings[i].CreatedAt.Before(buildings[j].CreatedAt)
+		}
 	})
 
 	return buildings

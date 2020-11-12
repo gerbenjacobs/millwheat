@@ -8,28 +8,28 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[BuildingFarm-0]
-	_ = x[BuildingMill-1]
-	_ = x[BuildingBakery-2]
-	_ = x[BuildingPigFarm-3]
-	_ = x[BuildingButcher-4]
-	_ = x[BuildingWeaponSmith-5]
-	_ = x[BuildingForestry-6]
-	_ = x[BuildingSawMill-7]
+	_ = x[BuildingWarehouse-0]
+	_ = x[BuildingFarm-1]
+	_ = x[BuildingMill-2]
+	_ = x[BuildingBakery-3]
+	_ = x[BuildingPigFarm-4]
+	_ = x[BuildingButcher-5]
+	_ = x[BuildingWeaponSmith-6]
+	_ = x[BuildingForestry-7]
 	_ = x[BuildingQuarry-8]
-	_ = x[BuildingTannery-9]
-	_ = x[BuildingCoalMine-10]
-	_ = x[BuildingIronMine-11]
-	_ = x[BuildingBlacksmith-12]
-	_ = x[BuildingArmourSmith-13]
-	_ = x[BuildingStables-14]
-	_ = x[BuildingWarehouse-15]
+	_ = x[BuildingSawMill-9]
+	_ = x[BuildingTannery-10]
+	_ = x[BuildingCoalMine-11]
+	_ = x[BuildingIronMine-12]
+	_ = x[BuildingBlacksmith-13]
+	_ = x[BuildingArmourSmith-14]
+	_ = x[BuildingStables-15]
 	_ = x[BuildingVineyard-16]
 }
 
-const _BuildingType_name = "FarmMillBakeryPig FarmButcherWeapon SmithForestrySaw MillQuarryTanneryCoal MineIron MineBlacksmithArmour SmithStablesWarehouseVineyard"
+const _BuildingType_name = "WarehouseFarmMillBakeryPig FarmButcherWeapon SmithForestryQuarrySaw MillTanneryCoal MineIron MineBlacksmithArmour SmithStablesVineyard"
 
-var _BuildingType_index = [...]uint8{0, 4, 8, 14, 22, 29, 41, 49, 57, 63, 70, 79, 88, 98, 110, 117, 126, 134}
+var _BuildingType_index = [...]uint8{0, 9, 13, 17, 23, 31, 38, 50, 58, 64, 72, 79, 88, 97, 107, 119, 126, 134}
 
 func (i BuildingType) String() string {
 	if i < 0 || i >= BuildingType(len(_BuildingType_index)-1) {

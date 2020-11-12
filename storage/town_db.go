@@ -14,6 +14,18 @@ import (
 
 type warehouseDTO map[string]int
 
+// defaultWarehouse returns a new map, to prevent pointer issues
+func defaultWarehouse() map[game.ItemID]game.WarehouseItem {
+	return map[game.ItemID]game.WarehouseItem{
+		"stone":    {ItemID: "stone", Quantity: 100},
+		"plank":    {ItemID: "plank", Quantity: 100},
+		"log":      {ItemID: "plank", Quantity: 10},
+		"wheat":    {ItemID: "wheat", Quantity: 10},
+		"flour":    {ItemID: "flour", Quantity: 4},
+		"iron_bar": {ItemID: "iron_bar", Quantity: 4},
+	}
+}
+
 func whToDTO(wh map[game.ItemID]game.WarehouseItem) warehouseDTO {
 	dto := make(warehouseDTO)
 	for _, wi := range wh {
@@ -31,6 +43,23 @@ func dtoToWH(dto warehouseDTO) map[game.ItemID]game.WarehouseItem {
 		}
 	}
 	return wh
+}
+
+func (t *TownRepository) createTownInDatabase(ctx context.Context, town *game.Town) error {
+	tid, _ := town.ID.MarshalBinary()
+	oid, _ := town.Owner.MarshalBinary()
+	whBytes, err := json.Marshal(whToDTO(town.Warehouse))
+	if err != nil {
+		return err
+	}
+
+	stmt, err := t.db.PrepareContext(ctx, "INSERT INTO towns (id, owner, name, warehouse, createdAt, updatedAt) VALUES(?, ?, ?, ?, ?, ?)")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.ExecContext(ctx, tid, oid, town.Name, whBytes, town.CreatedAt, town.UpdatedAt)
+	return err
+
 }
 
 func (t *TownRepository) getTownFromDatabase(ctx context.Context, id uuid.UUID) (*game.Town, error) {

@@ -28,7 +28,8 @@ CREATE TABLE `towns`
 
 ALTER TABLE `towns`
     ADD PRIMARY KEY (`id`),
-    ADD INDEX (`owner`);
+    ADD INDEX (`owner`),
+    ADD FOREIGN KEY (`owner`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 COMMIT;
 
 CREATE TABLE `buildings`
@@ -44,7 +45,8 @@ CREATE TABLE `buildings`
 
 ALTER TABLE `buildings`
     ADD PRIMARY KEY (`id`),
-    ADD INDEX (`townId`);
+    ADD INDEX (`townId`),
+    ADD FOREIGN KEY (`townId`) REFERENCES `towns` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 COMMIT;
 
 CREATE TABLE `jobs`
@@ -76,5 +78,6 @@ CREATE TABLE `warriors`
   DEFAULT CHARSET = utf8;
 
 ALTER TABLE `warriors`
-    ADD PRIMARY KEY (battleId, armyId, townId, warriorType);
+    ADD PRIMARY KEY (battleId, armyId, townId, warriorType),
+    ADD FOREIGN KEY (`townId`) REFERENCES `towns` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 COMMIT;

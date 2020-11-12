@@ -17,6 +17,8 @@ type UserStorage interface {
 }
 
 type TownStorage interface {
+	Create(ctx context.Context, owner uuid.UUID, townName string) (*game.Town, error)
+
 	Get(ctx context.Context, id uuid.UUID) (*game.Town, error)
 	AddBuilding(ctx context.Context, townID uuid.UUID, buildingType game.BuildingType) error
 	UpgradeBuilding(ctx context.Context, townID uuid.UUID, buildingID uuid.UUID) error

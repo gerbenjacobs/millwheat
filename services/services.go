@@ -32,6 +32,8 @@ type GameService interface {
 }
 
 type TownService interface {
+	Create(ctx context.Context, owner uuid.UUID, townName string) (*game.Town, error)
+
 	Town(ctx context.Context, id uuid.UUID) (*game.Town, error)
 	AddBuilding(ctx context.Context, buildingType game.BuildingType) error
 	UpgradeBuilding(ctx context.Context, buildingID uuid.UUID) error

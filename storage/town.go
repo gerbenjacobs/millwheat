@@ -25,21 +25,27 @@ type TownRepository struct {
 	townCache *cache.Cache
 }
 
-// defaultWarehouse returns a new map, to prevent pointer issues
-func defaultWarehouse() map[game.ItemID]game.WarehouseItem {
-	return map[game.ItemID]game.WarehouseItem{
-		"stone":    {ItemID: "stone", Quantity: 100},
-		"plank":    {ItemID: "plank", Quantity: 100},
-		"wheat":    {ItemID: "wheat", Quantity: 10},
-		"flour":    {ItemID: "flour", Quantity: 4},
-		"iron_bar": {ItemID: "iron_bar", Quantity: 4},
-	}
-}
-
 func NewTownRepository(db *sql.DB) *TownRepository {
 	c := cache.New(CacheDurationTown, time.Hour)
 
 	return &TownRepository{db: db, townCache: c}
+}
+
+func (t *TownRepository) Create(ctx context.Context, owner uuid.UUID, townName string) (*game.Town, error) {
+	town := &game.Town{
+		ID:        uuid.New(),
+		Owner:     owner,
+		Name:      townName,
+		Buildings: nil,
+		Warehouse: defaultWarehouse(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+	}
+	if err := t.createTownInDatabase(ctx, town); err != nil {
+		return nil, err
+	}
+
+	return town, nil
 }
 
 func (t *TownRepository) Get(ctx context.Context, id uuid.UUID) (town *game.Town, err error) {
