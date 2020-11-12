@@ -19,7 +19,7 @@ func defaultWarehouse() map[game.ItemID]game.WarehouseItem {
 	return map[game.ItemID]game.WarehouseItem{
 		"stone":    {ItemID: "stone", Quantity: 100},
 		"plank":    {ItemID: "plank", Quantity: 100},
-		"log":      {ItemID: "plank", Quantity: 10},
+		"log":      {ItemID: "log", Quantity: 10},
 		"wheat":    {ItemID: "wheat", Quantity: 10},
 		"flour":    {ItemID: "flour", Quantity: 4},
 		"iron_bar": {ItemID: "iron_bar", Quantity: 4},
