@@ -1,0 +1,94 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{define "flashes"}}{{ .Flashes }}{{end}}
+
+{{ define "content" }}
+    <div class="row">
+        <div class="col-3 col-3-md">
+            <strong>Location</strong>
+            <ul>
+                <li><a href="#">Pick apples</a></li>
+                <li><a href="#">Pick pears</a></li>
+            </ul>
+            <strong>Quests</strong>
+            <ul>
+                <li><a href="#">The three piglets</a></li>
+            </ul>
+            <strong>NPCs</strong>
+            <ul>
+                <li><a href="#">Talk with Jolanda</a></li>
+                <li><a href="#">Talk with Piers</a></li>
+            </ul>
+            <strong>Travel</strong>
+            <ul>
+                <li><a href="#">Orchard</a></li>
+                <li><a href="#">Seabay</a></li>
+                <li><a href="#">Longdeon Place</a></li>
+                <li><a href="#">Foresty Forst</a></li>
+            </ul>
+        </div>
+        <div class="col-9 col-6-md" style="text-align: justify;">
+            <h2>Talk with Alice</h2>
+            <div class="card">
+                <p>
+                    <strong>Alice</strong>: Hi there {user}. I heard you're new around town and are willing to help
+                    some of the locals for the upcoming festivities. That's great to hear.
+                </p>
+                <p>
+                    I do have a task for you if you want. I need <strong>10 apples, 5 flour and 5 water</strong>
+                    for the apple pies I'm going to bake. Perhaps afterwards you can also help me bake them?
+                </p>
+                <footer class="is-right">
+                    <a class="button primary">Accept</a>
+                    <a class="button">Decline</a>
+                </footer>
+            </div>
+        </div>
+        <div class="col-12 col-3-md" style="background-color: var(--color-darkGrey); color: white; padding: 10px;">
+            <h2>Inventory</h2>
+            <table>
+                <caption>Gear</caption>
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tr>
+                    <td>Iron Helmet</td>
+                    <td>
+                        <a href="#">Unequip</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Iron Shortsword</td>
+                    <td>
+                        <a href="#">Equip</a>
+                    </td>
+                </tr>
+            </table>
+
+            <table>
+                <caption>Consumables</caption>
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tr>
+                    <td>Apple</td>
+                    <td>
+                        <a href="#">Eat</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="color: mediumpurple;">Health Potion</td>
+                    <td>
+                        <a href="#">Use</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{{ end }}

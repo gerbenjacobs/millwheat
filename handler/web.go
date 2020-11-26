@@ -198,6 +198,25 @@ func (h *Handler) logout(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 	return
 }
 
+func (h *Handler) lore(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	flashes, _ := getFlashes(r, w)
+	tmpl := template.Must(template.ParseFiles(
+		"handler/templates/layout.html",
+		"handler/templates/lore.html",
+	))
+	err := tmpl.Execute(w, PageUser{
+		Page: Page{
+			Title:   "Lore &#x2694;&#xfe0f; Millwheat",
+			Flashes: flashes,
+		},
+	})
+	if err != nil {
+		logrus.Errorf("failed to execute layout: %v", err)
+		error500(w, errors.New("failed to create layout"))
+		return
+	}
+}
+
 func (h *Handler) errorHandler(localErr error) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data, err := h.getUserAndState(r, w, localErr.Error()+" &#x2694;&#xfe0f; Oops!")
