@@ -199,7 +199,6 @@ func (b Building) ActionURL() string {
 
 func (tb TownBuilding) GetCurrentProduction(b Building) (*ItemSet, error) {
 	t := time.Since(tb.LastCollection)
-	// TODO: replace minutes with hours again
 	hours := int(math.Floor(t.Hours()))
 	if hours < 1 {
 		return nil, errors.New("building not ready for collection")
