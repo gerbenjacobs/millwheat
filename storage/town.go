@@ -7,11 +7,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/patrickmn/go-cache"
-
 	"github.com/gerbenjacobs/millwheat/game"
 	"github.com/gerbenjacobs/millwheat/game/data"
+	"github.com/google/uuid"
+	"github.com/patrickmn/go-cache"
 )
 
 var (
@@ -225,10 +224,14 @@ func (t *TownRepository) warehouseLimit(townID uuid.UUID) int {
 	if err != nil {
 		return defaultWarehouseLimit
 	}
+	maxWarehouseLimit := 0
 	for _, tb := range town.Buildings {
 		if tb.IsWarehouse() {
-			return data.Buildings[tb.Type].MaxEfficiency("slots", tb.CurrentLevel)
+			maxWarehouseLimit += data.Buildings[tb.Type].MaxEfficiency("slots", tb.CurrentLevel)
 		}
+	}
+	if maxWarehouseLimit > 0 {
+		return maxWarehouseLimit
 	}
 
 	return defaultWarehouseLimit
