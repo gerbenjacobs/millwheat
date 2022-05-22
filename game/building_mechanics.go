@@ -54,6 +54,14 @@ func (b Building) MaxProduction(itemID ItemID, level int) int {
 			return m.Levels[level]
 		}
 	}
+	// if no output found, see if we can determine based on consumption
+	// this only applies to buildings where the key of production is consumption=true
+	// at the moment that's only the Butcher
+	for production := range b.Production {
+		if production.ItemID == itemID && production.IsConsumption {
+			return b.MaxConsumption(itemID, level)
+		}
+	}
 	return 0
 }
 

@@ -1,6 +1,8 @@
+// CreateProduct tests are in a separate folder to prevent import cycles with game/data
 package tests
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -9,23 +11,20 @@ import (
 )
 
 func TestBuilding_CreateProduct(t *testing.T) {
-
-	type args struct {
+	type productRequest struct {
 		product  game.ItemID
 		quantity int
 		level    int
 	}
 	tests := []struct {
-		name     string
 		building game.Building
-		args     args
+		req      productRequest
 		want     *game.ProductionResult
 		wantErr  bool
 	}{
 		{
-			name:     "1 wheat into flour in level 1 mill",
 			building: gamedata.Buildings[game.BuildingMill],
-			args:     args{"flour", 1, 1},
+			req:      productRequest{"flour", 1, 1},
 			want: &game.ProductionResult{
 				Consumption: []game.ItemSet{
 					{ItemID: "wheat", Quantity: 1, IsConsumption: true},
@@ -37,9 +36,8 @@ func TestBuilding_CreateProduct(t *testing.T) {
 			},
 		},
 		{
-			name:     "2 wheat into flour in level 2 mill",
 			building: gamedata.Buildings[game.BuildingMill],
-			args:     args{"flour", 2, 2},
+			req:      productRequest{"flour", 2, 2},
 			want: &game.ProductionResult{
 				Consumption: []game.ItemSet{
 					{ItemID: "wheat", Quantity: 2, IsConsumption: true},
@@ -51,9 +49,8 @@ func TestBuilding_CreateProduct(t *testing.T) {
 			},
 		},
 		{
-			name:     "8 wheat into flour in level 5 mill",
 			building: gamedata.Buildings[game.BuildingMill],
-			args:     args{"flour", 8, 5},
+			req:      productRequest{"flour", 8, 5},
 			want: &game.ProductionResult{
 				Consumption: []game.ItemSet{
 					{ItemID: "wheat", Quantity: 4, IsConsumption: true},
@@ -65,9 +62,8 @@ func TestBuilding_CreateProduct(t *testing.T) {
 			},
 		},
 		{
-			name:     "9 wheat into flour in level 5 mill",
 			building: gamedata.Buildings[game.BuildingMill],
-			args:     args{"flour", 9, 5},
+			req:      productRequest{"flour", 9, 5},
 			want: &game.ProductionResult{
 				Consumption: []game.ItemSet{
 					{ItemID: "wheat", Quantity: 5, IsConsumption: true},
@@ -79,9 +75,8 @@ func TestBuilding_CreateProduct(t *testing.T) {
 			},
 		},
 		{
-			name:     "1 pig for level 1 butcher",
 			building: gamedata.Buildings[game.BuildingButcher],
-			args:     args{"pig", 1, 1},
+			req:      productRequest{"pig", 1, 1},
 			want: &game.ProductionResult{
 				Consumption: []game.ItemSet{
 					{ItemID: "pig", Quantity: 1, IsConsumption: true},
@@ -94,9 +89,8 @@ func TestBuilding_CreateProduct(t *testing.T) {
 			},
 		},
 		{
-			name:     "1 pig for level 2 butcher",
 			building: gamedata.Buildings[game.BuildingButcher],
-			args:     args{"pig", 1, 2},
+			req:      productRequest{"pig", 1, 2},
 			want: &game.ProductionResult{
 				Consumption: []game.ItemSet{
 					{ItemID: "pig", Quantity: 1, IsConsumption: true},
@@ -109,9 +103,50 @@ func TestBuilding_CreateProduct(t *testing.T) {
 			},
 		},
 		{
-			name:     "1 lance for level 1 weaponsmith",
+			building: gamedata.Buildings[game.BuildingButcher],
+			req:      productRequest{"pig", 1, 3},
+			want: &game.ProductionResult{
+				Consumption: []game.ItemSet{
+					{ItemID: "pig", Quantity: 1, IsConsumption: true},
+				},
+				Production: []game.ItemSet{
+					{ItemID: "hide", Quantity: 2},
+					{ItemID: "meat", Quantity: 2},
+				},
+				Hours: 1,
+			},
+		},
+		{
+			building: gamedata.Buildings[game.BuildingButcher],
+			req:      productRequest{"pig", 2, 4},
+			want: &game.ProductionResult{
+				Consumption: []game.ItemSet{
+					{ItemID: "pig", Quantity: 2, IsConsumption: true},
+				},
+				Production: []game.ItemSet{
+					{ItemID: "hide", Quantity: 8},
+					{ItemID: "meat", Quantity: 10},
+				},
+				Hours: 1,
+			},
+		},
+		{
+			building: gamedata.Buildings[game.BuildingButcher],
+			req:      productRequest{"pig", 2, 5},
+			want: &game.ProductionResult{
+				Consumption: []game.ItemSet{
+					{ItemID: "pig", Quantity: 2, IsConsumption: true},
+				},
+				Production: []game.ItemSet{
+					{ItemID: "hide", Quantity: 10},
+					{ItemID: "meat", Quantity: 10},
+				},
+				Hours: 1,
+			},
+		},
+		{
 			building: gamedata.Buildings[game.BuildingWeaponSmith],
-			args:     args{"lance", 1, 1},
+			req:      productRequest{"lance", 1, 1},
 			want: &game.ProductionResult{
 				Consumption: []game.ItemSet{
 					{ItemID: "iron_bar", Quantity: 1, IsConsumption: true},
@@ -124,9 +159,8 @@ func TestBuilding_CreateProduct(t *testing.T) {
 			},
 		},
 		{
-			name:     "1 iron bar for level 1 blacksmith",
 			building: gamedata.Buildings[game.BuildingBlacksmith],
-			args:     args{"iron_bar", 1, 1},
+			req:      productRequest{"iron_bar", 1, 1},
 			want: &game.ProductionResult{
 				Consumption: []game.ItemSet{
 					{ItemID: "coal", Quantity: 4, IsConsumption: true},
@@ -139,9 +173,8 @@ func TestBuilding_CreateProduct(t *testing.T) {
 			},
 		},
 		{
-			name:     "2 iron bars for level 3 blacksmith",
 			building: gamedata.Buildings[game.BuildingBlacksmith],
-			args:     args{"iron_bar", 2, 3},
+			req:      productRequest{"iron_bar", 2, 3},
 			want: &game.ProductionResult{
 				Consumption: []game.ItemSet{
 					{ItemID: "coal", Quantity: 4, IsConsumption: true},
@@ -155,9 +188,9 @@ func TestBuilding_CreateProduct(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-
-			got, err := tt.building.CreateProduct(tt.args.product, tt.args.quantity, tt.args.level)
+		name := fmt.Sprintf("%d %s at level %d %s", tt.req.quantity, tt.req.product, tt.req.level, tt.building.Name)
+		t.Run(name, func(t *testing.T) {
+			got, err := tt.building.CreateProduct(tt.req.product, tt.req.quantity, tt.req.level)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CreateProduct() error = %v, wantErr %v", err, tt.wantErr)
 				return

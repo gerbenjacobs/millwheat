@@ -63,7 +63,7 @@ func (g *GameSvc) Produce(ctx context.Context, buildingID uuid.UUID, set game.It
 		Duration: time.Duration(productionResult.Hours) * time.Hour,
 	}
 	if err := g.prodSvc.CreateJob(ctx, job); err != nil {
-		// return back items
+		// return items
 		_ = g.townSvc.GiveToWarehouse(ctx, productionResult.Consumption)
 		return err
 	}
@@ -178,7 +178,7 @@ func (g *GameSvc) CreateWarriors(ctx context.Context, warriorType game.WarriorTy
 	}
 
 	if err := g.battleSvc.AddWarrior(ctx, TMPCurrentBattleId, TMPArmyId, TownFromContext(ctx), warriorType, quantity); err != nil {
-		// return back items
+		// return items
 		_ = g.townSvc.GiveToWarehouse(ctx, costs)
 	}
 
@@ -248,9 +248,9 @@ func (g *GameSvc) upgradeBuilding(ctx context.Context, buildingID *uuid.UUID, bu
 			Type:  buildingType,
 			Level: level,
 		},
-		Duration: 3600 * time.Second, // TODO: fix time
+		Duration: 3600 * time.Second,
 	}); err != nil {
-		// return back items
+		// return items
 		_ = g.townSvc.GiveToWarehouse(ctx, productionResult.Consumption)
 		return err
 	}

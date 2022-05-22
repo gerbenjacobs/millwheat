@@ -142,8 +142,11 @@ func (b Building) CreateProduct(product ItemID, quantity, level int) (*Productio
 			consume[i].Quantity = int(math.Ceil(float64(quantity) / float64(maxEfficiency)))
 		} else {
 			// efficiency has priority, then consumption is checked
-			consume[i].Quantity = maxConsumption * quantity
-
+			if isConsumable {
+				consume[i].Quantity = maxConsumption
+			} else {
+				consume[i].Quantity = maxConsumption * quantity
+			}
 		}
 	}
 	for i, p := range produce {

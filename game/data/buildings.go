@@ -164,7 +164,7 @@ var Buildings = game.Buildings{
 			},
 			{
 				Type:   game.MechanicEfficiency,
-				Name:   "Pigs per wheat",
+				Name:   "Pigs per wheat", // TODO: Wheat per pig? If so, flip the levels, high to low
 				ItemID: "wheat",
 				Levels: map[int]int{
 					1:  1,
@@ -203,6 +203,9 @@ var Buildings = game.Buildings{
 				Levels: map[int]int{
 					1: 1,
 					2: 1,
+					3: 1,
+					4: 2,
+					5: 2,
 				},
 			},
 			{
@@ -212,6 +215,9 @@ var Buildings = game.Buildings{
 				Levels: map[int]int{
 					1: 1,
 					2: 1,
+					3: 2,
+					4: 4,
+					5: 5,
 				},
 			},
 			{
@@ -221,33 +227,18 @@ var Buildings = game.Buildings{
 				Levels: map[int]int{
 					1: 1,
 					2: 2,
-				},
-			},
-			{
-				Type:   game.MechanicOutput,
-				Name:   "Hide per hour",
-				ItemID: "hide",
-				Levels: map[int]int{
-					1: 1,
-					2: 1,
-				},
-			},
-			{
-				Type:   game.MechanicOutput,
-				Name:   "Meat per hour",
-				ItemID: "meat",
-				Levels: map[int]int{
-					1: 1,
-					2: 2,
+					3: 2,
+					4: 5,
+					5: 5,
 				},
 			},
 		},
 		BuildCosts: map[int]game.BuildingCost{
 			1: {1, 3},
 			2: {2, 6},
-			3: {3, 15},
-			4: {5, 50},
-			5: {7, 75},
+			3: {5, 15},
+			4: {15, 20},
+			5: {30, 25},
 		},
 	},
 	game.BuildingWeaponSmith: {
