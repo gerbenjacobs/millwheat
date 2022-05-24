@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gerbenjacobs/millwheat/game"
-	"github.com/gerbenjacobs/millwheat/game/data"
 	"github.com/google/uuid"
 	"github.com/patrickmn/go-cache"
+
+	"github.com/gerbenjacobs/millwheat"
+	"github.com/gerbenjacobs/millwheat/game"
+	"github.com/gerbenjacobs/millwheat/game/data"
 )
 
 var (
@@ -166,7 +168,7 @@ func (t *TownRepository) TakeFromWarehouse(ctx context.Context, townID uuid.UUID
 		return err
 	}
 
-	// do changes in temporary warehouse struct
+	// make changes in temporary warehouse struct
 	newWh := make(map[game.ItemID]game.WarehouseItem)
 	for _, i := range wh {
 		newWh[i.ItemID] = i
@@ -174,13 +176,17 @@ func (t *TownRepository) TakeFromWarehouse(ctx context.Context, townID uuid.UUID
 
 	for _, is := range items {
 		i, ok := wh[is.ItemID]
+		if !ok && data.ItemExists(is.ItemID) {
+			// item is not in warehouse, value is basically zero
+			return millwheat.ErrNoItems
+		}
 		if !ok {
 			// if item not found
-			return errors.New("item not found")
+			return millwheat.ErrItemNotFound
 		}
 		if i.Quantity < is.Quantity {
 			// if not enough quantity for this item
-			return errors.New("not enough quantity")
+			return millwheat.ErrItemNotEnoughQuantity
 		}
 
 		newWh[i.ItemID] = game.WarehouseItem{

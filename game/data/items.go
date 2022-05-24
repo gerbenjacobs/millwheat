@@ -4,6 +4,11 @@ import (
 	"github.com/gerbenjacobs/millwheat/game"
 )
 
+func ItemExists(id game.ItemID) bool {
+	_, ok := Items[id]
+	return ok
+}
+
 // WarehouseOrder determines the way the warehouse will be displayed.
 var WarehouseOrder = []game.ItemID{
 	"stone", "plank", "log", "wheat", "flour", "bread", "wine",

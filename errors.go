@@ -13,4 +13,8 @@ var (
 
 	ErrPageNotFound     = errors.New("page not found")
 	ErrMethodNotAllowed = errors.New("method not allowed")
+
+	ErrItemNotFound          = errors.New("item not found")
+	ErrItemNotEnoughQuantity = errors.New("not enough quantity")
+	ErrNoItems               = errors.New("no items")
 )
