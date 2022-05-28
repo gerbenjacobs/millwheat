@@ -265,6 +265,9 @@ var Buildings = game.Buildings{
 				Levels: map[int]int{
 					1: 1,
 					2: 2,
+					3: 3,
+					4: 4,
+					5: 5,
 				},
 			},
 			{
@@ -274,6 +277,9 @@ var Buildings = game.Buildings{
 				Levels: map[int]int{
 					1: 1,
 					2: 2,
+					3: 3,
+					4: 4,
+					5: 5,
 				},
 			},
 			{
@@ -283,6 +289,9 @@ var Buildings = game.Buildings{
 				Levels: map[int]int{
 					1: 1,
 					2: 2,
+					3: 3,
+					4: 4,
+					5: 5,
 				},
 			},
 		},
