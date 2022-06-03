@@ -145,6 +145,20 @@ func TestBuilding_CreateProduct(t *testing.T) {
 			},
 		},
 		{
+			building: gamedata.Buildings[game.BuildingButcher],
+			req:      productRequest{"pig", 6, 1},
+			want: &game.ProductionResult{
+				Consumption: []game.ItemSet{
+					{ItemID: "pig", Quantity: 6, IsConsumption: true},
+				},
+				Production: []game.ItemSet{
+					{ItemID: "hide", Quantity: 6},
+					{ItemID: "meat", Quantity: 6},
+				},
+				Hours: 1,
+			},
+		},
+		{
 			building: gamedata.Buildings[game.BuildingWeaponSmith],
 			req:      productRequest{"lance", 1, 1},
 			want: &game.ProductionResult{

@@ -143,7 +143,7 @@ func (b Building) CreateProduct(product ItemID, quantity, level int) (*Productio
 		} else {
 			// efficiency has priority, then consumption is checked
 			if isConsumable {
-				consume[i].Quantity = maxConsumption
+				consume[i].Quantity = quantity
 			} else {
 				consume[i].Quantity = maxConsumption * quantity
 			}
@@ -160,7 +160,7 @@ func (b Building) CreateProduct(product ItemID, quantity, level int) (*Productio
 	}
 	var div int
 	if isConsumable {
-		div = b.MaxConsumption(product, level)
+		div = b.MaxConsumption(product, level) * quantity
 	} else {
 		div = b.MaxProduction(product, level)
 	}
