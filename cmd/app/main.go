@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -11,12 +12,10 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/google/uuid"
 	"github.com/mattn/go-colorable"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
-	"github.com/gerbenjacobs/millwheat/game"
 	"github.com/gerbenjacobs/millwheat/game/data"
 	"github.com/gerbenjacobs/millwheat/handler"
 	"github.com/gerbenjacobs/millwheat/services"
@@ -24,6 +23,10 @@ import (
 )
 
 func main() {
+	// flags
+	cfgPath := flag.String("config-path", ".", "path to config file")
+	flag.Parse()
+
 	// handle shutdown signals
 	shutdown := make(chan os.Signal, 3)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
@@ -36,7 +39,7 @@ func main() {
 	// load configuration
 	var c Configuration
 	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath(*cfgPath)
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("error reading config file: %s", err)
 	}
@@ -44,9 +47,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("unable to decode into struct: %v", err)
 	}
-
-	// load game data
-	_ = tempTowns()
 
 	// set up and check database
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s?parseTime=true", c.DB.User, c.DB.Password, c.DB.Database))
@@ -126,53 +126,4 @@ type Configuration struct {
 		Password string
 		Database string
 	}
-}
-
-func tempTowns() game.Towns {
-	tempTowns := map[uuid.UUID]*game.Town{
-		uuid.MustParse("272870c89e304a15924966e38a50f640"): {
-			ID:    uuid.MustParse("272870c89e304a15924966e38a50f640"),
-			Name:  "Bobville",
-			Owner: uuid.MustParse("ecb31b8a898e4049a9c7d18ea59a72a0"),
-			Buildings: map[uuid.UUID]game.TownBuilding{
-				uuid.MustParse("cb7d9231-ac10-4b69-8a82-fda38d8e65b9"): {
-					ID:           uuid.MustParse("cb7d9231-ac10-4b69-8a82-fda38d8e65b9"),
-					Type:         game.BuildingMill,
-					CurrentLevel: 3,
-				},
-			},
-			CreatedAt: time.Now().Add(-5 * time.Minute),
-			UpdatedAt: time.Now(),
-		},
-		uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"): {
-			ID:    uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"),
-			Name:  "Northbrook",
-			Owner: uuid.MustParse("273d94bb1cf7408da4c85feda0eeff75"),
-			Buildings: map[uuid.UUID]game.TownBuilding{
-				uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"): {
-					ID:             uuid.MustParse("f8b93eab-b11d-44ca-bba6-162c60e4762e"),
-					Type:           game.BuildingFarm,
-					CurrentLevel:   2,
-					LastCollection: time.Now().Add(-2 * time.Hour).UTC(),
-					CreatedAt:      time.Now().UTC().Add(-2 * time.Minute),
-				},
-				uuid.MustParse("578ad258-e913-4831-998a-2983dd4920ed"): {
-					ID:           uuid.MustParse("578ad258-e913-4831-998a-2983dd4920ed"),
-					Type:         game.BuildingButcher,
-					CurrentLevel: 1,
-					CreatedAt:    time.Now().UTC().Add(-1 * time.Minute),
-				},
-				uuid.MustParse("1afb2cf0-6671-4d54-9824-c15940073ce2"): {
-					ID:           uuid.MustParse("1afb2cf0-6671-4d54-9824-c15940073ce2"),
-					Type:         game.BuildingPigFarm,
-					CurrentLevel: 5,
-					CreatedAt:    time.Now().UTC(),
-				},
-			},
-			CreatedAt: time.Now().Add(-5 * time.Minute),
-			UpdatedAt: time.Now(),
-		},
-	}
-
-	return tempTowns
 }
