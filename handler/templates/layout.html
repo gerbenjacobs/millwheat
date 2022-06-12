@@ -13,12 +13,19 @@
 <body>
 
 {{ if .Flashes }}
-    {{ range $state, $msg := .Flashes }}
-        <div class="container flash flash-{{ $state }}">
-            {{ $msg }}
-        </div>
-    {{ end }}
+{{ range $state, $msg := .Flashes }}
+<div class="container flash flash-{{ $state }}">
+    {{ $msg }}
+</div>
 {{ end }}
+{{ end }}
+
+<div class="container" style="border: 2px solid var(--color-primary); background: rgba(210,214,221, 0.5) url(/images/beige-tiles.webp); padding: 1em;">
+    This game is currently in pre-alpha,
+    <a href="https://www.reddit.com/r/PBBG/comments/v72nbr/prealpha_of_millwheat/">read more about it on
+        Reddit</a>.
+    In the meantime check out our other game: <a href="https://transportgame.eu">Transport Game Europe</a>
+</div>
 
 <div class="container">
     <nav class="nav">
@@ -30,11 +37,11 @@
         <div class="nav-right">
             <div class="tabs">
                 {{ if .User }}
-                    <a href="/game">Town</a>
-                    <a href="/logout">Logout</a>
+                <a href="/game">Town</a>
+                <a href="/logout">Logout</a>
                 {{ else }}
-                    <a href="/login">Log in</a>
-                    <a href="/join">Join</a>
+                <a href="/login">Log in</a>
+                <a href="/join">Join</a>
                 {{ end }}
             </div>
         </div>
