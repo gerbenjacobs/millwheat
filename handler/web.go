@@ -112,17 +112,18 @@ func (h *Handler) joinNow(w http.ResponseWriter, r *http.Request, _ httprouter.P
 }
 
 func (h *Handler) join(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	flashes, _ := getFlashes(r, w)
+	data, _ := h.getUserAndState(r, w, "Register for free &#x2694;&#xfe0f; Millwheat")
+
+	if data.User != nil {
+		_ = storeAndSaveFlash(r, w, "info|You are already logged in")
+		http.Redirect(w, r, "/game", http.StatusFound)
+	}
+
 	tmpl := template.Must(template.ParseFiles(
 		"handler/templates/layout.html",
 		"handler/templates/join.html",
 	))
-	err := tmpl.Execute(w, PageUser{
-		Page: Page{
-			Title:   "Register for free &#x2694;&#xfe0f; Millwheat",
-			Flashes: flashes,
-		},
-	})
+	err := tmpl.Execute(w, data)
 	if err != nil {
 		logrus.Errorf("failed to execute layout: %v", err)
 		error500(w, errors.New("failed to create layout"))
@@ -131,17 +132,18 @@ func (h *Handler) join(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 }
 
 func (h *Handler) login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	flashes, _ := getFlashes(r, w)
+	data, _ := h.getUserAndState(r, w, "Register for free &#x2694;&#xfe0f; Millwheat")
+
+	if data.User != nil {
+		_ = storeAndSaveFlash(r, w, "info|You are already logged in")
+		http.Redirect(w, r, "/game", http.StatusFound)
+	}
+
 	tmpl := template.Must(template.ParseFiles(
 		"handler/templates/layout.html",
 		"handler/templates/login.html",
 	))
-	err := tmpl.Execute(w, PageUser{
-		Page: Page{
-			Title:   "Log in &#x2694;&#xfe0f; Millwheat",
-			Flashes: flashes,
-		},
-	})
+	err := tmpl.Execute(w, data)
 	if err != nil {
 		logrus.Errorf("failed to execute layout: %v", err)
 		error500(w, errors.New("failed to create layout"))
@@ -196,25 +198,6 @@ func (h *Handler) logout(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 	_ = storeAndSaveFlash(r, w, "success|Successfully logged out")
 	http.Redirect(w, r, "/", http.StatusFound)
 	return
-}
-
-func (h *Handler) lore(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	flashes, _ := getFlashes(r, w)
-	tmpl := template.Must(template.ParseFiles(
-		"handler/templates/layout.html",
-		"handler/templates/lore.html",
-	))
-	err := tmpl.Execute(w, PageUser{
-		Page: Page{
-			Title:   "Lore &#x2694;&#xfe0f; Millwheat",
-			Flashes: flashes,
-		},
-	})
-	if err != nil {
-		logrus.Errorf("failed to execute layout: %v", err)
-		error500(w, errors.New("failed to create layout"))
-		return
-	}
 }
 
 func (h *Handler) errorHandler(localErr error) func(w http.ResponseWriter, r *http.Request) {

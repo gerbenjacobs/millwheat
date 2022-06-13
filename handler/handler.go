@@ -51,7 +51,6 @@ func New(dependencies Dependencies) *Handler {
 	r.GET("/login", h.login)
 	r.POST("/login-now", h.loginNow)
 	r.GET("/logout", h.logout)
-	r.GET("/lore", h.lore)
 
 	r.GET("/game", h.AuthMiddleware(h.game))
 	r.POST("/game/produce", h.AuthMiddleware(h.produce))
