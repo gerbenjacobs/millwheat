@@ -12,7 +12,7 @@ require (
 	github.com/justinas/alice v1.2.0
 	github.com/mattn/go-colorable v0.1.13
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.2
 	github.com/spf13/viper v1.15.0
 	golang.org/x/crypto v0.8.0
 )
