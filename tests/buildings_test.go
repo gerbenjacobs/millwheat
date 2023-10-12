@@ -200,9 +200,35 @@ func TestBuilding_CreateProduct(t *testing.T) {
 				Hours: 1,
 			},
 		},
+		{
+			building: gamedata.Buildings[game.BuildingSawMill],
+			req:      productRequest{"plank", 2, 2},
+			want: &game.ProductionResult{
+				Consumption: []game.ItemSet{
+					{ItemID: "log", Quantity: 2, IsConsumption: true},
+				},
+				Production: []game.ItemSet{
+					{ItemID: "plank", Quantity: 2},
+				},
+				Hours: 1,
+			},
+		},
+		{
+			building: gamedata.Buildings[game.BuildingSawMill],
+			req:      productRequest{"plank", 8, 5},
+			want: &game.ProductionResult{
+				Consumption: []game.ItemSet{
+					{ItemID: "log", Quantity: 4, IsConsumption: true},
+				},
+				Production: []game.ItemSet{
+					{ItemID: "plank", Quantity: 8},
+				},
+				Hours: 1,
+			},
+		},
 	}
 	for _, tt := range tests {
-		name := fmt.Sprintf("%d %s at level %d %s", tt.req.quantity, tt.req.product, tt.req.level, tt.building.Name)
+		name := fmt.Sprintf("%d %s from %s at level %d %s taking %d hours", tt.req.quantity, tt.req.product, tt.want.Consumption, tt.req.level, tt.building.Name, tt.want.Hours)
 		t.Run(name, func(t *testing.T) {
 			got, err := tt.building.CreateProduct(tt.req.product, tt.req.quantity, tt.req.level)
 			if (err != nil) != tt.wantErr {
